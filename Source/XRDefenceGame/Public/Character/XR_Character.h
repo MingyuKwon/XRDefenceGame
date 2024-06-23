@@ -36,7 +36,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
 	UMaterialInstance* DefaultMaterial;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
