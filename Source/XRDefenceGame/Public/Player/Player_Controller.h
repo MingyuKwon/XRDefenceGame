@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "XRDefenceEnums.h"
+#include "Interface/HandInteractInterface.h"
 #include "Player_Controller.generated.h"
 
 /**
@@ -23,9 +24,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentLeftPose(Pose inputPose);
 
+
+	UFUNCTION(BlueprintCallable)
+	void HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface);
+
+	UFUNCTION(BlueprintCallable)
+	void HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
+
+	UFUNCTION(BlueprintCallable)
+	void HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface);
+
+	UFUNCTION(BlueprintCallable)
+	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
+
 private:
 	Pose currentRightPose;
 	Pose currentLeftPose;
+
+	TScriptInterface<IHandInteractInterface> currentRightInteractInterface = nullptr;
+	TScriptInterface<IHandInteractInterface> currentLeftInteractInterface = nullptr;
 
 
 	class APlayerPawn* playerPawn = nullptr;

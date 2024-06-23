@@ -4,26 +4,46 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/HandInteractInterface.h"
+
 #include "XR_Character.generated.h"
 
 UCLASS()
-class XRDEFENCEGAME_API AXR_Character : public ACharacter
+class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AXR_Character();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void InteractableEffectStart_Implementation() override;
+	virtual void InteractableEffectEnd_Implementation() override;
+	virtual void InteractStart_Implementation() override;
+	virtual void InteractEnd_Implementation() override;
+
+
+protected:
+	virtual void BeginPlay() override;
+
+
+private:
+
+	UPROPERTY()
+	USkeletalMeshComponent* CharacterMesh;
+	bool GetCharacterMesh();
+
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	UMaterialInstance* HighlightMaterial;
+	UPROPERTY()
+	UMaterialInstance* DefaultMaterial;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	float rescaleAmount = 1.1f;
+
+
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	bool bHightLighting = false;
 
 };

@@ -35,3 +35,40 @@ void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 	currentLeftPose = inputPose;
 	playerPawn->PoseLeftAction(currentLeftPose);
 }
+
+void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+	if (currentRightInteractInterface == handInteractInterface) return;
+
+	currentRightInteractInterface->InteractableEffectEnd();
+	handInteractInterface->InteractableEffectStart();
+	currentRightInteractInterface = handInteractInterface;
+
+}
+
+void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+	if (currentRightInteractInterface != handInteractInterface) return;
+
+	currentRightInteractInterface->InteractableEffectEnd();
+	currentRightInteractInterface = nullptr;
+
+}
+
+void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+	if (currentLeftInteractInterface == handInteractInterface) return;
+
+	currentLeftInteractInterface->InteractableEffectEnd();
+	handInteractInterface->InteractableEffectStart();
+	currentLeftInteractInterface = handInteractInterface;
+}
+
+void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+	if (currentLeftInteractInterface != handInteractInterface) return;
+
+	currentLeftInteractInterface->InteractableEffectEnd();
+	currentLeftInteractInterface = nullptr;
+
+}
