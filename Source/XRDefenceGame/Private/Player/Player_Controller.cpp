@@ -35,3 +35,61 @@ void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 	currentLeftPose = inputPose;
 	playerPawn->PoseLeftAction(currentLeftPose);
 }
+
+void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+    if (currentRightInteractInterface == handInteractInterface) return;
+
+    if (currentRightInteractInterface)
+    {
+        IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
+    }
+
+    if (handInteractInterface)
+    {
+        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+    }
+
+    currentRightInteractInterface = handInteractInterface;
+}
+
+void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+    if (currentRightInteractInterface != handInteractInterface) return;
+
+    if (currentRightInteractInterface)
+    {
+        IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
+    }
+
+    currentRightInteractInterface = nullptr;
+}
+
+void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+    if (currentLeftInteractInterface == handInteractInterface) return;
+
+    if (currentLeftInteractInterface)
+    {
+        IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
+    }
+
+    if (handInteractInterface)
+    {
+        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+    }
+
+    currentLeftInteractInterface = handInteractInterface;
+}
+
+void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+    if (currentLeftInteractInterface != handInteractInterface) return;
+
+    if (currentLeftInteractInterface)
+    {
+        IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
+    }
+
+    currentLeftInteractInterface = nullptr;
+}

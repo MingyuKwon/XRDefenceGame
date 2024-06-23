@@ -1,0 +1,33 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UObject/Interface.h"
+#include "HandInteractInterface.generated.h"
+
+UINTERFACE(MinimalAPI, Blueprintable)
+class UHandInteractInterface : public UInterface
+{
+	GENERATED_BODY()
+};
+
+/**
+ *
+ */
+class XRDEFENCEGAME_API IHandInteractInterface
+{
+	GENERATED_BODY()
+
+public:
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void InteractableEffectStart();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void InteractableEffectEnd();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void InteractStart();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void InteractEnd();
+};
