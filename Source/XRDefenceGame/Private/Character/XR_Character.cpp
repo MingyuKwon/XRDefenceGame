@@ -70,9 +70,16 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 void AXR_Character::InteractStart_Implementation()
 {
+
 }
 
 void AXR_Character::InteractEnd_Implementation()
 {
+
+}
+
+void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
+{
+	SetActorLocation(GrabPosition);
 }
 

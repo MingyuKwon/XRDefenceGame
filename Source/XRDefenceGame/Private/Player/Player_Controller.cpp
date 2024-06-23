@@ -5,39 +5,84 @@
 #include "Player/PlayerPawn.h"
 
 
-void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
+void APlayer_Controller::Tick(float DeltaTime)
 {
-	// playerPawn이 null인 경우에만 새로 가져와서 할당을 하고, 아니라면 기존 것 쓰는 것으로 최적화
+	if (!GetPlayerPawn()) return;
+
+	if (bRightGrabbing)
+	{
+		if (currentRightInteractInterface)
+		{
+			IHandInteractInterface::Execute_SetInteractPosition(currentRightInteractInterface.GetObject(), playerPawn->GetRightHandPosition());
+		}
+	}
+
+	if (bLeftGrabbing)
+	{
+		if (currentLeftInteractInterface)
+		{
+			IHandInteractInterface::Execute_SetInteractPosition(currentLeftInteractInterface.GetObject(), playerPawn->GetLeftHandPosition());
+		}
+	}
+}
+
+bool APlayer_Controller::GetPlayerPawn()
+{
 	playerPawn = (playerPawn == nullptr) ? Cast<APlayerPawn>(GetPawn()) : playerPawn;
 
 	if (playerPawn == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::UpdateCurrentPose : playerPawn == nullptr"));
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::GetPlayerPawn : playerPawn == nullptr"));
+		return false;
 	}
+
+	return true;
+}
+
+void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
+{
+	if (!GetPlayerPawn()) return;
 
 	currentRightPose = inputPose;
 	playerPawn->PoseRightAction(currentRightPose);
+
+	switch (inputPose)
+	{
+		case Pose::Grab :
+			RightGrabStart();
+			break;
+
+		default:
+			RightGrabEnd();
+			break;
+	}
 
 }
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
-	// playerPawn이 null인 경우에만 새로 가져와서 할당을 하고, 아니라면 기존 것 쓰는 것으로 최적화
-	playerPawn = (playerPawn == nullptr) ? Cast<APlayerPawn>(GetPawn()) : playerPawn;
-
-	if (playerPawn == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::UpdateCurrentPose : playerPawn == nullptr"));
-		return;
-	}
+	if (!GetPlayerPawn()) return;
 
 	currentLeftPose = inputPose;
 	playerPawn->PoseLeftAction(currentLeftPose);
+
+	switch (inputPose)
+	{
+		case Pose::Grab:
+			LeftGrabStart();
+			break;
+
+		default:
+			LeftGrabEnd();
+			break;
+	}
 }
 
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (bRightGrabbing) return;
+
+	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
 
     if (currentRightInteractInterface)
@@ -55,6 +100,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (bRightGrabbing) return;
     if (currentRightInteractInterface != handInteractInterface) return;
 
     if (currentRightInteractInterface)
@@ -67,7 +113,10 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 
 void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-    if (currentLeftInteractInterface == handInteractInterface) return;
+	if (bLeftGrabbing) return;
+
+	if (currentLeftInteractInterface == handInteractInterface) return;
+	if (currentRightInteractInterface == handInteractInterface) return;
 
     if (currentLeftInteractInterface)
     {
@@ -84,6 +133,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (bLeftGrabbing) return;
     if (currentLeftInteractInterface != handInteractInterface) return;
 
     if (currentLeftInteractInterface)
@@ -93,3 +143,29 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 
     currentLeftInteractInterface = nullptr;
 }
+
+
+void APlayer_Controller::LeftGrabStart()
+{
+	bLeftGrabbing = true;
+
+}
+
+void APlayer_Controller::LeftGrabEnd()
+{
+	bLeftGrabbing = false;
+
+}  
+
+void APlayer_Controller::RightGrabStart()
+{
+	bRightGrabbing = true;
+
+}
+
+void APlayer_Controller::RightGrabEnd()
+{
+	bRightGrabbing = false;
+
+}
+
