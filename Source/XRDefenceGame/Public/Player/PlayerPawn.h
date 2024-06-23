@@ -14,6 +14,7 @@ class XRDEFENCEGAME_API APlayerPawn : public APawn
 
 public:
 	APlayerPawn();
+
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PoseRightAction(Pose currentPose);
@@ -21,11 +22,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PoseLeftAction(Pose currentPose);
 
-protected:
-	virtual void BeginPlay() override;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(BlueprintReadWrite)
+	FVector LeftHandPosition;
+	UPROPERTY(BlueprintReadWrite)
+	FVector RightHandPosition;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetLeftHandPosition();
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetRightHandPosition();
+
+	UFUNCTION()
+	inline FVector GetLeftHandPosition() { SetLeftHandPosition(); return LeftHandPosition; }
+	UFUNCTION()
+	inline FVector GetRightHandPosition() { SetRightHandPosition(); return RightHandPosition; }
 
 };

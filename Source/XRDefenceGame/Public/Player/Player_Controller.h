@@ -18,6 +18,10 @@ class XRDEFENCEGAME_API APlayer_Controller : public APlayerController
 	
 
 public:
+
+	virtual void Tick(float DeltaTime) override;
+
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentRightPose(Pose inputPose);
 
@@ -38,12 +42,22 @@ public:
 	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
 private:
+	bool GetPlayerPawn();
+
+
 	Pose currentRightPose;
 	Pose currentLeftPose;
 
 	TScriptInterface<IHandInteractInterface> currentRightInteractInterface = nullptr;
 	TScriptInterface<IHandInteractInterface> currentLeftInteractInterface = nullptr;
 
+	bool bLeftGrabbing = false;
+	bool bRightGrabbing = false;
+
+	void LeftGrabStart();
+	void RightGrabStart();
+	void LeftGrabEnd();
+	void RightGrabEnd();
 
 	class APlayerPawn* playerPawn = nullptr;
 

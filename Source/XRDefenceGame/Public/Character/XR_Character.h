@@ -22,6 +22,8 @@ public:
 	virtual void InteractableEffectEnd_Implementation() override;
 	virtual void InteractStart_Implementation() override;
 	virtual void InteractEnd_Implementation() override;
+	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
+
 
 
 protected:

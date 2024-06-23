@@ -9,16 +9,5 @@ APlayerPawn::APlayerPawn()
 
 }
 
-void APlayerPawn::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void APlayerPawn::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 
