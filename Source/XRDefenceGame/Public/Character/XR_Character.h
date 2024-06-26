@@ -34,8 +34,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
 
-	
-
 protected:
 	virtual void BeginPlay() override;
 
