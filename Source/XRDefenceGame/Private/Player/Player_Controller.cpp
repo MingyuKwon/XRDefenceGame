@@ -153,6 +153,11 @@ void APlayer_Controller::LeftGrabStart()
 
 void APlayer_Controller::LeftGrabEnd()
 {
+	if (currentLeftInteractInterface)
+	{
+		IHandInteractInterface::Execute_InteractableEffectStart(currentLeftInteractInterface.GetObject());
+	}
+
 	bLeftGrabbing = false;
 
 }  
@@ -165,6 +170,11 @@ void APlayer_Controller::RightGrabStart()
 
 void APlayer_Controller::RightGrabEnd()
 {
+	if (currentRightInteractInterface)
+	{
+		//IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
+	}
+
 	bRightGrabbing = false;
 
 }

@@ -24,10 +24,17 @@ public:
 	virtual void InteractEnd_Implementation() override;
 	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
 
+	virtual void CheckGroundState_Implementation() override;
 
+	  
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	bool bOnBoard = false;
+
+	
 
 protected:
 	virtual void BeginPlay() override;
+
 
 
 private:
@@ -47,5 +54,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	bool bHightLighting = false;
+
 
 };

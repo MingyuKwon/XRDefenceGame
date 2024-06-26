@@ -47,7 +47,7 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	if(HighlightMaterial) CharacterMesh->SetMaterial(0, HighlightMaterial);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; // 10% ´õ Å©°Ô
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; // 10% ï¿½ï¿½ Å©ï¿½ï¿½
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 
@@ -62,7 +62,7 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	if (DefaultMaterial) CharacterMesh->SetMaterial(0, DefaultMaterial);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; // ¿ø»óº¹±¸
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; // ï¿½ï¿½ï¿½óº¹±ï¿½
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 
@@ -81,5 +81,10 @@ void AXR_Character::InteractEnd_Implementation()
 void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 {
 	SetActorLocation(GrabPosition);
+}
+
+void AXR_Character::CheckGroundState_Implementation()
+{
+
 }
 
