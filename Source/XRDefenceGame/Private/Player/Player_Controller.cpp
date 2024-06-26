@@ -11,7 +11,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (bRightGrabbing)
 	{
-		if (currentRightInteractInterface)
+		if (IsRightGrabable())
 		{
 			IHandInteractInterface::Execute_SetInteractPosition(currentRightInteractInterface.GetObject(), playerPawn->GetRightHandPosition());
 		}
@@ -19,7 +19,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (bLeftGrabbing)
 	{
-		if (currentLeftInteractInterface)
+		if (IsLeftGrabable())
 		{
 			IHandInteractInterface::Execute_SetInteractPosition(currentLeftInteractInterface.GetObject(), playerPawn->GetLeftHandPosition());
 		}
@@ -147,24 +147,53 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 
 void APlayer_Controller::LeftGrabStart()
 {
+	if (bLeftGrabbing) return;
+
+	if (IsLeftGrabable())
+	{
+		IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
+	}
+
 	bLeftGrabbing = true;
 
 }
 
 void APlayer_Controller::LeftGrabEnd()
 {
+	if (!bLeftGrabbing) return;
+
+	if (IsLeftGrabable())
+	{
+		IHandInteractInterface::Execute_GrabEnd(currentLeftInteractInterface.GetObject());
+	}
+
 	bLeftGrabbing = false;
 
 }  
 
 void APlayer_Controller::RightGrabStart()
 {
+	if (bRightGrabbing) return;
+
+	if (IsRightGrabable())
+	{
+		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
+	}
+
+
 	bRightGrabbing = true;
 
 }
 
 void APlayer_Controller::RightGrabEnd()
 {
+	if (!bRightGrabbing) return;
+
+	if (IsRightGrabable())
+	{
+		IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
+	}
+
 	bRightGrabbing = false;
 
 }

@@ -47,7 +47,7 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	if(HighlightMaterial) CharacterMesh->SetMaterial(0, HighlightMaterial);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; // 10% 더 크게
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 
@@ -62,7 +62,7 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	if (DefaultMaterial) CharacterMesh->SetMaterial(0, DefaultMaterial);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; // 원상복구
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 
@@ -81,5 +81,20 @@ void AXR_Character::InteractEnd_Implementation()
 void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 {
 	SetActorLocation(GrabPosition);
+}
+
+void AXR_Character::GrabStart_Implementation()
+{
+	// Execute in Blueprint
+}
+
+void AXR_Character::GrabEnd_Implementation()
+{
+	// Execute in Blueprint
+}
+
+bool AXR_Character::IsOnBoard_Implementation()
+{
+	return bOnBoard;
 }
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/HandInteractInterface.h"
+#include "XRDefenceEnums.h"
 
 #include "XR_Character.generated.h"
 
@@ -24,10 +25,21 @@ public:
 	virtual void InteractEnd_Implementation() override;
 	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
 
+	
+	virtual void GrabStart_Implementation() override;
+	virtual void GrabEnd_Implementation() override;
+	virtual bool IsOnBoard_Implementation() override;
 
+	
+	  
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	bool bOnBoard = false;
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	EObjectType ObjectType;
 
 
 private:
@@ -47,5 +59,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	bool bHightLighting = false;
+
 
 };
