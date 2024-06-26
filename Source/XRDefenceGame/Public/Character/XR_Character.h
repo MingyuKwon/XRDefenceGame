@@ -24,8 +24,12 @@ public:
 	virtual void InteractEnd_Implementation() override;
 	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
 
-	virtual void CheckGroundState_Implementation() override;
+	
+	virtual void GrabStart_Implementation() override;
+	virtual void GrabEnd_Implementation() override;
+	virtual bool IsOnBoard_Implementation() override;
 
+	
 	  
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;

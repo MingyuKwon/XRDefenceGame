@@ -54,6 +54,9 @@ private:
 	bool bLeftGrabbing = false;
 	bool bRightGrabbing = false;
 
+	inline bool IsRightGrabable() { return currentRightInteractInterface && !IHandInteractInterface::Execute_IsOnBoard(currentRightInteractInterface.GetObject()); }
+	inline bool IsLeftGrabable() { return currentLeftInteractInterface && !IHandInteractInterface::Execute_IsOnBoard(currentLeftInteractInterface.GetObject()); }
+
 	void LeftGrabStart();
 	void RightGrabStart();
 	void LeftGrabEnd();

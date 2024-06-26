@@ -35,6 +35,12 @@ public:
 	void SetInteractPosition(FVector GrabPosition);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	void CheckGroundState();
+	void GrabStart();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void GrabEnd();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	bool IsOnBoard();
 
 };
