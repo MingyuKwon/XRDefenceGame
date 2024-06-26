@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/HandInteractInterface.h"
+#include "XRDefenceEnums.h"
 
 #include "XR_Character.generated.h"
 
@@ -37,6 +38,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	EObjectType ObjectType;
 
 
 private:
