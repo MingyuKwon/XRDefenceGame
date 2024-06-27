@@ -55,6 +55,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr <class UFloorRingSMC> FloorRingMesh;
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
+
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
+	bool bPalletteBeamAvailable;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
+	FVector PalletteBeamEndPosition;
+
 	
 
 private:
@@ -68,9 +78,16 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
 	UMaterialInstance* DefaultMaterial;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* OffenceRingMaterial;
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DefenceRingMaterial;
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DefaultRingMaterial;
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	float rescaleAmount = 1.1f;
-
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	bool bHightLighting = false;
