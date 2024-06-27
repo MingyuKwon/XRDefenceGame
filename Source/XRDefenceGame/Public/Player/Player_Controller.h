@@ -42,6 +42,10 @@ public:
 	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
 private:
+
+	void ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
+	void ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
+
 	bool GetPlayerPawn();
 
 

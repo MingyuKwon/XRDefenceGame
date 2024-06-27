@@ -100,16 +100,22 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bRightGrabbing) return;
-    if (currentRightInteractInterface != handInteractInterface) return;
-
-    if (currentRightInteractInterface)
-    {
-        IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
-    }
-
-    currentRightInteractInterface = nullptr;
+	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
+	ReleaseRightInteract(handInteractInterface);
 }
+
+void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+	if (currentRightInteractInterface != handInteractInterface) return;
+
+	if (currentRightInteractInterface)
+	{
+		IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
+	}
+
+	currentRightInteractInterface = nullptr;
+}
+
 
 void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
@@ -133,15 +139,21 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bLeftGrabbing) return;
-    if (currentLeftInteractInterface != handInteractInterface) return;
+	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
+	ReleaseLeftInteract(handInteractInterface);
+}
 
-    if (currentLeftInteractInterface)
-    {
-        IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
-    }
 
-    currentLeftInteractInterface = nullptr;
+void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
+{
+	if (currentLeftInteractInterface != handInteractInterface) return;
+
+	if (currentLeftInteractInterface)
+	{
+		IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
+	}
+
+	currentLeftInteractInterface = nullptr;
 }
 
 
@@ -165,6 +177,7 @@ void APlayer_Controller::LeftGrabEnd()
 	if (IsLeftGrabable())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentLeftInteractInterface.GetObject());
+		ReleaseLeftInteract(currentLeftInteractInterface);
 	}
 
 	bLeftGrabbing = false;
@@ -192,6 +205,7 @@ void APlayer_Controller::RightGrabEnd()
 	if (IsRightGrabable())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
+		ReleaseRightInteract(currentRightInteractInterface);
 	}
 
 	bRightGrabbing = false;
