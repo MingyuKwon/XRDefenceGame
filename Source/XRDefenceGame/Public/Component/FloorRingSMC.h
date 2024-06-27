@@ -27,6 +27,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeRingColorRotation(float Percent, float SpinSpeed);
 
+	UFUNCTION(BlueprintCallable)
+	void SetMaterialCall();
+
+
 protected:
 	virtual void BeginPlay() override;
 

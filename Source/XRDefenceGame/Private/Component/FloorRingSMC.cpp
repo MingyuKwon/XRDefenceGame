@@ -23,22 +23,27 @@ void UFloorRingSMC::ChangeRingColorRotation(float Percent, float SpinSpeed)
 	}
 }
 
+void UFloorRingSMC::SetMaterialCall()
+{
+	if (GetMaterial(0))
+	{
+		DynamicMaterialInstance = CreateAndSetMaterialInstanceDynamic(0);
+	}
+}
+
 void UFloorRingSMC::BeginPlay()
 {
 	Super::BeginPlay();
 
 	XRCharacter = Cast<AXR_Character>(GetOwner());
 
-	if ( GetMaterial(0)) 
-	{
-		DynamicMaterialInstance = CreateAndSetMaterialInstanceDynamic(0);
-	}
 }
 
 void UFloorRingSMC::SetMaterialScalarParameterValue(FName ParameterName, float ParameterValue)
 {
 	if (DynamicMaterialInstance)
 	{
+		UE_LOG(LogTemp, Display, TEXT("%f"), ParameterValue);
 		DynamicMaterialInstance->SetScalarParameterValue(ParameterName, ParameterValue);
 	}
 }
