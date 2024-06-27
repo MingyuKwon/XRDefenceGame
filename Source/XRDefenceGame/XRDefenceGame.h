@@ -4,3 +4,5 @@
 
 #include "CoreMinimal.h"
 
+
+#define ECC_Pallette ECollisionChannel::ECC_GameTraceChannel3

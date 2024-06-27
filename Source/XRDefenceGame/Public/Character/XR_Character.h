@@ -45,14 +45,17 @@ protected:
 
 
 	/** Please add a variable description */
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Niagara Parameter")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
 
 	/** Please add a variable description */
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Niagara Parameter")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr <class UFloorRingSMC> FloorRingMesh;
 
+	
 
 private:
 

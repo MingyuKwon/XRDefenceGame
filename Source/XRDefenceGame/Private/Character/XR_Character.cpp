@@ -3,6 +3,7 @@
 
 #include "Character/XR_Character.h"
 #include "NiagaraComponent.h"
+#include "Component/FloorRingSMC.h"
 
 AXR_Character::AXR_Character()
 {
@@ -13,6 +14,10 @@ AXR_Character::AXR_Character()
 
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
+
+	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
+	FloorRingMesh->SetupAttachment(RootComponent);
+
 }
 
 void AXR_Character::BeginPlay()
