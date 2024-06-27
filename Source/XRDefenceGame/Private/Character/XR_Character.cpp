@@ -47,6 +47,7 @@ void AXR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
