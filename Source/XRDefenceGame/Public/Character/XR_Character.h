@@ -6,8 +6,10 @@
 #include "GameFramework/Character.h"
 #include "Interface/HandInteractInterface.h"
 #include "XRDefenceEnums.h"
-
+#include "Components/TimelineComponent.h"
 #include "XR_Character.generated.h"
+
+class UNiagaraComponent;
 
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
@@ -42,6 +44,29 @@ protected:
 	EObjectType ObjectType;
 
 
+	/** Please add a variable description */
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
+
+	/** Please add a variable description */
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr <class UFloorRingSMC> FloorRingMesh;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
+
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
+	bool bPalletteBeamAvailable;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
+	FVector PalletteBeamEndPosition;
+
+	
+
 private:
 
 	UPROPERTY()
@@ -53,12 +78,31 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
 	UMaterialInstance* DefaultMaterial;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* OffenceRingMaterial;
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DefenceRingMaterial;
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DefaultRingMaterial;
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	float rescaleAmount = 1.1f;
 
-
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	bool bHightLighting = false;
+
+	//TimeLIne
+	UPROPERTY(VisibleAnywhere)
+	class UTimelineComponent* TimelineComponent;
+
+	FOnTimelineFloat InterpFunction;
+
+	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
+	UCurveFloat* DissolveCurve;
+	UFUNCTION()
+	void DissolveCallBack(float percent);
+	//TimeLIne
 
 
 };
