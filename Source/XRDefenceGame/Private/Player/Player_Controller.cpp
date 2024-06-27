@@ -100,7 +100,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bRightGrabbing) return;
+	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
     if (currentRightInteractInterface != handInteractInterface) return;
 
     if (currentRightInteractInterface)
@@ -133,7 +133,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bLeftGrabbing) return;
+	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
     if (currentLeftInteractInterface != handInteractInterface) return;
 
     if (currentLeftInteractInterface)
