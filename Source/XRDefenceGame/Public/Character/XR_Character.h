@@ -9,6 +9,8 @@
 
 #include "XR_Character.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
 {
@@ -40,6 +42,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
+
+
+	/** Please add a variable description */
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Niagara Parameter")
+	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
+
+	/** Please add a variable description */
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Niagara Parameter")
+	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
+
 
 
 private:

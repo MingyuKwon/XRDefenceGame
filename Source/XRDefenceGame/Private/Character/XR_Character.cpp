@@ -2,11 +2,17 @@
 
 
 #include "Character/XR_Character.h"
+#include "NiagaraComponent.h"
 
 AXR_Character::AXR_Character()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	FromPaletteToCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("FromPaletteToCharacter"));
+	FromPaletteToCharacter->SetupAttachment(RootComponent);
+
+	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
+	FromCharacterToRing->SetupAttachment(RootComponent);
 }
 
 void AXR_Character::BeginPlay()
