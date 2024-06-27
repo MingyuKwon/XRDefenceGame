@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+
 #include "Mode/XRGamePlayMode.h"
 
 AXR_Character::AXR_Character()
@@ -21,6 +22,9 @@ AXR_Character::AXR_Character()
 
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
+
+	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("DissolveTimeline"));
+
 
 }
 
@@ -132,12 +136,54 @@ void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 
 void AXR_Character::GrabStart_Implementation()
 {
-	// Execute in Blueprint
+	FromPaletteToCharacter->SetVisibility(true);
+	FromCharacterToRing->SetVisibility(true);
+	bPalletteBeamAvailable = true;
+
+	PalletteBeamEndPosition = GetActorLocation();
+
+	FromPaletteToCharacter->SetVectorParameter("User.BeamEnd", PalletteBeamEndPosition - FVector(0.0f, 0.0f, 3.f));
+	XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
+
 }
 
 void AXR_Character::GrabEnd_Implementation()
 {
-	// Execute in Blueprint
+	FromPaletteToCharacter->SetVisibility(false);
+	FromCharacterToRing->SetVisibility(false);
+	bPalletteBeamAvailable = false;
+
+	XRGamePlayMode->TriggerOnObjectGrabEvent(false, ObjectType);
+
+	if (bOnBoard) return;
+
+	bOnBoard = FloorRingMesh->bBeneathBoard;
+
+	if (bOnBoard)
+	{
+		if (DissolveCurve && TimelineComponent)
+		{
+			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
+			TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
+			TimelineComponent->SetLooping(false);
+			TimelineComponent->SetIgnoreTimeDilation(true);
+			TimelineComponent->SetTimelineLength(2.0f); 
+			TimelineComponent->Play();
+		}
+
+	}
+	else
+	{
+		SetInteractPosition_Implementation(PalletteBeamEndPosition);
+	}
+
+
+}
+
+void AXR_Character::DissolveCallBack(float percent)
+{
+	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	FloorRingMesh->ChangeRingColorRotation(percent, 10.f);
 }
 
 bool AXR_Character::IsOnBoard_Implementation()

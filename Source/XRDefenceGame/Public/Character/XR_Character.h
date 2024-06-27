@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/HandInteractInterface.h"
 #include "XRDefenceEnums.h"
-
+#include "Components/TimelineComponent.h"
 #include "XR_Character.generated.h"
 
 class UNiagaraComponent;
@@ -91,6 +91,18 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	bool bHightLighting = false;
+
+	//TimeLIne
+	UPROPERTY(VisibleAnywhere)
+	class UTimelineComponent* TimelineComponent;
+
+	FOnTimelineFloat InterpFunction;
+
+	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
+	UCurveFloat* DissolveCurve;
+	UFUNCTION()
+	void DissolveCallBack(float percent);
+	//TimeLIne
 
 
 };
