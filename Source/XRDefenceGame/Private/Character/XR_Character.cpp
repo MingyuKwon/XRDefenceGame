@@ -35,8 +35,8 @@ void AXR_Character::BeginPlay()
 	if (!GetCharacterMesh()) return;
 
 	CharacterMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DefaultMaterial = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
-
+	DefaultMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
+	DefaultMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
@@ -96,7 +96,12 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	bHightLighting = true;
 
-	if(HighlightMaterial) CharacterMesh->SetMaterial(0, HighlightMaterial);
+	if (HighlightMaterial)
+	{
+		CharacterMesh->SetMaterial(0, HighlightMaterial);
+		CharacterMesh->SetMaterial(1, HighlightMaterial);
+	}
+		
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -111,7 +116,8 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	bHightLighting = false;
 
-	if (DefaultMaterial) CharacterMesh->SetMaterial(0, DefaultMaterial);
+	if (DefaultMaterialFirst) CharacterMesh->SetMaterial(0, DefaultMaterialFirst);
+	if (DefaultMaterialSecond) CharacterMesh->SetMaterial(1, DefaultMaterialSecond);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);

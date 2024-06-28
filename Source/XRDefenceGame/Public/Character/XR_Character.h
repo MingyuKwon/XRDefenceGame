@@ -76,7 +76,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultMaterial;
+	UMaterialInstance* DefaultMaterialFirst;
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultMaterialSecond;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
 	UMaterialInstance* OffenceRingMaterial;
