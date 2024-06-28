@@ -167,6 +167,9 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard)
 	{
+
+		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+
 		if (DissolveCurve && TimelineComponent)
 		{
 			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);

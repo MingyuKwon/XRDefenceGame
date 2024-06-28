@@ -11,6 +11,9 @@
 
 class UNiagaraComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
+
+
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
 {
@@ -32,16 +35,25 @@ public:
 	virtual void GrabEnd_Implementation() override;
 	virtual bool IsOnBoard_Implementation() override;
 
+	// Event that invoke when character set on Board
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnSetBoardEvent OnSetBoardEvent;
+
 	
-	  
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
+
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	ECharacterType CharacterType;
+
 
 
 	/** Please add a variable description */
@@ -68,6 +80,8 @@ protected:
 	
 
 private:
+
+	int32 SpawnPlaceIndex;
 
 	UPROPERTY()
 	USkeletalMeshComponent* CharacterMesh;
@@ -106,5 +120,9 @@ private:
 	void DissolveCallBack(float percent);
 	//TimeLIne
 
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
 
 };
