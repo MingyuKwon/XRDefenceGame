@@ -48,6 +48,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+
+	void InitializeCharacter();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
 
@@ -80,6 +84,9 @@ protected:
 	
 
 private:
+
+	UPROPERTY()
+	class UCharacterMovementComponent* CharacterMovementComponent;
 
 	int32 SpawnPlaceIndex;
 
