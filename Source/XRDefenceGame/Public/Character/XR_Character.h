@@ -85,6 +85,13 @@ protected:
 
 private:
 
+	//  =================================== Pool ====================================================== 
+	bool bPool = true;
+
+	FTransform PoolPlacedTransform;
+
+	//  =================================== Pool ====================================================== 
+
 	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;
 
@@ -131,5 +138,12 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
+
+	UFUNCTION(BlueprintCallable)
+	bool GetPool() { return bPool; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetPool(bool b) { bPool = b; }
+
 
 };

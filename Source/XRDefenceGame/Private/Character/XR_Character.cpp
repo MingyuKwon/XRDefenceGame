@@ -55,9 +55,7 @@ void AXR_Character::InitializeCharacter()
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
 	if (CharacterMovementComponent)
-	{
-		CharacterMovementComponent->SetMovementMode(EMovementMode::MOVE_Walking));
-		
+	{		
 		FString ActorName = GetName();
 		int32 HashValue = FCrc::StrCrc32(*ActorName);
 		FString DebugMessage = FString::Printf(TEXT("Actor: %s, Movement Mode: %s, ,Default Movement Mode: %s"),
@@ -119,6 +117,8 @@ void AXR_Character::Tick(float DeltaTime)
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
 
+	/*
+	
 	FString ActorName = GetName();
 	int32 HashValue = FCrc::StrCrc32(*ActorName);
 	FString MovementModeString = UEnum::GetValueAsString(CharacterMovementComponent->MovementMode);
@@ -130,6 +130,10 @@ void AXR_Character::Tick(float DeltaTime)
 		*MoveInputIgnoredString);
 
 	GEngine->AddOnScreenDebugMessage(HashValue, 0.1f, FColor::Blue, DebugMessage);
+	
+	*/
+
+	
 
 
 	if (bOnBoard)
