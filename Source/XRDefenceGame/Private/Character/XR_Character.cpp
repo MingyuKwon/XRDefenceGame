@@ -4,6 +4,7 @@
 #include "Character/XR_Character.h"
 #include "NiagaraComponent.h"
 #include "Component/FloorRingSMC.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
@@ -26,7 +27,16 @@ AXR_Character::AXR_Character()
 
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("DissolveTimeline"));
 
+	bPalletteBeamAvailable = false;
+	FromPaletteToCharacter->SetVisibility(false);
+	FromCharacterToRing->SetVisibility(false);
+
 	CharacterMovementComponent = GetCharacterMovement();
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
 }
 
 void AXR_Character::BeginPlay()
@@ -48,7 +58,6 @@ void AXR_Character::InitializeCharacter()
 {
 	if (!GetCharacterMesh()) return;
 
-	CharacterMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DefaultMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
 	DefaultMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
@@ -68,9 +77,6 @@ void AXR_Character::InitializeCharacter()
 
 	}
 
-	bPalletteBeamAvailable = false;
-	FromPaletteToCharacter->SetVisibility(false);
-	FromCharacterToRing->SetVisibility(false);
 
 	switch (ObjectType)
 	{
