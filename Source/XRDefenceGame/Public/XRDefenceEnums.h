@@ -35,6 +35,7 @@ enum class ECharacterType : uint8
     ECT_OffenceH,
     ECT_OffenceB,
     ECT_OffenceS,
+    ECT_OffenceL,
     ECT_Gold,
     ECT_DefenceP,
     ECT_DefenceT,
