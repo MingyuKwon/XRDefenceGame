@@ -4,9 +4,11 @@
 #include "Character/XR_Character.h"
 #include "NiagaraComponent.h"
 #include "Component/FloorRingSMC.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Mode/XRGamePlayMode.h"
 
@@ -25,6 +27,15 @@ AXR_Character::AXR_Character()
 
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("DissolveTimeline"));
 
+	bPalletteBeamAvailable = false;
+	FromPaletteToCharacter->SetVisibility(false);
+	FromCharacterToRing->SetVisibility(false);
+
+	CharacterMovementComponent = GetCharacterMovement();
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
 }
 
@@ -32,40 +43,64 @@ void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitializeCharacter();
+
+}
+
+void AXR_Character::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+}
+
+
+void AXR_Character::InitializeCharacter()
+{
 	if (!GetCharacterMesh()) return;
 
-	CharacterMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DefaultMaterial = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
-
+	DefaultMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
+	DefaultMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
-	bPalletteBeamAvailable = false;
-	FromPaletteToCharacter->SetVisibility(false);
-	FromCharacterToRing->SetVisibility(false);
+	if (CharacterMovementComponent)
+	{		
+		FString ActorName = GetName();
+		int32 HashValue = FCrc::StrCrc32(*ActorName);
+		FString DebugMessage = FString::Printf(TEXT("Actor: %s, Movement Mode: %s, ,Default Movement Mode: %s"),
+			*ActorName,
+			*UEnum::GetValueAsString(CharacterMovementComponent->MovementMode),
+			*UEnum::GetValueAsString(CharacterMovementComponent->DefaultLandMovementMode)
+			);
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *DebugMessage);
+
+	}
+
 
 	switch (ObjectType)
 	{
-		case EObjectType::EOT_Offence:
-			FloorRingMesh->SetMaterial(0, OffenceRingMaterial);
-			FloorRingMesh->beneathTraceChannel = ECC_AttackBoard;
-			FloorRingMesh->SetMaterialCall();
-			break;
-		case EObjectType::EOT_Deffence:
-			FloorRingMesh->SetMaterial(0, DefenceRingMaterial);
-			FloorRingMesh->beneathTraceChannel = ECC_DefenceBoard;
-			FloorRingMesh->SetMaterialCall();
-			break;
-		case EObjectType::EOT_Neutral:
-			FloorRingMesh->SetMaterial(0, DefaultRingMaterial);
-			FloorRingMesh->beneathTraceChannel = ECC_Board;
-			FloorRingMesh->SetMaterialCall();
-			break;
-		case EObjectType::EOT_None:
-			break;
-		default:
-			break;
+	case EObjectType::EOT_Offence:
+		FloorRingMesh->SetMaterial(0, OffenceRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_AttackBoard;
+		FloorRingMesh->SetMaterialCall();
+		break;
+	case EObjectType::EOT_Deffence:
+		FloorRingMesh->SetMaterial(0, DefenceRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_DefenceBoard;
+		FloorRingMesh->SetMaterialCall();
+		break;
+	case EObjectType::EOT_Neutral:
+		FloorRingMesh->SetMaterial(0, DefaultRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_Board;
+		FloorRingMesh->SetMaterialCall();
+		break;
+	case EObjectType::EOT_None:
+		break;
+	default:
+		break;
 	}
+
 
 }
 
@@ -87,6 +122,30 @@ void AXR_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
+
+	/*
+	
+	FString ActorName = GetName();
+	int32 HashValue = FCrc::StrCrc32(*ActorName);
+	FString MovementModeString = UEnum::GetValueAsString(CharacterMovementComponent->MovementMode);
+	FString MoveInputIgnoredString = IsMoveInputIgnored() ? TEXT("True") : TEXT("False");
+
+	FString DebugMessage = FString::Printf(TEXT("Actor: %s, Movement Mode: %s, Move Input Ignored: %s"),
+		*ActorName,
+		*MovementModeString,
+		*MoveInputIgnoredString);
+
+	GEngine->AddOnScreenDebugMessage(HashValue, 0.1f, FColor::Blue, DebugMessage);
+	
+	*/
+
+	
+
+
+	if (bOnBoard)
+	{
+		AddMovementInput(GetActorForwardVector(), 0.001f);
+	}
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -96,11 +155,15 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	bHightLighting = true;
 
-	if(HighlightMaterial) CharacterMesh->SetMaterial(0, HighlightMaterial);
+	if (HighlightMaterial)
+	{
+		CharacterMesh->SetMaterial(0, HighlightMaterial);
+		CharacterMesh->SetMaterial(1, HighlightMaterial);
+	}
+		
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
-
 
 }
 
@@ -111,7 +174,8 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	bHightLighting = false;
 
-	if (DefaultMaterial) CharacterMesh->SetMaterial(0, DefaultMaterial);
+	if (DefaultMaterialFirst) CharacterMesh->SetMaterial(0, DefaultMaterialFirst);
+	if (DefaultMaterialSecond) CharacterMesh->SetMaterial(1, DefaultMaterialSecond);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -161,6 +225,8 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard)
 	{
+		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+
 		if (DissolveCurve && TimelineComponent)
 		{
 			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);

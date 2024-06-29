@@ -26,6 +26,22 @@ enum class EObjectType : uint8
 };
 
 
+UENUM(BlueprintType)
+enum class ECharacterType : uint8
+{
+    ECT_OffenceD,
+    ECT_OffenceDT,
+    ECT_OffenceT,
+    ECT_OffenceH,
+    ECT_OffenceB,
+    ECT_OffenceS,
+    ECT_Gold,
+    ECT_DefenceP,
+    ECT_DefenceT,
+    ECT_None
+};
+
+
 class XRDEFENCEGAME_API XRDefenceEnums
 {
 public:

@@ -8,6 +8,7 @@
 UFloorRingSMC::UFloorRingSMC()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
@@ -36,7 +37,6 @@ void UFloorRingSMC::BeginPlay()
 	Super::BeginPlay();
 
 	XRCharacter = Cast<AXR_Character>(GetOwner());
-	SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void UFloorRingSMC::SetMaterialScalarParameterValue(FName ParameterName, float ParameterValue)

@@ -2,9 +2,15 @@
 
 
 #include "Mode/XRGamePlayMode.h"
+#include "Character/XR_Character.h"
 
 void AXRGamePlayMode::TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType)
 {
 	OnObjectGrabEvent.Broadcast(isGrab, objectType);
 
+}
+
+AXR_Character* AXRGamePlayMode::PoolSpawnActor_Implementation(ECharacterType characterType)
+{
+	return nullptr;
 }

@@ -11,6 +11,9 @@
 
 class UNiagaraComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
+
+
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
 {
@@ -32,16 +35,29 @@ public:
 	virtual void GrabEnd_Implementation() override;
 	virtual bool IsOnBoard_Implementation() override;
 
+	// Event that invoke when character set on Board
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnSetBoardEvent OnSetBoardEvent;
+
 	
-	  
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
+
 
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+
+	void InitializeCharacter();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	ECharacterType CharacterType;
+
 
 
 	/** Please add a variable description */
@@ -69,6 +85,18 @@ protected:
 
 private:
 
+	//  =================================== Pool ====================================================== 
+	bool bPool = true;
+
+	FTransform PoolPlacedTransform;
+
+	//  =================================== Pool ====================================================== 
+
+	UPROPERTY()
+	class UCharacterMovementComponent* CharacterMovementComponent;
+
+	int32 SpawnPlaceIndex;
+
 	UPROPERTY()
 	USkeletalMeshComponent* CharacterMesh;
 	bool GetCharacterMesh();
@@ -76,7 +104,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultMaterial;
+	UMaterialInstance* DefaultMaterialFirst;
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultMaterialSecond;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
 	UMaterialInstance* OffenceRingMaterial;
@@ -103,6 +133,17 @@ private:
 	UFUNCTION()
 	void DissolveCallBack(float percent);
 	//TimeLIne
+
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
+
+	UFUNCTION(BlueprintCallable)
+	bool GetPool() { return bPool; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetPool(bool b) { bPool = b; }
 
 
 };
