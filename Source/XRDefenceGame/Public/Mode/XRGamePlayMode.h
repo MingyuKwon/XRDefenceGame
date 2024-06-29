@@ -21,5 +21,8 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);
-    
+
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+    class AXR_Character* PoolSpawnActor(ECharacterType characterType);
 };
