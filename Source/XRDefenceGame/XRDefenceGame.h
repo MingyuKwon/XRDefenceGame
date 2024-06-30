@@ -8,3 +8,5 @@
 #define ECC_Pallette ECollisionChannel::ECC_GameTraceChannel3
 #define ECC_AttackBoard ECollisionChannel::ECC_GameTraceChannel4
 #define ECC_DefenceBoard ECollisionChannel::ECC_GameTraceChannel5
+#define ECC_AttackGoldBoard ECollisionChannel::ECC_GameTraceChannel6
+#define ECC_DefenceGoldBoard ECollisionChannel::ECC_GameTraceChannel7

@@ -22,6 +22,8 @@ enum class EObjectType : uint8
     EOT_Offence,
     EOT_Deffence,
     EOT_Neutral,
+    EOT_OffenceGold,
+    EOT_DeffenceGold,
     EOT_None
 };
 

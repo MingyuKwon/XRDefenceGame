@@ -39,10 +39,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
 
-	
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CheckNeutralToConvert(EObjectType objectType);
 
 
 protected:
@@ -91,6 +92,9 @@ private:
 	FTransform PoolPlacedTransform;
 
 	//  =================================== Pool ====================================================== 
+
+	void SetRingProperty();
+
 
 	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;

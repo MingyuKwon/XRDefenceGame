@@ -39,6 +39,7 @@ AXR_Character::AXR_Character()
 
 }
 
+
 void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
@@ -52,7 +53,6 @@ void AXR_Character::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 }
-
 
 void AXR_Character::InitializeCharacter()
 {
@@ -77,23 +77,60 @@ void AXR_Character::InitializeCharacter()
 
 	}
 
+	SetRingProperty();
 
+}
+
+void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
+{
+	if (EObjectType::EOT_Neutral != ObjectType) return;
+
+	if (CharacterType == ECharacterType::ECT_Gold)
+	{
+		if (objectType == EObjectType::EOT_Offence)
+		{
+			ObjectType = EObjectType::EOT_OffenceGold;
+		}
+		else if (objectType == EObjectType::EOT_Deffence)
+		{
+			ObjectType = EObjectType::EOT_DeffenceGold;
+		}
+	}
+	else
+	{
+		ObjectType = objectType;
+	}
+
+	SetRingProperty();
+}
+
+void AXR_Character::SetRingProperty()
+{
 	switch (ObjectType)
 	{
 	case EObjectType::EOT_Offence:
 		FloorRingMesh->SetMaterial(0, OffenceRingMaterial);
 		FloorRingMesh->beneathTraceChannel = ECC_AttackBoard;
-		FloorRingMesh->SetMaterialCall();
 		break;
+
+	case EObjectType::EOT_OffenceGold:
+		FloorRingMesh->SetMaterial(0, OffenceRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_AttackGoldBoard;
+		break;
+
 	case EObjectType::EOT_Deffence:
 		FloorRingMesh->SetMaterial(0, DefenceRingMaterial);
 		FloorRingMesh->beneathTraceChannel = ECC_DefenceBoard;
-		FloorRingMesh->SetMaterialCall();
 		break;
+
+	case EObjectType::EOT_DeffenceGold:
+		FloorRingMesh->SetMaterial(0, DefenceRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_DefenceGoldBoard;
+		break;
+
 	case EObjectType::EOT_Neutral:
 		FloorRingMesh->SetMaterial(0, DefaultRingMaterial);
 		FloorRingMesh->beneathTraceChannel = ECC_Board;
-		FloorRingMesh->SetMaterialCall();
 		break;
 	case EObjectType::EOT_None:
 		break;
@@ -101,6 +138,7 @@ void AXR_Character::InitializeCharacter()
 		break;
 	}
 
+	FloorRingMesh->SetMaterialCall();
 
 }
 
