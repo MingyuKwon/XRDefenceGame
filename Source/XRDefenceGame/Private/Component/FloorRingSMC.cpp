@@ -53,7 +53,8 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (XRCharacter == nullptr) return;
-
+	if (XRCharacter->IsOnBoard()) return;
+	
 	FVector ActorLocation = XRCharacter->GetActorLocation();
 	FVector TraceEndLocation = ActorLocation - FVector(0.f, 0.f, traceLength);
 		
