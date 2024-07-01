@@ -41,6 +41,18 @@ enum class ECharacterType : uint8
     ECT_Gold,
     ECT_DefenceP,
     ECT_DefenceT,
+    ECT_DefenceT_Laser_1,
+    ECT_DefenceT_Laser_2,
+    ECT_DefenceT_Canon_1,
+    ECT_DefenceT_Canon_2,
+    ECT_DefenceT_Fire_1,
+    ECT_DefenceT_Fire_2,
+    ECT_DefenceT_Arrow_1,
+    ECT_DefenceT_Arrow_2,
+    ECT_DefenceH,
+    ECT_DefenceF1,
+    ECT_DefenceF2,
+
     ECT_None
 };
 

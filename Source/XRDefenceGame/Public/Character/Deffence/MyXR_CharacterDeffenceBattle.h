@@ -13,5 +13,22 @@ UCLASS()
 class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeffence
 {
 	GENERATED_BODY()
+
+public:
+	AMyXR_CharacterDeffenceBattle();
 	
+
+protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    USkeletalMeshComponent* GunMeshComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UStaticMeshComponent* EtcMeshComponent1;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UStaticMeshComponent* EtcMeshComponent2;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UStaticMeshComponent* EtcMeshComponent3;
+
 };
