@@ -3,6 +3,7 @@
 
 #include "Component/FloorRingSMC.h"
 #include "Character/XR_Character.h"
+#include "Interface/HandInteractInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 UFloorRingSMC::UFloorRingSMC()
@@ -53,7 +54,8 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (XRCharacter == nullptr) return;
-	if (XRCharacter->IsOnBoard()) return;
+
+	if (IHandInteractInterface::Execute_IsOnBoard(Cast<UObject>(XRCharacter))) return;
 	
 	FVector ActorLocation = XRCharacter->GetActorLocation();
 	FVector TraceEndLocation = ActorLocation - FVector(0.f, 0.f, traceLength);

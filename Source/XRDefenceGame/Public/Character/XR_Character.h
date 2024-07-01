@@ -51,7 +51,7 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	void InitializeCharacter();
+	virtual void InitializeCharacter();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
@@ -60,12 +60,9 @@ protected:
 	ECharacterType CharacterType;
 
 
-
-	/** Please add a variable description */
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
 
-	/** Please add a variable description */
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
 
@@ -82,7 +79,32 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
 	FVector PalletteBeamEndPosition;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	UMaterialInstance* HighlightMaterial;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	float rescaleAmount = 1.1f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	bool bHightLighting = false;
+
+	int32 SpawnPlaceIndex;
+
+
+	//TimeLIne
+	UPROPERTY(VisibleAnywhere)
+	class UTimelineComponent* TimelineComponent;
+
+	FOnTimelineFloat InterpFunction;
+
+	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
+	UCurveFloat* DissolveCurve;
+	UFUNCTION()
+	virtual void DissolveCallBack(float percent);
+	//TimeLIne
+
+	virtual void BindDissolveCallBack();
+
 
 private:
 
@@ -96,21 +118,20 @@ private:
 	void SetRingProperty();
 
 
+
+
 	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;
 
-	int32 SpawnPlaceIndex;
 
 	UPROPERTY()
 	USkeletalMeshComponent* CharacterMesh;
 	bool GetCharacterMesh();
 
-	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
-	UMaterialInstance* HighlightMaterial;
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultMaterialFirst;
+	UMaterialInstance* DefaultSkeletalMaterialFirst;
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultMaterialSecond;
+	UMaterialInstance* DefaultSkeletalMaterialSecond;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
 	UMaterialInstance* OffenceRingMaterial;
@@ -118,26 +139,6 @@ private:
 	UMaterialInstance* DefenceRingMaterial;
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
 	UMaterialInstance* DefaultRingMaterial;
-
-
-	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
-	float rescaleAmount = 1.1f;
-
-	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
-	bool bHightLighting = false;
-
-	//TimeLIne
-	UPROPERTY(VisibleAnywhere)
-	class UTimelineComponent* TimelineComponent;
-
-	FOnTimelineFloat InterpFunction;
-
-	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
-	UCurveFloat* DissolveCurve;
-	UFUNCTION()
-	void DissolveCallBack(float percent);
-	//TimeLIne
-
 
 public:
 	UFUNCTION(BlueprintCallable)

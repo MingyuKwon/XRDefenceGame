@@ -58,24 +58,10 @@ void AXR_Character::InitializeCharacter()
 {
 	if (!GetCharacterMesh()) return;
 
-	DefaultMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
-	DefaultMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
+	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
+	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
-
-	if (CharacterMovementComponent)
-	{		
-		FString ActorName = GetName();
-		int32 HashValue = FCrc::StrCrc32(*ActorName);
-		FString DebugMessage = FString::Printf(TEXT("Actor: %s, Movement Mode: %s, ,Default Movement Mode: %s"),
-			*ActorName,
-			*UEnum::GetValueAsString(CharacterMovementComponent->MovementMode),
-			*UEnum::GetValueAsString(CharacterMovementComponent->DefaultLandMovementMode)
-			);
-
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *DebugMessage);
-
-	}
 
 	SetRingProperty();
 
@@ -177,9 +163,6 @@ void AXR_Character::Tick(float DeltaTime)
 	
 	*/
 
-	
-
-
 	if (bOnBoard)
 	{
 		AddMovementInput(GetActorForwardVector(), 0.001f);
@@ -212,8 +195,8 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	bHightLighting = false;
 
-	if (DefaultMaterialFirst) CharacterMesh->SetMaterial(0, DefaultMaterialFirst);
-	if (DefaultMaterialSecond) CharacterMesh->SetMaterial(1, DefaultMaterialSecond);
+	if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+	if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -267,11 +250,11 @@ void AXR_Character::GrabEnd_Implementation()
 
 		if (DissolveCurve && TimelineComponent)
 		{
-			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
+			BindDissolveCallBack();
 			TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
 			TimelineComponent->SetLooping(false);
 			TimelineComponent->SetIgnoreTimeDilation(true);
-			TimelineComponent->SetTimelineLength(2.0f); 
+			TimelineComponent->SetTimelineLength(2.0f);
 			TimelineComponent->Play();
 		}
 
@@ -288,6 +271,11 @@ void AXR_Character::DissolveCallBack(float percent)
 {
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
 	FloorRingMesh->ChangeRingColorRotation(percent, 10.f);
+}
+
+void AXR_Character::BindDissolveCallBack()
+{
+	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
 }
 
 bool AXR_Character::IsOnBoard_Implementation()
