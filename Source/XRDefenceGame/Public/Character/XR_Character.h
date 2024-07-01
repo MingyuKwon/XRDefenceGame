@@ -39,10 +39,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
 
-	
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CheckNeutralToConvert(EObjectType objectType);
 
 
 protected:
@@ -50,7 +51,7 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	void InitializeCharacter();
+	virtual void InitializeCharacter();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
@@ -59,12 +60,9 @@ protected:
 	ECharacterType CharacterType;
 
 
-
-	/** Please add a variable description */
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
 
-	/** Please add a variable description */
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
 
@@ -81,46 +79,17 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
 	FVector PalletteBeamEndPosition;
 
-	
-
-private:
-
-	//  =================================== Pool ====================================================== 
-	bool bPool = true;
-
-	FTransform PoolPlacedTransform;
-
-	//  =================================== Pool ====================================================== 
-
-	UPROPERTY()
-	class UCharacterMovementComponent* CharacterMovementComponent;
-
-	int32 SpawnPlaceIndex;
-
-	UPROPERTY()
-	USkeletalMeshComponent* CharacterMesh;
-	bool GetCharacterMesh();
-
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
-	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultMaterialFirst;
-	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultMaterialSecond;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
-	UMaterialInstance* OffenceRingMaterial;
-	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
-	UMaterialInstance* DefenceRingMaterial;
-	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
-	UMaterialInstance* DefaultRingMaterial;
-
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	float rescaleAmount = 1.1f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	bool bHightLighting = false;
+
+	int32 SpawnPlaceIndex;
+
 
 	//TimeLIne
 	UPROPERTY(VisibleAnywhere)
@@ -131,9 +100,45 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
 	UCurveFloat* DissolveCurve;
 	UFUNCTION()
-	void DissolveCallBack(float percent);
+	virtual void DissolveCallBack(float percent);
 	//TimeLIne
 
+	virtual void BindDissolveCallBack();
+
+
+private:
+
+	//  =================================== Pool ====================================================== 
+	bool bPool = true;
+
+	FTransform PoolPlacedTransform;
+
+	//  =================================== Pool ====================================================== 
+
+	void SetRingProperty();
+
+
+
+
+	UPROPERTY()
+	class UCharacterMovementComponent* CharacterMovementComponent;
+
+
+	UPROPERTY()
+	USkeletalMeshComponent* CharacterMesh;
+	bool GetCharacterMesh();
+
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultSkeletalMaterialFirst;
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultSkeletalMaterialSecond;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* OffenceRingMaterial;
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DefenceRingMaterial;
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DefaultRingMaterial;
 
 public:
 	UFUNCTION(BlueprintCallable)

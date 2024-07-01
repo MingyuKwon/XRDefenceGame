@@ -3,6 +3,8 @@
 
 #include "Component/FloorRingSMC.h"
 #include "Character/XR_Character.h"
+#include "XRDefenceGame/XRDefenceGame.h"
+#include "Interface/HandInteractInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 UFloorRingSMC::UFloorRingSMC()
@@ -58,9 +60,17 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	FVector TraceEndLocation = ActorLocation - FVector(0.f, 0.f, traceLength);
 		
 	FHitResult FloortraceResult;
-	GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, beneathTraceChannel);
 
-	FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.2f);
+	if (IHandInteractInterface::Execute_IsOnBoard(Cast<UObject>(XRCharacter)))
+	{
+		GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, ECC_Board);
+	}
+	else
+	{
+		GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, beneathTraceChannel);
+	}
+
+	FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.f);
 	
 	FHitResult PallettetraceResult;
 	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, ActorLocation, TraceEndLocation, ECC_Pallette);
