@@ -270,7 +270,7 @@ void AXR_Character::GrabEnd_Implementation()
 void AXR_Character::DissolveCallBack(float percent)
 {
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
-	FloorRingMesh->ChangeRingColorRotation(percent, 10.f);
+	FloorRingMesh->ChangeRingColorRotation(percent, 12.f);
 }
 
 void AXR_Character::BindDissolveCallBack()
