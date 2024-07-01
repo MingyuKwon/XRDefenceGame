@@ -23,6 +23,10 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
     GunMeshComponent->SetupAttachment(GetMesh());
     GunMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+    GunMeshComponent2 = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComponent2"));
+    GunMeshComponent2->SetupAttachment(GunMeshComponent);
+    GunMeshComponent2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
     EtcMeshComponent1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EtcMeshComponent1"));
     EtcMeshComponent1->SetupAttachment(GunMeshComponent);
@@ -37,20 +41,34 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
     EtcMeshComponent3->SetupAttachment(GunMeshComponent);
     EtcMeshComponent3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+    EtcMeshComponent4 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EtcMeshComponent4"));
+    EtcMeshComponent4->SetupAttachment(GunMeshComponent);
+    EtcMeshComponent4->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    EtcMeshComponent5 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EtcMeshComponent5"));
+    EtcMeshComponent5->SetupAttachment(GunMeshComponent);
+    EtcMeshComponent5->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
 }
 
 void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
 {
     if (GunMeshComponent == nullptr) return;
+    if (GunMeshComponent2 == nullptr) return;
     if (EtcMeshComponent1 == nullptr) return;
     if (EtcMeshComponent2 == nullptr) return;
     if (EtcMeshComponent3 == nullptr) return;
+    if (EtcMeshComponent4 == nullptr) return;
+    if (EtcMeshComponent5 == nullptr) return;
 
     DefaultGunMaterial = Cast<UMaterialInstance>(GunMeshComponent->GetMaterial(0));
+    DefaultGun2Material = Cast<UMaterialInstance>(GunMeshComponent2->GetMaterial(0));
     DefaultEtcMaterialFirst = Cast<UMaterialInstance>(EtcMeshComponent1->GetMaterial(0));
     DefaultEtcMaterialSecond = Cast<UMaterialInstance>(EtcMeshComponent2->GetMaterial(0));
     DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
+    DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
+    DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
 
     Super::InitializeCharacter();
 }
@@ -64,9 +82,13 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
 {
     GunMeshComponent->SetScalarParameterValueOnMaterials("Dissolve", percent);
 
+    if (GunMeshComponent2->GetSkeletalMeshAsset() != nullptr) GunMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+
     if (EtcMeshComponent1->GetStaticMesh() != nullptr) EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
     if (EtcMeshComponent2->GetStaticMesh() != nullptr) EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
     if (EtcMeshComponent3->GetStaticMesh() != nullptr) EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (EtcMeshComponent4->GetStaticMesh() != nullptr) EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (EtcMeshComponent5->GetStaticMesh() != nullptr) EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dissolve", percent);
 
     Super::DissolveCallBack(percent);
 }
@@ -80,14 +102,22 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectStart_Implementation()
     if (HighlightMaterial)
     {
         GunMeshComponent->SetMaterial(0, HighlightMaterial);
+        GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
         EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
         EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
         EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+        EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+        EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
     }
 
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() * rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
+
+    NewScale = GunMeshComponent2->GetRelativeScale3D() * rescaleAmount;
+    GunMeshComponent2->SetRelativeScale3D(NewScale);
+
 
     NewScale = EtcMeshComponent1->GetRelativeScale3D() * rescaleAmount;
     EtcMeshComponent1->SetRelativeScale3D(NewScale);
@@ -98,6 +128,12 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectStart_Implementation()
     NewScale = EtcMeshComponent3->GetRelativeScale3D() * rescaleAmount;
     EtcMeshComponent3->SetRelativeScale3D(NewScale);
 
+    NewScale = EtcMeshComponent4->GetRelativeScale3D() * rescaleAmount;
+    EtcMeshComponent4->SetRelativeScale3D(NewScale);
+
+    NewScale = EtcMeshComponent5->GetRelativeScale3D() * rescaleAmount;
+    EtcMeshComponent5->SetRelativeScale3D(NewScale);
+
 }
 
 void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
@@ -105,13 +141,21 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
     Super::InteractableEffectEnd_Implementation();
 
     if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
+    if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+
     if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
     if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
     if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
+    if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
+    if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
 
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() / rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
+
+    NewScale = GunMeshComponent2->GetRelativeScale3D() / rescaleAmount;
+    GunMeshComponent2->SetRelativeScale3D(NewScale);
+
 
     NewScale = EtcMeshComponent1->GetRelativeScale3D() / rescaleAmount;
     EtcMeshComponent1->SetRelativeScale3D(NewScale);
@@ -121,6 +165,12 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 
     NewScale = EtcMeshComponent3->GetRelativeScale3D() / rescaleAmount;
     EtcMeshComponent3->SetRelativeScale3D(NewScale);
+
+    NewScale = EtcMeshComponent4->GetRelativeScale3D() / rescaleAmount;
+    EtcMeshComponent4->SetRelativeScale3D(NewScale);
+
+    NewScale = EtcMeshComponent5->GetRelativeScale3D() / rescaleAmount;
+    EtcMeshComponent5->SetRelativeScale3D(NewScale);
 
 }
 

@@ -25,6 +25,10 @@ protected:
     USkeletalMeshComponent* GunMeshComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    USkeletalMeshComponent* GunMeshComponent2;
+
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent1;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -32,6 +36,12 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent3;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UStaticMeshComponent* EtcMeshComponent4;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UStaticMeshComponent* EtcMeshComponent5;
 
     virtual void InitializeCharacter() override;  // override 키워드 사용
 
@@ -46,6 +56,9 @@ private:
     UMaterialInstance* DefaultGunMaterial;
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+    UMaterialInstance* DefaultGun2Material;
+
+    UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultEtcMaterialFirst;
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
@@ -53,6 +66,12 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultEtcMaterialThird;
+
+    UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+    UMaterialInstance* DefaultEtcMaterialForth;
+
+    UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+    UMaterialInstance* DefaultEtcMaterialFifth;
 
 
 
