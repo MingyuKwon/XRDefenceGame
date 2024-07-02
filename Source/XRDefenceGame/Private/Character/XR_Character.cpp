@@ -84,6 +84,11 @@ void AXR_Character::SetOnBoard(bool isOnBoard)
 	bOnBoard = isOnBoard;
 
 	OnBoardCalledFunction(isOnBoard);
+
+	if (bOnBoard)
+	{
+		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+	}
 }
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
@@ -308,8 +313,6 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard)
 	{
-		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
-
 		AXR_Character* beneathBuffableCharacter = FloorRingMesh->GetBuffableCharacter();
 
 		if (beneathBuffableCharacter)
