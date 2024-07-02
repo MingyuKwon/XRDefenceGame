@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Character/Deffence/XR_CharacterDeffence.h"
+#include "Interface/BuffableInterface.h"
 #include "MyXR_CharacterDeffenceBattle.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeffence
+class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeffence, public IBuffableInterface
 {
 	GENERATED_BODY()
 

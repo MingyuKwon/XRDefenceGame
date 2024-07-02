@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "Interface/BuffableInterface.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Mode/XRGamePlayMode.h"
@@ -289,9 +291,19 @@ void AXR_Character::GrabEnd_Implementation()
 
 	SetOnBoard(FloorRingMesh->bBeneathBoard);
 
+
+
 	if (bOnBoard)
 	{
 		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+
+		AXR_Character* beneathBuffableCharacter = FloorRingMesh->GetBuffableCharacter();
+
+		if (beneathBuffableCharacter)
+		{
+			IBuffableInterface* beneathBuffable = Cast<IBuffableInterface>(beneathBuffableCharacter);
+			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
+		}
 
 		if (DissolveCurve && TimelineComponent)
 		{

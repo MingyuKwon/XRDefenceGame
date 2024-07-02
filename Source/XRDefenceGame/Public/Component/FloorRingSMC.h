@@ -7,6 +7,7 @@
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "FloorRingSMC.generated.h"
 
+class AXR_Character;
 /**
  * 
  */
@@ -34,12 +35,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TObjectPtr<class AXR_Character> XRCharacter;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TObjectPtr<AXR_Character> XRCharacter;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	double traceLength = 50.f;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TObjectPtr<AXR_Character> BuffableCharacter;
 
 
 private:
@@ -50,6 +53,6 @@ private:
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	inline TObjectPtr<AXR_Character> GetBuffableCharacter() { return BuffableCharacter; }
 
 };

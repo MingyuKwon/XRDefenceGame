@@ -5,6 +5,7 @@
 #include "Character/XR_Character.h"
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "Interface/HandInteractInterface.h"
+#include "Interface/BuffableInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 UFloorRingSMC::UFloorRingSMC()
@@ -78,10 +79,19 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 	bBeneathBoard = FloortraceResult.bBlockingHit && !PallettetraceResult.bBlockingHit;
 
+	BuffableCharacter = nullptr;
+
 	if (bBeneathBoard)
 	{
 		SetVisibility(true);
 		SetWorldLocation(WillSpawnPosition);
+
+		IBuffableInterface* beneathBuffable = Cast<IBuffableInterface>(FloortraceResult.GetActor());
+		if (beneathBuffable)
+		{
+			BuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
+		}
+
 	}
 	else
 	{
