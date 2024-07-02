@@ -44,11 +44,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheckNeutralToConvert(EObjectType objectType);
 
-	UFUNCTION(BlueprintCallable)
-	void SetCharacterVisibility(bool bVisible);
 
+	UFUNCTION(BlueprintCallable)
+	virtual void PoolSpawnBeginPlay();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void PoolSpawnDestryoed();
 
 protected:
+
+	//  =================================== Pool ====================================================== 
+	bool bPool = true;
+
+	FTransform PoolPlacedTransform;
+
+	//  =================================== Pool ====================================================== 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
@@ -61,9 +71,8 @@ protected:
 
 	virtual void InitializeCharacter();
 
-	virtual void PoolSpawnBeginPlay();
-
-	virtual void PoolSpawnDestryoed();
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterVisibility(bool bVisible);
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
@@ -124,34 +133,35 @@ protected:
 
 	UFUNCTION()
 	virtual void DissolveCallBack(float percent);
+
+	UFUNCTION()
+	virtual void DissolveCallBackReverse(float percent);
+
 	//TimeLIne
 
 	virtual void BindDissolveCallBack();
+
+	virtual void BindReverseDissolveCallBack();
 
 
 	UFUNCTION()
 	virtual void HighLightMesh(bool bHighlight);
 
+	virtual void StartDissolveTimeline(bool bNotReverse);
+
+	virtual void Death();
+
+	virtual void DeathTimerFunction();
+
+	FTimerHandle DeathTimerHandle;
 
 
 private:
 
-	//  =================================== Pool ====================================================== 
-	bool bPool = true;
-
-	FTransform PoolPlacedTransform;
-
-	//  =================================== Pool ====================================================== 
-
 	void SetRingProperty();
-
-
-
 
 	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;
-
-
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")

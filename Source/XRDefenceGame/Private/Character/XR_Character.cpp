@@ -53,6 +53,7 @@ void AXR_Character::BeginPlay()
 
 	InitializeCharacter();
 
+	SetCharacterVisibility(false);
 }
 
 void AXR_Character::PostInitializeComponents()
@@ -63,6 +64,8 @@ void AXR_Character::PostInitializeComponents()
 
 void AXR_Character::InitializeCharacter()
 {
+	PoolPlacedTransform = GetActorTransform();
+
 	if (!GetCharacterMesh()) return;
 
 	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
@@ -171,25 +174,20 @@ void AXR_Character::SetCharacterVisibility(bool bVisible)
 {
 	SetActorHiddenInGame(!bVisible);
 	SetActorTickEnabled(bVisible);
-
-	if (bVisible)
-	{
-		PoolSpawnBeginPlay();
-	}
-	else
-	{
-		PoolSpawnDestryoed();
-	}
 }
 
 void AXR_Character::PoolSpawnBeginPlay()
 {
+	bPool = false;
+	SetCharacterVisibility(true);
 
 }
 
 void AXR_Character::PoolSpawnDestryoed()
 {
-
+	SetActorTransform(PoolPlacedTransform);
+	SetCharacterVisibility(false);
+	bPool = true;
 }
 
 void AXR_Character::Tick(float DeltaTime)
@@ -248,6 +246,8 @@ void AXR_Character::HighLightMesh(bool bHighlight)
 	}
 
 }
+
+
 
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
@@ -318,15 +318,7 @@ void AXR_Character::GrabEnd_Implementation()
 			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
 		}
 
-		if (DissolveCurve && TimelineComponent)
-		{
-			BindDissolveCallBack();
-			TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
-			TimelineComponent->SetLooping(false);
-			TimelineComponent->SetIgnoreTimeDilation(true);
-			TimelineComponent->SetTimelineLength(2.0f);
-			TimelineComponent->Play();
-		}
+		StartDissolveTimeline(true);
 
 	}
 	else
@@ -337,10 +329,48 @@ void AXR_Character::GrabEnd_Implementation()
 
 }
 
+void AXR_Character::StartDissolveTimeline(bool bNotReverse)
+{
+	if (DissolveCurve && TimelineComponent)
+	{
+		if (bNotReverse)
+		{
+			BindDissolveCallBack();
+		}
+		else
+		{
+			BindReverseDissolveCallBack();
+		}
+
+		TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
+		TimelineComponent->SetLooping(false);
+		TimelineComponent->SetIgnoreTimeDilation(true);
+		TimelineComponent->SetTimelineLength(2.0f);
+		TimelineComponent->Play();
+	}
+}
+
+void AXR_Character::Death()
+{
+	bOnBoard = false;
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+	StartDissolveTimeline(false);
+}
+
+void AXR_Character::DeathTimerFunction()
+{
+	PoolSpawnDestryoed();
+}
+
 void AXR_Character::DissolveCallBack(float percent)
 {
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
 	FloorRingMesh->ChangeRingColorRotation(percent, 12.f);
+}
+
+void AXR_Character::DissolveCallBackReverse(float percent)
+{
+	DissolveCallBack(1- percent);
 }
 
 void AXR_Character::BindDissolveCallBack()
@@ -348,6 +378,10 @@ void AXR_Character::BindDissolveCallBack()
 	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
 }
 
+void AXR_Character::BindReverseDissolveCallBack()
+{
+	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackReverse);
+}
 
 
 bool AXR_Character::IsOnBoard_Implementation()

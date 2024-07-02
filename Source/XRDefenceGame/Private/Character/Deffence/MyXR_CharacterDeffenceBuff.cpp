@@ -69,6 +69,11 @@ void AMyXR_CharacterDeffenceBuff::BindDissolveCallBack()
     InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBuff::DissolveCallBack);
 }
 
+void AMyXR_CharacterDeffenceBuff::BindReverseDissolveCallBack()
+{
+    InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBuff::DissolveCallBackReverse);
+}
+
 void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)
 {
     if (RingMeshComponent1->GetStaticMesh() != nullptr) RingMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
@@ -79,6 +84,14 @@ void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)
 
 }
 
+void AMyXR_CharacterDeffenceBuff::DissolveCallBackReverse(float percent)
+{
+    percent = 1 - percent;
+    if (RingMeshComponent1->GetStaticMesh() != nullptr) RingMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (RingMeshComponent2->GetStaticMesh() != nullptr) RingMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (RingMeshComponent3->GetStaticMesh() != nullptr) RingMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
+}
+
 void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
 {
     Super::OnBoardCalledFunction(isOnBoard);
@@ -86,6 +99,8 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
     RingMeshComponent1->SetVisibility(isOnBoard);
     RingMeshComponent2->SetVisibility(isOnBoard);
     RingMeshComponent3->SetVisibility(isOnBoard);
+
+    GetWorld()->GetTimerManager().SetTimer(LifeTimeTimerHandle, this, &AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction, 2.0f, false);
 
 }
 
@@ -120,6 +135,11 @@ void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Compo
         NewLocation.Z = NewZ;
         Component->SetRelativeLocation(NewLocation);
     }
+}
+
+void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
+{
+    Death();
 }
 
 

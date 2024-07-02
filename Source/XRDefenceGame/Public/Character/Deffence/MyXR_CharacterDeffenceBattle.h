@@ -61,8 +61,6 @@ protected:
     virtual void HighLightMesh(bool bHighlight) override;
 
 
-
-
 private:
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultGunMaterial;
@@ -84,7 +82,5 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultEtcMaterialFifth;
-
-
 
 };

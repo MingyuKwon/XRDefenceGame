@@ -23,12 +23,14 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+    virtual void BindDissolveCallBack() override;
 
-    UFUNCTION()
-    void BindDissolveCallBack() override;
+    virtual void BindReverseDissolveCallBack() override;
+
 
     virtual void DissolveCallBack(float percent) override;
 
+    virtual void DissolveCallBackReverse(float percent) override;
 
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -59,5 +61,11 @@ private:
     bool bMovingUp3;
 
     void UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed);
+
+
+    void LifeTimeTimerFunction();
+
+    FTimerHandle LifeTimeTimerHandle;
+
 
 };
