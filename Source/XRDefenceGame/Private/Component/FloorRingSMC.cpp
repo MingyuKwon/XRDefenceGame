@@ -85,25 +85,6 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		SetVisibility(true);
 		SetWorldLocation(WillSpawnPosition);
 
-		IBuffableInterface* beneathBuffable = Cast<IBuffableInterface>(FloortraceResult.GetActor());
-		if (beneathBuffable)
-		{
-			AXR_Character* BeforeBuffableCharacter = BuffableCharacter;
-			BuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
-
-			if (BeforeBuffableCharacter != BuffableCharacter)
-			{
-				IBuffableInterface::Execute_BuffableEffectStart(Cast<UObject>(BuffableCharacter));
-				if (BeforeBuffableCharacter)
-				{
-					IBuffableInterface::Execute_BuffableEffectEnd(Cast<UObject>(BeforeBuffableCharacter));
-				}
-			}
-		}
-		else
-		{
-			BuffableCharacter = nullptr;
-		}
 
 	}
 	else
@@ -111,11 +92,7 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		SetVisibility(false);
 		SetWorldLocation(ActorLocation);
 
-		if (BuffableCharacter)
-		{
-			IBuffableInterface::Execute_BuffableEffectEnd(Cast<UObject>(BuffableCharacter));
-		}
-		BuffableCharacter = nullptr;
+
 
 	}
 }

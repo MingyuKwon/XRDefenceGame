@@ -18,6 +18,8 @@ AXR_Character::AXR_Character()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 	FromPaletteToCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("FromPaletteToCharacter"));
 	FromPaletteToCharacter->SetupAttachment(RootComponent);
 
@@ -62,12 +64,9 @@ void AXR_Character::PostInitializeComponents()
 
 void AXR_Character::InitializeCharacter()
 {
-	PoolPlacedTransform = GetActorTransform();
 
-	if (!GetCharacterMesh()) return;
-
-	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
-	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
+	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(GetMesh()->GetMaterial(0));
+	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(GetMesh()->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
@@ -160,39 +159,6 @@ void AXR_Character::SetRingProperty()
 
 }
 
-bool AXR_Character::GetCharacterMesh()
-{
-	CharacterMesh = (CharacterMesh == nullptr) ? GetMesh() : CharacterMesh;
-
-	if (CharacterMesh == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AXR_Character::GetCharacterMesh : CharacterMesh == nullptr"));
-		return false;
-	}
-
-	return true;
-}
-
-void AXR_Character::SetCharacterVisibility(bool bVisible)
-{
-	SetActorHiddenInGame(!bVisible);
-	SetActorTickEnabled(bVisible);
-}
-
-void AXR_Character::PoolSpawnBeginPlay()
-{
-	bPool = false;
-	SetCharacterVisibility(true);
-
-}
-
-void AXR_Character::PoolSpawnDestryoed()
-{
-	GetWorld()->GetTimerManager().ClearTimer(DeathTimerHandle);
-	SetActorTransform(PoolPlacedTransform);
-	SetCharacterVisibility(false);
-	bPool = true;
-}
 
 void AXR_Character::Tick(float DeltaTime)
 {
@@ -220,15 +186,14 @@ void AXR_Character::Tick(float DeltaTime)
 
 void AXR_Character::InteractableEffectStart_Implementation()
 {
-	if (!GetCharacterMesh()) return;
 	if (bHightLighting) return;
 
 	bHightLighting = true;
 
 	HighLightMesh(true);
 		
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
-	CharacterMesh->SetRelativeScale3D(NewScale);
+	FVector NewScale = GetMesh()->GetRelativeScale3D() * rescaleAmount;
+	GetMesh()->SetRelativeScale3D(NewScale);
 
 }
 
@@ -238,14 +203,14 @@ void AXR_Character::HighLightMesh(bool bHighlight)
 	{
 		if (HighlightMaterial)
 		{
-			CharacterMesh->SetMaterial(0, HighlightMaterial);
-			CharacterMesh->SetMaterial(1, HighlightMaterial);
+			GetMesh()->SetMaterial(0, HighlightMaterial);
+			GetMesh()->SetMaterial(1, HighlightMaterial);
 		}
 	}
 	else
 	{
-		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+		if (DefaultSkeletalMaterialFirst) GetMesh()->SetMaterial(0, DefaultSkeletalMaterialFirst);
+		if (DefaultSkeletalMaterialSecond) GetMesh()->SetMaterial(1, DefaultSkeletalMaterialSecond);
 
 	}
 
@@ -255,15 +220,14 @@ void AXR_Character::HighLightMesh(bool bHighlight)
 
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
-	if (!GetCharacterMesh()) return;
 	if (!bHightLighting) return;
 
 	bHightLighting = false;
 
 	HighLightMesh(false);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
-	CharacterMesh->SetRelativeScale3D(NewScale);
+	FVector NewScale = GetMesh()->GetRelativeScale3D() / rescaleAmount;
+	GetMesh()->SetRelativeScale3D(NewScale);
 
 
 }
@@ -361,7 +325,7 @@ void AXR_Character::Death()
 
 void AXR_Character::DeathTimerFunction()
 {
-	PoolSpawnDestryoed();
+	Destroy();
 }
 
 void AXR_Character::DissolveCallBack(float percent)

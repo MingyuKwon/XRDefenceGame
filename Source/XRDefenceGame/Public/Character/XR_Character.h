@@ -45,20 +45,7 @@ public:
 	void CheckNeutralToConvert(EObjectType objectType);
 
 
-	UFUNCTION(BlueprintCallable)
-	virtual void PoolSpawnBeginPlay();
-
-	UFUNCTION(BlueprintCallable)
-	virtual void PoolSpawnDestryoed();
-
 protected:
-
-	//  =================================== Pool ====================================================== 
-	bool bPool = true;
-
-	FTransform PoolPlacedTransform;
-
-	//  =================================== Pool ====================================================== 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
@@ -70,9 +57,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 	virtual void InitializeCharacter();
-
-	UFUNCTION(BlueprintCallable)
-	void SetCharacterVisibility(bool bVisible);
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
@@ -116,10 +100,6 @@ protected:
 	UMaterialInstance* DefaultSkeletalMaterialFirst;
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
 	UMaterialInstance* DefaultSkeletalMaterialSecond;
-
-	UPROPERTY()
-	USkeletalMeshComponent* CharacterMesh;
-	bool GetCharacterMesh();
 
 
 	//TimeLIne
@@ -174,12 +154,6 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
-
-	UFUNCTION(BlueprintCallable)
-	bool GetPool() { return bPool; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetPool(bool b) { bPool = b; }
 
 
 };
