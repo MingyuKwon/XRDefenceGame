@@ -17,6 +17,9 @@ class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBuff : public AXR_CharacterDeffen
 public:
     AMyXR_CharacterDeffenceBuff();
 
+    virtual void Tick(float DeltaTime) override;
+
+
 protected:
     virtual void BeginPlay() override;
 
@@ -37,4 +40,20 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* RingMeshComponent3;
 	
+private:
+    float ElapsedTime;
+    float MoveSpeed;
+    float MinZ;
+    float MaxZ;
+
+    FVector InitialLocation1;
+    FVector InitialLocation2;
+    FVector InitialLocation3;
+
+    bool bMovingUp1;
+    bool bMovingUp2;
+    bool bMovingUp3;
+
+    void UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime);
+
 };

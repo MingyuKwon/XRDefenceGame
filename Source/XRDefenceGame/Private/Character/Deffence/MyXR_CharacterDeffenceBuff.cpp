@@ -17,11 +17,52 @@ AMyXR_CharacterDeffenceBuff::AMyXR_CharacterDeffenceBuff()
     RingMeshComponent3->SetupAttachment(GetMesh());
     RingMeshComponent3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+    ElapsedTime = 0.0f;
+    MoveSpeed = 200.0f; 
+    MinZ = 0.0f;     
+    MaxZ = 250.0f;    
+
+    bMovingUp1 = true;
+    bMovingUp2 = true;
+    bMovingUp3 = true;
+
+
+}
+
+void AMyXR_CharacterDeffenceBuff::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    ElapsedTime += DeltaTime;
+
+    UpdateComponentPosition(RingMeshComponent1, InitialLocation1, bMovingUp1, DeltaTime);
+    UpdateComponentPosition(RingMeshComponent2, InitialLocation2, bMovingUp2, DeltaTime);
+    UpdateComponentPosition(RingMeshComponent3, InitialLocation3, bMovingUp3, DeltaTime);
+
+
+    FRotator NewRotation(0.0f, 3.0f, 0.f);
+    RingMeshComponent1->AddLocalRotation(NewRotation);
+    RingMeshComponent2->AddLocalRotation(NewRotation);
+    RingMeshComponent3->AddLocalRotation(NewRotation);
+
 }
 
 void AMyXR_CharacterDeffenceBuff::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (RingMeshComponent1)
+    {
+        InitialLocation1 = RingMeshComponent1->GetRelativeLocation();
+    }
+    if (RingMeshComponent2)
+    {
+        InitialLocation2 = RingMeshComponent2->GetRelativeLocation();
+    }
+    if (RingMeshComponent3)
+    {
+        InitialLocation3 = RingMeshComponent3->GetRelativeLocation();
+    }
 }
 
 void AMyXR_CharacterDeffenceBuff::BindDissolveCallBack()
@@ -38,4 +79,28 @@ void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)
     Super::DissolveCallBack(1-percent);
 
 }
+
+void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime)
+{
+    if (Component)
+    {
+        FVector NewLocation = Component->GetRelativeLocation();
+        float NewZ = NewLocation.Z + (bMovingUp ? MoveSpeed : -MoveSpeed) * DeltaTime;
+
+        if (NewZ >= MaxZ)
+        {
+            NewZ = MaxZ;
+            bMovingUp = false;
+        }
+        else if (NewZ <= MinZ)
+        {
+            NewZ = MinZ;
+            bMovingUp = true;
+        }
+
+        NewLocation.Z = NewZ;
+        Component->SetRelativeLocation(NewLocation);
+    }
+}
+
 
