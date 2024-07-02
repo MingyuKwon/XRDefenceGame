@@ -46,6 +46,9 @@ protected:
 
     virtual void PoolSpawnBeginPlay() override;
 
+    virtual void PoolSpawnDestryoed() override;
+
+
 	
 private:
     float ElapsedTime;
@@ -61,7 +64,6 @@ private:
     bool bMovingUp3;
 
     void UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed);
-
 
     void LifeTimeTimerFunction();
 

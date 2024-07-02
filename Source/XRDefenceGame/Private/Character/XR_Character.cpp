@@ -185,6 +185,7 @@ void AXR_Character::PoolSpawnBeginPlay()
 
 void AXR_Character::PoolSpawnDestryoed()
 {
+	GetWorld()->GetTimerManager().ClearTimer(DeathTimerHandle);
 	SetActorTransform(PoolPlacedTransform);
 	SetCharacterVisibility(false);
 	bPool = true;

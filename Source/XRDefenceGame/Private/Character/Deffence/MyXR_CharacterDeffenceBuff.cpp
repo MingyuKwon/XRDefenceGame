@@ -114,6 +114,15 @@ void AMyXR_CharacterDeffenceBuff::PoolSpawnBeginPlay()
 
 }
 
+void AMyXR_CharacterDeffenceBuff::PoolSpawnDestryoed()
+{
+    Super::PoolSpawnDestryoed();
+
+    GetWorld()->GetTimerManager().ClearTimer(LifeTimeTimerHandle);
+    GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", 0);
+
+}
+
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)
 {
     if (Component)
