@@ -32,7 +32,7 @@ AXR_Character::AXR_Character()
 	FromCharacterToRing->SetVisibility(false);
 
 	CharacterMovementComponent = GetCharacterMovement();
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
@@ -135,6 +135,16 @@ void AXR_Character::SetRingProperty()
 	case EObjectType::EOT_None:
 		break;
 	default:
+		break;
+	}
+
+	switch (CharacterType)
+	{
+	case ECharacterType::ECT_DefenceH :
+	case ECharacterType::ECT_DefenceF1:
+	case ECharacterType::ECT_DefenceF2:
+		FloorRingMesh->SetMaterial(0, DefaultRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_Buffable;
 		break;
 	}
 

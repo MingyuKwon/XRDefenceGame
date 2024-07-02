@@ -50,6 +50,8 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
     EtcMeshComponent5->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
+    GetMesh()->SetCollisionResponseToChannel(ECC_Buffable, ECollisionResponse::ECR_Block);
+
 }
 
 void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
