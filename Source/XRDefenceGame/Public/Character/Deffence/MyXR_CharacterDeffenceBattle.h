@@ -21,6 +21,10 @@ public:
     virtual void InteractableEffectStart_Implementation() override;
     virtual void InteractableEffectEnd_Implementation() override;
 
+    virtual void BuffableEffectStart_Implementation() override;
+    virtual void BuffableEffectEnd_Implementation() override;
+
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkeletalMeshComponent* GunMeshComponent;
@@ -50,6 +54,13 @@ protected:
     void BindDissolveCallBack() override;
 
     virtual void DissolveCallBack(float percent) override;
+
+    UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+    bool bBufferHightLighting = false;
+
+    virtual void HighLightMesh(bool bHighlight) override;
+
+
 
 
 private:

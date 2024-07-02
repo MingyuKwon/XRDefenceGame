@@ -18,9 +18,8 @@ AMyXR_CharacterDeffenceBuff::AMyXR_CharacterDeffenceBuff()
     RingMeshComponent3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     ElapsedTime = 0.0f;
-    MoveSpeed = 200.0f; 
     MinZ = 0.0f;     
-    MaxZ = 250.0f;    
+    MaxZ = 200.0f;    
 
     bMovingUp1 = true;
     bMovingUp2 = true;
@@ -35,9 +34,9 @@ void AMyXR_CharacterDeffenceBuff::Tick(float DeltaTime)
 
     ElapsedTime += DeltaTime;
 
-    UpdateComponentPosition(RingMeshComponent1, InitialLocation1, bMovingUp1, DeltaTime);
-    UpdateComponentPosition(RingMeshComponent2, InitialLocation2, bMovingUp2, DeltaTime);
-    UpdateComponentPosition(RingMeshComponent3, InitialLocation3, bMovingUp3, DeltaTime);
+    UpdateComponentPosition(RingMeshComponent1, InitialLocation1, bMovingUp1, DeltaTime, 200.f);
+    UpdateComponentPosition(RingMeshComponent2, InitialLocation2, bMovingUp2, DeltaTime, 300.f);
+    UpdateComponentPosition(RingMeshComponent3, InitialLocation3, bMovingUp3, DeltaTime, 400.f);
 
 
     FRotator NewRotation(0.0f, 3.0f, 0.f);
@@ -100,7 +99,7 @@ void AMyXR_CharacterDeffenceBuff::PoolSpawnBeginPlay()
 
 }
 
-void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime)
+void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)
 {
     if (Component)
     {

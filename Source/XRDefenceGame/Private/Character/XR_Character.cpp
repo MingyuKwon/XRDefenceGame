@@ -223,15 +223,29 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	bHightLighting = true;
 
-	if (HighlightMaterial)
-	{
-		CharacterMesh->SetMaterial(0, HighlightMaterial);
-		CharacterMesh->SetMaterial(1, HighlightMaterial);
-	}
+	HighLightMesh(true);
 		
-
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
+
+}
+
+void AXR_Character::HighLightMesh(bool bHighlight)
+{
+	if (bHighlight)
+	{
+		if (HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+		}
+	}
+	else
+	{
+		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+
+	}
 
 }
 
@@ -242,8 +256,7 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	bHightLighting = false;
 
-	if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-	if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+	HighLightMesh(false);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -292,7 +305,6 @@ void AXR_Character::GrabEnd_Implementation()
 	SetOnBoard(FloorRingMesh->bBeneathBoard);
 
 
-
 	if (bOnBoard)
 	{
 		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
@@ -303,6 +315,7 @@ void AXR_Character::GrabEnd_Implementation()
 		{
 			IBuffableInterface* beneathBuffable = Cast<IBuffableInterface>(beneathBuffableCharacter);
 			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
+			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
 		}
 
 		if (DissolveCurve && TimelineComponent)
@@ -334,6 +347,8 @@ void AXR_Character::BindDissolveCallBack()
 {
 	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
 }
+
+
 
 bool AXR_Character::IsOnBoard_Implementation()
 {

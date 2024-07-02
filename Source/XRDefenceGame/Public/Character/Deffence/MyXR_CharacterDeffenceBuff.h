@@ -47,7 +47,6 @@ protected:
 	
 private:
     float ElapsedTime;
-    float MoveSpeed;
     float MinZ;
     float MaxZ;
 
@@ -59,6 +58,6 @@ private:
     bool bMovingUp2;
     bool bMovingUp3;
 
-    void UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime);
+    void UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed);
 
 };

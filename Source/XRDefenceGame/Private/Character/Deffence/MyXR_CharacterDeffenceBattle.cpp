@@ -95,24 +95,44 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
     Super::DissolveCallBack(percent);
 }
 
+void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
+{
+    Super::HighLightMesh(bHighlight);
+
+
+    if (bHighlight)
+    {
+        if (HighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, HighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+        }
+
+    }else
+    {
+        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
+        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+
+        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
+        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
+        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
+        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
+        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+    }
+}
+
 
 void AMyXR_CharacterDeffenceBattle::InteractableEffectStart_Implementation()
 {
     Super::InteractableEffectStart_Implementation();
 
-
-    if (HighlightMaterial)
-    {
-        GunMeshComponent->SetMaterial(0, HighlightMaterial);
-        GunMeshComponent2->SetMaterial(0, HighlightMaterial);
-
-        EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
-    }
-
+    HighLightMesh(true);
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() * rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
@@ -142,14 +162,7 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 {
     Super::InteractableEffectEnd_Implementation();
 
-    if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
-    if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
-
-    if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
-    if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
-    if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
-    if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
-    if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+    HighLightMesh(false);
 
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() / rescaleAmount;
@@ -173,6 +186,25 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 
     NewScale = EtcMeshComponent5->GetRelativeScale3D() / rescaleAmount;
     EtcMeshComponent5->SetRelativeScale3D(NewScale);
+
+}
+
+void AMyXR_CharacterDeffenceBattle::BuffableEffectStart_Implementation()
+{
+    if (bHightLighting) return;
+
+    bBufferHightLighting = true;
+
+    HighLightMesh(true);
+}
+
+void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
+{
+    bBufferHightLighting = false;
+
+    if (bHightLighting) return;
+
+    HighLightMesh(false);
 
 }
 

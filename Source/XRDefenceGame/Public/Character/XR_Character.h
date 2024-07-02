@@ -103,6 +103,15 @@ protected:
 
 	int32 SpawnPlaceIndex;
 
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultSkeletalMaterialFirst;
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultSkeletalMaterialSecond;
+
+	UPROPERTY()
+	USkeletalMeshComponent* CharacterMesh;
+	bool GetCharacterMesh();
+
 
 	//TimeLIne
 	UPROPERTY(VisibleAnywhere)
@@ -112,11 +121,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
 	UCurveFloat* DissolveCurve;
+
 	UFUNCTION()
 	virtual void DissolveCallBack(float percent);
 	//TimeLIne
 
 	virtual void BindDissolveCallBack();
+
+
+	UFUNCTION()
+	virtual void HighLightMesh(bool bHighlight);
+
 
 
 private:
@@ -137,14 +152,7 @@ private:
 	class UCharacterMovementComponent* CharacterMovementComponent;
 
 
-	UPROPERTY()
-	USkeletalMeshComponent* CharacterMesh;
-	bool GetCharacterMesh();
 
-	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultSkeletalMaterialFirst;
-	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultSkeletalMaterialSecond;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
 	UMaterialInstance* OffenceRingMaterial;
