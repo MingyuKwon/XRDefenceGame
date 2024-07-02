@@ -63,8 +63,6 @@ void AXR_Character::PostInitializeComponents()
 
 void AXR_Character::InitializeCharacter()
 {
-	PoolPlacedTransform = GetActorTransform();
-
 	if (!GetCharacterMesh()) return;
 
 	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
@@ -174,26 +172,6 @@ bool AXR_Character::GetCharacterMesh()
 	return true;
 }
 
-void AXR_Character::SetCharacterVisibility(bool bVisible)
-{
-	SetActorHiddenInGame(!bVisible);
-	SetActorTickEnabled(bVisible);
-}
-
-void AXR_Character::PoolSpawnBeginPlay()
-{
-	bPool = false;
-	SetCharacterVisibility(true);
-
-}
-
-void AXR_Character::PoolSpawnDestryoed()
-{
-	GetWorld()->GetTimerManager().ClearTimer(DeathTimerHandle);
-	SetActorTransform(PoolPlacedTransform);
-	SetCharacterVisibility(false);
-	bPool = true;
-}
 
 void AXR_Character::Tick(float DeltaTime)
 {
@@ -362,7 +340,7 @@ void AXR_Character::Death()
 
 void AXR_Character::DeathTimerFunction()
 {
-	PoolSpawnDestryoed();
+	Destroy();
 }
 
 void AXR_Character::DissolveCallBack(float percent)

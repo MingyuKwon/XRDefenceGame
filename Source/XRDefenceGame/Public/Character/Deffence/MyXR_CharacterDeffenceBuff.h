@@ -44,12 +44,7 @@ protected:
 
     virtual void OnBoardCalledFunction(bool isOnBoard) override;
 
-    virtual void PoolSpawnBeginPlay() override;
 
-    virtual void PoolSpawnDestryoed() override;
-
-
-	
 private:
     float ElapsedTime;
     float MinZ;

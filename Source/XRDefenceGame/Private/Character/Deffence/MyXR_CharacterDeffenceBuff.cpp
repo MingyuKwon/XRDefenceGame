@@ -104,24 +104,6 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
 
 }
 
-void AMyXR_CharacterDeffenceBuff::PoolSpawnBeginPlay()
-{
-    Super::PoolSpawnBeginPlay();
-
-    RingMeshComponent1->SetVisibility(false);
-    RingMeshComponent2->SetVisibility(false);
-    RingMeshComponent3->SetVisibility(false);
-
-}
-
-void AMyXR_CharacterDeffenceBuff::PoolSpawnDestryoed()
-{
-    Super::PoolSpawnDestryoed();
-
-    GetWorld()->GetTimerManager().ClearTimer(LifeTimeTimerHandle);
-    GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", 0);
-
-}
 
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)
 {
