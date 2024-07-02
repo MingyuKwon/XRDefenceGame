@@ -30,6 +30,10 @@
 				"Win64",
 				"Android"
 			]
+		},
+		{
+			"Name": "SkeletalMeshModelingTools",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

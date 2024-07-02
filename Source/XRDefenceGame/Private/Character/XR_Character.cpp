@@ -163,10 +163,6 @@ void AXR_Character::Tick(float DeltaTime)
 	
 	*/
 
-	if (bOnBoard)
-	{
-		AddMovementInput(GetActorForwardVector(), 0.001f);
-	}
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
