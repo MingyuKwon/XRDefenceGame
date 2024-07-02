@@ -40,6 +40,11 @@ AXR_Character::AXR_Character()
 }
 
 
+void AXR_Character::OnBoardCalledFunction(bool isOnBoard)
+{
+
+}
+
 void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
@@ -65,6 +70,15 @@ void AXR_Character::InitializeCharacter()
 
 	SetRingProperty();
 
+}
+
+
+
+void AXR_Character::SetOnBoard(bool isOnBoard)
+{
+	bOnBoard = isOnBoard;
+
+	OnBoardCalledFunction(isOnBoard);
 }
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
@@ -139,6 +153,31 @@ bool AXR_Character::GetCharacterMesh()
 	}
 
 	return true;
+}
+
+void AXR_Character::SetCharacterVisibility(bool bVisible)
+{
+	SetActorHiddenInGame(!bVisible);
+	SetActorTickEnabled(bVisible);
+
+	if (bVisible)
+	{
+		PoolSpawnBeginPlay();
+	}
+	else
+	{
+		PoolSpawnDestryoed();
+	}
+}
+
+void AXR_Character::PoolSpawnBeginPlay()
+{
+
+}
+
+void AXR_Character::PoolSpawnDestryoed()
+{
+
 }
 
 void AXR_Character::Tick(float DeltaTime)
@@ -238,7 +277,7 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard) return;
 
-	bOnBoard = FloorRingMesh->bBeneathBoard;
+	SetOnBoard(FloorRingMesh->bBeneathBoard);
 
 	if (bOnBoard)
 	{

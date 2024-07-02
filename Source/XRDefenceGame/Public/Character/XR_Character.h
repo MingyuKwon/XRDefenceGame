@@ -39,19 +39,32 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
-	bool bOnBoard = false;
+	void SetOnBoard(bool isOnBoard);
 
 	UFUNCTION(BlueprintCallable)
 	void CheckNeutralToConvert(EObjectType objectType);
 
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterVisibility(bool bVisible);
+
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	bool bOnBoard = false;
+
+	virtual void OnBoardCalledFunction(bool isOnBoard);
+
 	virtual void BeginPlay() override;
 
 	virtual void PostInitializeComponents() override;
 
 	virtual void InitializeCharacter();
+
+	virtual void PoolSpawnBeginPlay();
+
+	virtual void PoolSpawnDestryoed();
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;

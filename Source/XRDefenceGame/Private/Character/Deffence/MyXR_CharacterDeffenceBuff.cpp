@@ -80,6 +80,26 @@ void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)
 
 }
 
+void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
+{
+    Super::OnBoardCalledFunction(isOnBoard);
+
+    RingMeshComponent1->SetVisibility(isOnBoard);
+    RingMeshComponent2->SetVisibility(isOnBoard);
+    RingMeshComponent3->SetVisibility(isOnBoard);
+
+}
+
+void AMyXR_CharacterDeffenceBuff::PoolSpawnBeginPlay()
+{
+    Super::PoolSpawnBeginPlay();
+
+    RingMeshComponent1->SetVisibility(false);
+    RingMeshComponent2->SetVisibility(false);
+    RingMeshComponent3->SetVisibility(false);
+
+}
+
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime)
 {
     if (Component)
