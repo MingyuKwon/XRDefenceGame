@@ -52,8 +52,6 @@ void AXR_Character::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeCharacter();
-
-	SetCharacterVisibility(false);
 }
 
 void AXR_Character::PostInitializeComponents()
