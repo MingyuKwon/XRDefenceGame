@@ -101,6 +101,11 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 		}
 		BuffableCharacter = nullptr;
 
+		if (isMaxLevel)
+		{
+			bBeneathBoard = false;
+		}
+
 	}
 
 }
