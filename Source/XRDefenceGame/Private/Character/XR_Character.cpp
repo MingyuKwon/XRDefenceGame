@@ -45,7 +45,10 @@ AXR_Character::AXR_Character()
 
 void AXR_Character::OnBoardCalledFunction(bool isOnBoard)
 {
-
+	if (bOnBoard)
+	{
+		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+	}
 }
 
 void AXR_Character::BeginPlay()
@@ -74,18 +77,10 @@ void AXR_Character::InitializeCharacter()
 
 }
 
-
-
 void AXR_Character::SetOnBoard(bool isOnBoard)
 {
 	bOnBoard = isOnBoard;
-
 	OnBoardCalledFunction(isOnBoard);
-
-	if (bOnBoard)
-	{
-		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
-	}
 }
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
@@ -287,7 +282,6 @@ void AXR_Character::GrabEnd_Implementation()
 
 	SetOnBoard(FloorRingMesh->bBeneathBoard);
 
-
 	if (bOnBoard)
 	{
 		AXR_Character* beneathBuffableCharacter = FloorRingMesh->GetBuffableCharacter();
@@ -333,6 +327,7 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 
 void AXR_Character::Death()
 {
+	FloorRingMesh->bTickReject = true;
 	bOnBoard = false;
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
 	StartDissolveTimeline(false);

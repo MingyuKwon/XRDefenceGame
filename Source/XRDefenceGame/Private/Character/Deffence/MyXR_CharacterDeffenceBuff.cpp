@@ -19,7 +19,7 @@ AMyXR_CharacterDeffenceBuff::AMyXR_CharacterDeffenceBuff()
 
     ElapsedTime = 0.0f;
     MinZ = 0.0f;     
-    MaxZ = 200.0f;    
+    MaxZ = 180.0f;    
 
     bMovingUp1 = true;
     bMovingUp2 = true;
@@ -62,6 +62,11 @@ void AMyXR_CharacterDeffenceBuff::BeginPlay()
     {
         InitialLocation3 = RingMeshComponent3->GetRelativeLocation();
     }
+
+    RingMeshComponent1->SetVisibility(false);
+    RingMeshComponent2->SetVisibility(false);
+    RingMeshComponent3->SetVisibility(false);
+
 }
 
 void AMyXR_CharacterDeffenceBuff::BindDissolveCallBack()
@@ -69,10 +74,6 @@ void AMyXR_CharacterDeffenceBuff::BindDissolveCallBack()
     InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBuff::DissolveCallBack);
 }
 
-void AMyXR_CharacterDeffenceBuff::BindReverseDissolveCallBack()
-{
-    InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBuff::DissolveCallBackReverse);
-}
 
 void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)
 {
@@ -100,10 +101,17 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
     RingMeshComponent2->SetVisibility(isOnBoard);
     RingMeshComponent3->SetVisibility(isOnBoard);
 
-    GetWorld()->GetTimerManager().SetTimer(LifeTimeTimerHandle, this, &AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction, 2.0f, false);
+    if (isOnBoard)
+    {
+        GetWorld()->GetTimerManager().SetTimer(LifeTimeTimerHandle, this, &AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction, 2.0f, false);
+    }
 
 }
 
+void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
+{
+    Death();
+}
 
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)
 {
@@ -128,9 +136,6 @@ void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Compo
     }
 }
 
-void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
-{
-    Death();
-}
+
 
 

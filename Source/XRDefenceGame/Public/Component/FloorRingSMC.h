@@ -31,6 +31,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMaterialCall();
 
+	bool bTickReject = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -49,6 +50,9 @@ private:
 	class UMaterialInstanceDynamic* DynamicMaterialInstance;
 
 	void SetMaterialScalarParameterValue(FName ParameterName, float ParameterValue);
+
+	void CheckBeneath(bool bBeneath, FHitResult& FloortraceResult);
+	void CheckBuffable(bool bBuffable, FHitResult& FloortraceResult);
 
 
 public:

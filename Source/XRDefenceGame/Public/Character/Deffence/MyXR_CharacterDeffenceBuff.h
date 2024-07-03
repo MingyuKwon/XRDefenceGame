@@ -25,9 +25,6 @@ protected:
 
     virtual void BindDissolveCallBack() override;
 
-    virtual void BindReverseDissolveCallBack() override;
-
-
     virtual void DissolveCallBack(float percent) override;
 
     virtual void DissolveCallBackReverse(float percent) override;

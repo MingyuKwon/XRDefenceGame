@@ -39,6 +39,7 @@ void UFloorRingSMC::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetVisibility(false);
 	XRCharacter = Cast<AXR_Character>(GetOwner());
 }
 
@@ -51,66 +52,41 @@ void UFloorRingSMC::SetMaterialScalarParameterValue(FName ParameterName, float P
 	}
 }
 
-void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (XRCharacter == nullptr) return;
-
-	FVector ActorLocation = XRCharacter->GetActorLocation();
-	FVector TraceEndLocation = ActorLocation - FVector(0.f, 0.f, traceLength);
-		
-	FHitResult FloortraceResult;
-
-	if (IHandInteractInterface::Execute_IsOnBoard(Cast<UObject>(XRCharacter)))
+	if (bBeneath)
 	{
-		GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, ECC_Board);
-	}
-	else
-	{
-		GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, beneathTraceChannel);
-	}
-
-	FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.f);
-	
-	FHitResult PallettetraceResult;
-	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, ActorLocation, TraceEndLocation, ECC_Pallette);
-
-
-	bBeneathBoard = FloortraceResult.bBlockingHit && !PallettetraceResult.bBlockingHit;
-
-
-	if (bBeneathBoard)
-	{
-		SetVisibility(true);
+		FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.f);
 		SetWorldLocation(WillSpawnPosition);
+	}
+	else
+	{
+		SetWorldLocation(XRCharacter->GetActorLocation());
+	}
 
-		IBuffableInterface* beneathBuffable = Cast<IBuffableInterface>(FloortraceResult.GetActor());
-		if (beneathBuffable)
+	if (bBeneath == bBeneathBoard) return;
+	bBeneathBoard = bBeneath;
+	bBeneathBoard && beneathTraceChannel != ECC_Buffable ? SetVisibility(true) : SetVisibility(false);
+}
+
+void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
+{
+	if (bBuffable)
+	{
+		AXR_Character* NewBuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
+		if (NewBuffableCharacter != BuffableCharacter)
 		{
-			AXR_Character* BeforeBuffableCharacter = BuffableCharacter;
-			BuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
-
-			if (BeforeBuffableCharacter != BuffableCharacter)
+			if (BuffableCharacter)
 			{
-				IBuffableInterface::Execute_BuffableEffectStart(Cast<UObject>(BuffableCharacter));
-				if (BeforeBuffableCharacter)
-				{
-					IBuffableInterface::Execute_BuffableEffectEnd(Cast<UObject>(BeforeBuffableCharacter));
-				}
+				IBuffableInterface::Execute_BuffableEffectEnd(Cast<UObject>(BuffableCharacter));
 			}
-		}
-		else
-		{
-			BuffableCharacter = nullptr;
+			BuffableCharacter = NewBuffableCharacter;
+			IBuffableInterface::Execute_BuffableEffectStart(Cast<UObject>(BuffableCharacter));
 		}
 
 	}
 	else
 	{
-		SetVisibility(false);
-		SetWorldLocation(ActorLocation);
-
 		if (BuffableCharacter)
 		{
 			IBuffableInterface::Execute_BuffableEffectEnd(Cast<UObject>(BuffableCharacter));
@@ -118,4 +94,27 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		BuffableCharacter = nullptr;
 
 	}
+
+}
+
+void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bTickReject) return;
+	if (XRCharacter == nullptr) return;
+
+	FVector ActorLocation = XRCharacter->GetActorLocation();
+	FVector TraceEndLocation = ActorLocation - FVector(0.f, 0.f, traceLength);
+		
+	FHitResult FloortraceResult;
+	GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, beneathTraceChannel);
+
+	FHitResult PallettetraceResult;
+	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, ActorLocation, TraceEndLocation, ECC_Pallette);
+
+	CheckBeneath(FloortraceResult.bBlockingHit && !PallettetraceResult.bBlockingHit, FloortraceResult);
+	CheckBuffable(Cast<IBuffableInterface>(FloortraceResult.GetActor()) != nullptr, FloortraceResult);
+
+
 }
