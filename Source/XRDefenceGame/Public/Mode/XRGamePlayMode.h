@@ -28,6 +28,6 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     AXR_Character* PoolSpawnActor(ECharacterType characterType);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-    void SpawnActorForUpgrade(ECharacterType characterType, FVector position, FRotator rotation);
+    void SpawnActorForUpgrade(ECharacterType characterType, FVector position, FRotator rotation, FCharacterValueTransmitForm form);
 
 };

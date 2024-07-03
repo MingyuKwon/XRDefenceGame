@@ -10,7 +10,7 @@ void AXRGamePlayMode::TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectTy
 
 }
 
-void AXRGamePlayMode::SpawnActorForUpgrade_Implementation(ECharacterType characterType, FVector position, FRotator rotation)
+void AXRGamePlayMode::SpawnActorForUpgrade_Implementation(ECharacterType characterType, FVector position, FRotator rotation, FCharacterValueTransmitForm form)
 {
 }
 

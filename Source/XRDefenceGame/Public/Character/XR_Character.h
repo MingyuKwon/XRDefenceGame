@@ -13,6 +13,18 @@ class UNiagaraComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
+USTRUCT(BlueprintType)
+struct FCharacterValueTransmitForm
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
+	int32 DamageUpgradeCount = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
+	int32 RangeUpgradeCount = 0;
+};
 
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
@@ -36,7 +48,7 @@ public:
 	virtual bool IsOnBoard_Implementation() override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void NonPalletteSpawnInitalize();
+	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
 
 	// Event that invoke when character set on Board
 	UPROPERTY(BlueprintAssignable, Category = "Events")
@@ -62,6 +74,8 @@ protected:
 	virtual void InitializeCharacter();
 
 	virtual void SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter);
+
+	virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm);
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")

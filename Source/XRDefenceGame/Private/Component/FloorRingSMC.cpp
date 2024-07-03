@@ -71,12 +71,17 @@ void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 
 void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 {
-	if (bBuffable)
+	AXR_Character* NewBuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
+
+	bool isMaxLevel = false;
+
+	if (NewBuffableCharacter)
 	{
-		AXR_Character* NewBuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
+		isMaxLevel = IBuffableInterface::Execute_GetTotalLevel(NewBuffableCharacter) >= 6;
+	}
 
-		if(IBuffableInterface::Execute_GetTotalLevel(NewBuffableCharacter) >= 6) return;
-
+	if (bBuffable && !isMaxLevel)
+	{
 		if (NewBuffableCharacter != BuffableCharacter)
 		{
 			if (BuffableCharacter)

@@ -215,6 +215,8 @@ void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType bu
     {
         return;
     }
+    if (GetTotalLevel_Implementation() == 6) return;
+
 
     switch (buffType)
     {
@@ -227,6 +229,18 @@ void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType bu
         break;
     }
 
+    FString ActorName = GetName();
+    int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+    FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, DamageUpgradeCount : %d, RangeUpgradeCount: %d"),
+        *ActorName,
+        DamageUpgradeCount,
+        RangeUpgradeCount);
+
+    GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+
+
+
     ECharacterType* upgradeTurretTypePtr = TurretTypeMap.Find(GetUpgradeLevel_Implementation());
     if (upgradeTurretTypePtr)
     {
@@ -237,7 +251,10 @@ void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType bu
 
 void AMyXR_CharacterDeffenceBattle::UpgradeTurret(ECharacterType characterType)
 {
-    XRGamePlayMode->SpawnActorForUpgrade(characterType, GetActorLocation(), GetActorRotation());
+    FCharacterValueTransmitForm outForm;
+    PackCharacterValueTransmitForm(outForm);
+
+    XRGamePlayMode->SpawnActorForUpgrade(characterType, GetActorLocation(), GetActorRotation(), outForm);
     Destroy();
 }
 
@@ -252,6 +269,20 @@ int32 AMyXR_CharacterDeffenceBattle::GetUpgradeLevel_Implementation()
 int32 AMyXR_CharacterDeffenceBattle::GetTotalLevel_Implementation()
 {
     return DamageUpgradeCount + RangeUpgradeCount;
+}
+
+void AMyXR_CharacterDeffenceBattle::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
+{
+    Super::NonPalletteSpawnInitalize(inheritform);
+    DamageUpgradeCount = inheritform.DamageUpgradeCount;
+    RangeUpgradeCount = inheritform.RangeUpgradeCount;
+}
+
+void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
+{
+    Super::PackCharacterValueTransmitForm(outForm);
+    outForm.DamageUpgradeCount = DamageUpgradeCount;
+    outForm.RangeUpgradeCount = RangeUpgradeCount;
 }
 
 

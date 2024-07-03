@@ -92,7 +92,7 @@ void AXR_Character::InitializeCharacter()
 
 }
 
-void AXR_Character::NonPalletteSpawnInitalize()
+void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
 	bOnBoard = true;
 	OnBoardCalledFunction(true, false);
@@ -190,22 +190,6 @@ void AXR_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
-
-	/*
-	
-	FString ActorName = GetName();
-	int32 HashValue = FCrc::StrCrc32(*ActorName);
-	FString MovementModeString = UEnum::GetValueAsString(CharacterMovementComponent->MovementMode);
-	FString MoveInputIgnoredString = IsMoveInputIgnored() ? TEXT("True") : TEXT("False");
-
-	FString DebugMessage = FString::Printf(TEXT("Actor: %s, Movement Mode: %s, Move Input Ignored: %s"),
-		*ActorName,
-		*MovementModeString,
-		*MoveInputIgnoredString);
-
-	GEngine->AddOnScreenDebugMessage(HashValue, 0.1f, FColor::Blue, DebugMessage);
-	
-	*/
 
 }
 
@@ -321,6 +305,11 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 	}
 
 	OnBoardCalledFunction(isOnBoard, true);
+}
+
+void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
+{
+
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)

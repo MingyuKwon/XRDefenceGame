@@ -26,9 +26,14 @@ public:
     virtual void BuffApplied_Implementation(ECharacterType buffType) override;
     virtual int32 GetUpgradeLevel_Implementation() override;
     virtual int32 GetTotalLevel_Implementation() override;
+
+    virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform) override;
+
     
 
 protected:
+    virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkeletalMeshComponent* GunMeshComponent;
 
