@@ -26,7 +26,6 @@ public:
     virtual void BuffApplied_Implementation(ECharacterType buffType) override;
     virtual int32 GetUpgradeLevel_Implementation() override;
     virtual int32 GetTotalLevel_Implementation() override;
-
     
 
 protected:
@@ -68,6 +67,8 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
     int32 RangeUpgradeCount = 0;
+
+    void UpgradeTurret(ECharacterType characterType);
 
 private:
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")

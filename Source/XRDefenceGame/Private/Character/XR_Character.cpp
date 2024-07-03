@@ -52,12 +52,18 @@ AXR_Character::AXR_Character()
 }
 
 
-void AXR_Character::OnBoardCalledFunction(bool isOnBoard)
+void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 {
 	if (bOnBoard)
 	{
-		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+		StartDissolveTimeline(true);
+
+		if (isSpawnedByHand)
+		{
+			OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+		}
 	}
+
 }
 
 void AXR_Character::BeginPlay()
@@ -84,6 +90,12 @@ void AXR_Character::InitializeCharacter()
 
 	SetRingProperty();
 
+}
+
+void AXR_Character::NonPalletteSpawnInitalize()
+{
+	bOnBoard = true;
+	OnBoardCalledFunction(true, false);
 }
 
 
@@ -287,14 +299,11 @@ void AXR_Character::GrabEnd_Implementation()
 
 	SetPalletteCharacterOnBoard(FloorRingMesh->bBeneathBoard, FloorRingMesh->GetBuffableCharacter());
 
-	if (bOnBoard)
-	{
-		StartDissolveTimeline(true);
-	}
-	else
+	if (!bOnBoard)
 	{
 		SetInteractPosition_Implementation(PalletteBeamEndPosition);
 	}
+
 
 }
 
@@ -311,7 +320,7 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 		}
 	}
 
-	OnBoardCalledFunction(isOnBoard);
+	OnBoardCalledFunction(isOnBoard, true);
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)
@@ -374,4 +383,6 @@ bool AXR_Character::IsOnBoard_Implementation()
 {
 	return bOnBoard;
 }
+
+
 

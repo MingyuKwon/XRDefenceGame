@@ -35,6 +35,9 @@ public:
 	virtual void GrabEnd_Implementation() override;
 	virtual bool IsOnBoard_Implementation() override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void NonPalletteSpawnInitalize();
+
 	// Event that invoke when character set on Board
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
@@ -50,7 +53,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
 
-	virtual void OnBoardCalledFunction(bool isOnBoard);
+	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
 
 	virtual void BeginPlay() override;
 

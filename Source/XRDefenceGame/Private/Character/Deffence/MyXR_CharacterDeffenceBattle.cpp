@@ -230,9 +230,15 @@ void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType bu
     ECharacterType* upgradeTurretTypePtr = TurretTypeMap.Find(GetUpgradeLevel_Implementation());
     if (upgradeTurretTypePtr)
     {
-        ECharacterType upgradeTurretType = *upgradeTurretTypePtr;
+        UpgradeTurret(*upgradeTurretTypePtr);
     }
     
+}
+
+void AMyXR_CharacterDeffenceBattle::UpgradeTurret(ECharacterType characterType)
+{
+    XRGamePlayMode->SpawnActorForUpgrade(characterType, GetActorLocation(), GetActorRotation());
+    Destroy();
 }
 
 int32 AMyXR_CharacterDeffenceBattle::GetUpgradeLevel_Implementation()

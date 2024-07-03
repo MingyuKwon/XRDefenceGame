@@ -101,9 +101,9 @@ void AMyXR_CharacterDeffenceBuff::SetPalletteCharacterOnBoard(bool isOnBoard, AX
     if (isOnBoard) BeneathBuffableCharacter = beneathBuffableCharacter;
 }
 
-void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
+void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 {
-    Super::OnBoardCalledFunction(isOnBoard);
+    Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
 
     RingMeshComponent1->SetVisibility(isOnBoard);
     RingMeshComponent2->SetVisibility(isOnBoard);
@@ -119,7 +119,7 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
 void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
 {
     Death();
-    IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter);
+    IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter, CharacterType);
 }
 
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)
