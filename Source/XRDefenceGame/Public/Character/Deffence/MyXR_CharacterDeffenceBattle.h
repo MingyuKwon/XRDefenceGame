@@ -23,7 +23,11 @@ public:
 
     virtual void BuffableEffectStart_Implementation() override;
     virtual void BuffableEffectEnd_Implementation() override;
+    virtual void BuffApplied_Implementation(ECharacterType buffType) override;
+    virtual int32 GetUpgradeLevel_Implementation() override;
+    virtual int32 GetTotalLevel_Implementation() override;
 
+    
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -31,7 +35,6 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkeletalMeshComponent* GunMeshComponent2;
-
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent1;
@@ -60,6 +63,11 @@ protected:
 
     virtual void HighLightMesh(bool bHighlight) override;
 
+    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    int32 DamageUpgradeCount = 0;
+
+    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    int32 RangeUpgradeCount = 0;
 
 private:
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")

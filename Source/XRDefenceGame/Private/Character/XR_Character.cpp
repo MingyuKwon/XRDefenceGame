@@ -40,6 +40,15 @@ AXR_Character::AXR_Character()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	TurretTypeMap.Add(30 , ECharacterType::ECT_DefenceT_Laser_1);
+	TurretTypeMap.Add(60 , ECharacterType::ECT_DefenceT_Laser_2);
+	TurretTypeMap.Add(21 , ECharacterType::ECT_DefenceT_Canon_1);
+	TurretTypeMap.Add(42 , ECharacterType::ECT_DefenceT_Canon_2);
+	TurretTypeMap.Add(12 , ECharacterType::ECT_DefenceT_Fire_1);
+	TurretTypeMap.Add(24 , ECharacterType::ECT_DefenceT_Fire_2);
+	TurretTypeMap.Add(3 , ECharacterType::ECT_DefenceT_Arrow_1);
+	TurretTypeMap.Add(6 , ECharacterType::ECT_DefenceT_Arrow_2);
 }
 
 
@@ -77,11 +86,7 @@ void AXR_Character::InitializeCharacter()
 
 }
 
-void AXR_Character::SetOnBoard(bool isOnBoard)
-{
-	bOnBoard = isOnBoard;
-	OnBoardCalledFunction(isOnBoard);
-}
+
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 {
@@ -280,28 +285,33 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard) return;
 
-	SetOnBoard(FloorRingMesh->bBeneathBoard);
+	SetPalletteCharacterOnBoard(FloorRingMesh->bBeneathBoard, FloorRingMesh->GetBuffableCharacter());
 
 	if (bOnBoard)
 	{
-		AXR_Character* beneathBuffableCharacter = FloorRingMesh->GetBuffableCharacter();
-
-		if (beneathBuffableCharacter)
-		{
-			IBuffableInterface* beneathBuffable = Cast<IBuffableInterface>(beneathBuffableCharacter);
-			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
-			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
-		}
-
 		StartDissolveTimeline(true);
-
 	}
 	else
 	{
 		SetInteractPosition_Implementation(PalletteBeamEndPosition);
 	}
 
+}
 
+void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter)
+{
+	bOnBoard = isOnBoard;
+
+	if (isOnBoard)
+	{
+		if (beneathBuffableCharacter)
+		{
+			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
+			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
+		}
+	}
+
+	OnBoardCalledFunction(isOnBoard);
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)

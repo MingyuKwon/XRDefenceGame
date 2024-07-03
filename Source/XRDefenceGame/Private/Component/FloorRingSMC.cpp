@@ -74,6 +74,9 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 	if (bBuffable)
 	{
 		AXR_Character* NewBuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
+
+		if(IBuffableInterface::Execute_GetTotalLevel(NewBuffableCharacter) >= 6) return;
+
 		if (NewBuffableCharacter != BuffableCharacter)
 		{
 			if (BuffableCharacter)

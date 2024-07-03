@@ -29,6 +29,8 @@ protected:
 
     virtual void DissolveCallBackReverse(float percent) override;
 
+    virtual void SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter) override;
+
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* RingMeshComponent1;
@@ -41,6 +43,7 @@ protected:
 
     virtual void OnBoardCalledFunction(bool isOnBoard) override;
 
+    AXR_Character* BeneathBuffableCharacter;
 
 private:
     float ElapsedTime;

@@ -39,14 +39,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
 
-	void SetOnBoard(bool isOnBoard);
-
 	UFUNCTION(BlueprintCallable)
 	void CheckNeutralToConvert(EObjectType objectType);
 
 
 protected:
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	TMap<int32, ECharacterType> TurretTypeMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
@@ -58,6 +57,8 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 	virtual void InitializeCharacter();
+
+	virtual void SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter);
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")

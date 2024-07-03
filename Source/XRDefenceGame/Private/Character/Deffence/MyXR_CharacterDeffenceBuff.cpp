@@ -2,6 +2,7 @@
 
 
 #include "Character/Deffence/MyXR_CharacterDeffenceBuff.h"
+#include "Interface/BuffableInterface.h"
 
 AMyXR_CharacterDeffenceBuff::AMyXR_CharacterDeffenceBuff()
 {
@@ -93,6 +94,13 @@ void AMyXR_CharacterDeffenceBuff::DissolveCallBackReverse(float percent)
     if (RingMeshComponent3->GetStaticMesh() != nullptr) RingMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
 }
 
+void AMyXR_CharacterDeffenceBuff::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter)
+{
+    Super::SetPalletteCharacterOnBoard(isOnBoard, beneathBuffableCharacter);
+
+    if (isOnBoard) BeneathBuffableCharacter = beneathBuffableCharacter;
+}
+
 void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
 {
     Super::OnBoardCalledFunction(isOnBoard);
@@ -111,6 +119,7 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard)
 void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
 {
     Death();
+    IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter);
 }
 
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)

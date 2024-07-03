@@ -209,4 +209,43 @@ void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
 
 }
 
+void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType buffType)
+{
+    if (ECharacterType::ECT_DefenceH == buffType)
+    {
+        return;
+    }
+
+    switch (buffType)
+    {
+    case ECharacterType::ECT_DefenceF1 :
+        DamageUpgradeCount++;
+        break;
+
+    case ECharacterType::ECT_DefenceF2:
+        RangeUpgradeCount++;
+        break;
+    }
+
+    ECharacterType* upgradeTurretTypePtr = TurretTypeMap.Find(GetUpgradeLevel_Implementation());
+    if (upgradeTurretTypePtr)
+    {
+        ECharacterType upgradeTurretType = *upgradeTurretTypePtr;
+    }
+    
+}
+
+int32 AMyXR_CharacterDeffenceBattle::GetUpgradeLevel_Implementation()
+{
+    int32 returnValue = 0;
+    returnValue += DamageUpgradeCount * 10;
+    returnValue += RangeUpgradeCount;
+    return returnValue;
+}
+
+int32 AMyXR_CharacterDeffenceBattle::GetTotalLevel_Implementation()
+{
+    return DamageUpgradeCount + RangeUpgradeCount;
+}
+
 
