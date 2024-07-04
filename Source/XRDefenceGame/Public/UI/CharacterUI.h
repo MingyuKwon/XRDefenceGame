@@ -24,4 +24,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUtilCount(int32 count);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetDamgeUtilVisible(bool flag);
+
 };

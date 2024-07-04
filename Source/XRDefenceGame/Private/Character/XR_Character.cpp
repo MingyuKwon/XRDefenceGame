@@ -114,6 +114,8 @@ void AXR_Character::SpawnCharacterPropertyUI()
 		if (CharacterPropertyUI)
 		{
 			CharacterPropertyUI->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepWorldTransform);
+
+			SetPropertyUIVisible(false);
 		}
 
 		UpdateCharacterPropertyUI();
@@ -129,6 +131,21 @@ void AXR_Character::UpdateCharacterPropertyUI()
 		CharacterPropertyUI->SetDamageCount(CharacterProperty.Damage);
 		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
 	}
+}
+
+
+void AXR_Character::SetPropertyUIVisible(bool flag)
+{
+	if (!CharacterPropertyUI) return;
+
+
+	if (ObjectType == EObjectType::EOT_Deffence)
+	{
+		CharacterPropertyUI->SetDamgeUtilVisible(true);
+		return;
+	}
+
+	CharacterPropertyUI->SetDamgeUtilVisible(flag);
 }
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
@@ -247,8 +264,7 @@ void AXR_Character::Tick(float DeltaTime)
 
 	if (bOnBoard)
 	{
-		AddMovementInput(GetActorForwardVector(), 0.001f);
-
+		//AddMovementInput(GetActorForwardVector(), 0.001f);
 	}
 
 }
@@ -259,6 +275,8 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	if (bHightLighting) return;
 
 	bHightLighting = true;
+
+	SetPropertyUIVisible(true);
 
 	HighLightMesh(true);
 		
@@ -286,14 +304,14 @@ void AXR_Character::HighLightMesh(bool bHighlight)
 
 }
 
-
-
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
 	if (!GetCharacterMesh()) return;
 	if (!bHightLighting) return;
 
 	bHightLighting = false;
+
+	SetPropertyUIVisible(false);
 
 	HighLightMesh(false);
 
@@ -414,6 +432,7 @@ void AXR_Character::DestroyMyself()
 		CharacterPropertyUI = nullptr;
 	}
 }
+
 
 
 void AXR_Character::DeathTimerFunction()

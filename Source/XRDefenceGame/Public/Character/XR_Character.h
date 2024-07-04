@@ -43,15 +43,15 @@ public:
 	float MaxHealth = 20;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
-	float Damage = 0;
+	float Damage = 3;
 
 	//Only Uses Attacker
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
-	float Util_Fast = 0;
+	float Util_Fast = 2;
 	
 	// Use Both
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
-	float Util_Range = 0;
+	float Util_Range = 4;
 
 };
 
@@ -90,6 +90,9 @@ public:
 protected:
 
 	virtual void DestroyMyself();
+
+	virtual void SetPropertyUIVisible(bool flag);
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	TMap<int32, ECharacterType> TurretTypeMap;
