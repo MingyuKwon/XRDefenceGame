@@ -61,6 +61,7 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		StartDissolveTimeline(true);
 
 		SpawnCharacterPropertyUI();
+		FloorRingMesh->bCharacterOnBoard = true;
 
 		if (isSpawnedByHand)
 		{
@@ -352,12 +353,10 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
 		}
 
-		FloorRingMesh->bTickReject = true;
-		FloorRingMesh->SetVisibility(true);
-
 	}
 
 	OnBoardCalledFunction(isOnBoard, true);
+
 }
 
 void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)

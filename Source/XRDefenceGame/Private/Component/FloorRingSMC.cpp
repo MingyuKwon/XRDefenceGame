@@ -123,7 +123,15 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	FVector TraceEndLocation = ActorLocation - FVector(0.f, 0.f, traceLength);
 		
 	FHitResult FloortraceResult;
-	GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, beneathTraceChannel);
+
+	if (bCharacterOnBoard)
+	{
+		GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, ECC_Board);
+	}
+	else
+	{
+		GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, beneathTraceChannel);
+	}
 
 	FHitResult PallettetraceResult;
 	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, ActorLocation, TraceEndLocation, ECC_Pallette);
