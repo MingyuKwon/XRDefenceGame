@@ -96,9 +96,10 @@ void AMyXR_CharacterDeffenceBuff::DissolveCallBackReverse(float percent)
 
 void AMyXR_CharacterDeffenceBuff::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter)
 {
+    if (isOnBoard) BeneathBuffableCharacter = beneathBuffableCharacter;
+
     Super::SetPalletteCharacterOnBoard(isOnBoard, beneathBuffableCharacter);
 
-    if (isOnBoard) BeneathBuffableCharacter = beneathBuffableCharacter;
 }
 
 void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
@@ -112,6 +113,10 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard, bool isS
     if (isOnBoard)
     {
         GetWorld()->GetTimerManager().SetTimer(LifeTimeTimerHandle, this, &AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction, 2.0f, false);
+        if (CharacterType == ECharacterType::ECT_DefenceH)
+        {
+            GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &AMyXR_CharacterDeffenceBuff::OnHealTimerTick, 0.5f, true, 0.0f);
+        }
     }
 
 }
@@ -120,6 +125,14 @@ void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
 {
     Death();
     IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter, CharacterType);
+}
+
+void AMyXR_CharacterDeffenceBuff::OnHealTimerTick()
+{
+    if (BeneathBuffableCharacter)
+    {
+        BeneathBuffableCharacter->Heal(healAmount);
+    }
 }
 
 void AMyXR_CharacterDeffenceBuff::UpdateComponentPosition(USceneComponent* Component, FVector InitialLocation, bool& bMovingUp, float DeltaTime, float MoveSpeed)

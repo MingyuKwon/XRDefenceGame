@@ -156,7 +156,6 @@ void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheri
 	FString ActorName = GetName();
 	int32 HashValue = FCrc::StrCrc32(*ActorName);
 
-	// DebugMessage를 수정하여 currentHealth와 MaxHealth를 출력
 	FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s, Current Health: %.2f, Max Health: %.2f"),
 		*ActorName, CharacterProperty.currentHealth, CharacterProperty.MaxHealth);
 
@@ -467,5 +466,10 @@ bool AXR_Character::IsOnBoard_Implementation()
 	return bOnBoard;
 }
 
-
+void AXR_Character::Heal(float healAmount)
+{
+	CharacterProperty.currentHealth += healAmount;
+	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+	UpdateCharacterPropertyUI();
+}
 

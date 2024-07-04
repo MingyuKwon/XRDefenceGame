@@ -86,6 +86,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheckNeutralToConvert(EObjectType objectType);
 
+	virtual void Heal(float healAmount);
+
 
 protected:
 
