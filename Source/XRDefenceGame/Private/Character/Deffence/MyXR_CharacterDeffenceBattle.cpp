@@ -11,6 +11,7 @@
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "UI/CharacterUI.h"
 
 #include "Mode/XRGamePlayMode.h"
 
@@ -229,23 +230,13 @@ void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType bu
         break;
     }
 
-    FString ActorName = GetName();
-    int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-    FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, DamageUpgradeCount : %d, RangeUpgradeCount: %d"),
-        *ActorName,
-        DamageUpgradeCount,
-        RangeUpgradeCount);
-
-    GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-
-
-
     ECharacterType* upgradeTurretTypePtr = TurretTypeMap.Find(GetUpgradeLevel_Implementation());
     if (upgradeTurretTypePtr)
     {
         UpgradeTurret(*upgradeTurretTypePtr);
     }
+
+    UpdateCharacterPropertyUI();
     
 }
 
@@ -255,7 +246,7 @@ void AMyXR_CharacterDeffenceBattle::UpgradeTurret(ECharacterType characterType)
     PackCharacterValueTransmitForm(outForm);
 
     XRGamePlayMode->SpawnActorForUpgrade(characterType, GetActorLocation(), GetActorRotation(), outForm);
-    Destroy();
+    DestroyMyself();
 }
 
 int32 AMyXR_CharacterDeffenceBattle::GetUpgradeLevel_Implementation()
@@ -274,8 +265,12 @@ int32 AMyXR_CharacterDeffenceBattle::GetTotalLevel_Implementation()
 void AMyXR_CharacterDeffenceBattle::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
     Super::NonPalletteSpawnInitalize(inheritform);
+
     DamageUpgradeCount = inheritform.DamageUpgradeCount;
     RangeUpgradeCount = inheritform.RangeUpgradeCount;
+
+    UpdateCharacterPropertyUI();
+
 }
 
 void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
@@ -283,6 +278,17 @@ void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterVal
     Super::PackCharacterValueTransmitForm(outForm);
     outForm.DamageUpgradeCount = DamageUpgradeCount;
     outForm.RangeUpgradeCount = RangeUpgradeCount;
+}
+
+void AMyXR_CharacterDeffenceBattle::UpdateCharacterPropertyUI()
+{
+    Super::UpdateCharacterPropertyUI();
+
+    if (CharacterPropertyUI)
+    {
+        CharacterPropertyUI->SetDamageCount(DamageUpgradeCount);
+        CharacterPropertyUI->SetUtilCount(RangeUpgradeCount);
+    }
 }
 
 

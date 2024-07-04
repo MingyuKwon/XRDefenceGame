@@ -37,6 +37,8 @@ public:
 	void SetMaterialCall();
 
 	bool bTickReject = false;
+	bool bCharacterOnBoard = false;
+
 
 protected:
 	virtual void BeginPlay() override;

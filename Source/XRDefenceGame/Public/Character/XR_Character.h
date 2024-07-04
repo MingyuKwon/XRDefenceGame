@@ -19,11 +19,40 @@ struct FCharacterValueTransmitForm
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Property Parameter")
+	float currentHealth = 0;
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
 	int32 DamageUpgradeCount = 0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
 	int32 RangeUpgradeCount = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FCharacterStatus
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float currentHealth = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float MaxHealth = 20;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Damage = 3;
+
+	//Only Uses Attacker
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Util_Fast = 2;
+	
+	// Use Both
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Util_Range = 4;
+
 };
 
 UCLASS()
@@ -59,8 +88,26 @@ public:
 
 
 protected:
+
+	virtual void DestroyMyself();
+
+	virtual void SetPropertyUIVisible(bool flag);
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	TMap<int32, ECharacterType> TurretTypeMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprint parameter")
+	TSubclassOf<class ACharacterUI> characterProperyUIClass;
+
+	ACharacterUI* CharacterPropertyUI = nullptr;
+
+	void SpawnCharacterPropertyUI();
+
+	virtual void UpdateCharacterPropertyUI();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	FCharacterStatus CharacterProperty;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;

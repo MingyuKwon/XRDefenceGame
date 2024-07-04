@@ -9,7 +9,7 @@
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "Interface/BuffableInterface.h"
-
+#include "UI/CharacterUI.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Mode/XRGamePlayMode.h"
@@ -52,11 +52,16 @@ AXR_Character::AXR_Character()
 }
 
 
+
+
 void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 {
 	if (bOnBoard)
 	{
 		StartDissolveTimeline(true);
+
+		SpawnCharacterPropertyUI();
+		FloorRingMesh->bCharacterOnBoard = true;
 
 		if (isSpawnedByHand)
 		{
@@ -72,6 +77,8 @@ void AXR_Character::BeginPlay()
 
 	InitializeCharacter();
 }
+
+
 
 void AXR_Character::PostInitializeComponents()
 {
@@ -92,9 +99,70 @@ void AXR_Character::InitializeCharacter()
 
 }
 
+void AXR_Character::SpawnCharacterPropertyUI()
+{
+	if (characterProperyUIClass)
+	{
+		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 6);
+		FRotator SpawnRotation = GetActorRotation();
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		CharacterPropertyUI = GetWorld()->SpawnActor<ACharacterUI>(characterProperyUIClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (CharacterPropertyUI)
+		{
+			CharacterPropertyUI->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepWorldTransform);
+
+			SetPropertyUIVisible(false);
+		}
+
+		UpdateCharacterPropertyUI();
+
+	}
+}
+
+void AXR_Character::UpdateCharacterPropertyUI()
+{
+	if (CharacterPropertyUI)
+	{
+		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
+		CharacterPropertyUI->SetDamageCount(CharacterProperty.Damage);
+		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
+	}
+}
+
+
+void AXR_Character::SetPropertyUIVisible(bool flag)
+{
+	if (!CharacterPropertyUI) return;
+
+
+	if (ObjectType == EObjectType::EOT_Deffence)
+	{
+		CharacterPropertyUI->SetDamgeUtilVisible(true);
+		return;
+	}
+
+	CharacterPropertyUI->SetDamgeUtilVisible(flag);
+}
+
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
 	bOnBoard = true;
+	CharacterProperty.currentHealth = inheritform.currentHealth;
+
+	FString ActorName = GetName();
+	int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+	// DebugMessage를 수정하여 currentHealth와 MaxHealth를 출력
+	FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s, Current Health: %.2f, Max Health: %.2f"),
+		*ActorName, CharacterProperty.currentHealth, CharacterProperty.MaxHealth);
+
+	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+
+
 	OnBoardCalledFunction(true, false);
 }
 
@@ -122,6 +190,7 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 
 	SetRingProperty();
 }
+
 
 void AXR_Character::SetRingProperty()
 {
@@ -193,6 +262,11 @@ void AXR_Character::Tick(float DeltaTime)
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
 
+	if (bOnBoard)
+	{
+		//AddMovementInput(GetActorForwardVector(), 0.001f);
+	}
+
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -201,6 +275,8 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	if (bHightLighting) return;
 
 	bHightLighting = true;
+
+	SetPropertyUIVisible(true);
 
 	HighLightMesh(true);
 		
@@ -228,14 +304,14 @@ void AXR_Character::HighLightMesh(bool bHighlight)
 
 }
 
-
-
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
 	if (!GetCharacterMesh()) return;
 	if (!bHightLighting) return;
 
 	bHightLighting = false;
+
+	SetPropertyUIVisible(false);
 
 	HighLightMesh(false);
 
@@ -304,14 +380,16 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
 			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
 		}
+
 	}
 
 	OnBoardCalledFunction(isOnBoard, true);
+
 }
 
 void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
 {
-
+	outForm.currentHealth = CharacterProperty.currentHealth;
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)
@@ -343,9 +421,23 @@ void AXR_Character::Death()
 	StartDissolveTimeline(false);
 }
 
-void AXR_Character::DeathTimerFunction()
+void AXR_Character::DestroyMyself()
 {
 	Destroy();
+
+	if (CharacterPropertyUI)
+	{
+
+		CharacterPropertyUI->Destroy();
+		CharacterPropertyUI = nullptr;
+	}
+}
+
+
+
+void AXR_Character::DeathTimerFunction()
+{
+	DestroyMyself();
 }
 
 void AXR_Character::DissolveCallBack(float percent)
