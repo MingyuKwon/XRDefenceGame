@@ -90,6 +90,8 @@ public:
 
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	bool DefaultPlaceInBoard = false;
 
 	virtual void DestroyMyself();
 
@@ -117,8 +119,6 @@ protected:
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
 
 	virtual void BeginPlay() override;
-
-	virtual void PostInitializeComponents() override;
 
 	virtual void InitializeCharacter();
 

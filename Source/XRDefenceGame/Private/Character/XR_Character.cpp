@@ -76,15 +76,14 @@ void AXR_Character::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeCharacter();
+
+	if (DefaultPlaceInBoard)
+	{
+		bOnBoard = true;
+		OnBoardCalledFunction(true, false);
+	}
 }
 
-
-
-void AXR_Character::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-}
 
 void AXR_Character::InitializeCharacter()
 {
@@ -152,16 +151,15 @@ void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheri
 {
 	bOnBoard = true;
 	CharacterProperty.currentHealth = inheritform.currentHealth;
-
-	FString ActorName = GetName();
+	/*
+		FString ActorName = GetName();
 	int32 HashValue = FCrc::StrCrc32(*ActorName);
 
 	FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s, Current Health: %.2f, Max Health: %.2f"),
 		*ActorName, CharacterProperty.currentHealth, CharacterProperty.MaxHealth);
 
 	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-
-
+	*/
 	OnBoardCalledFunction(true, false);
 }
 
