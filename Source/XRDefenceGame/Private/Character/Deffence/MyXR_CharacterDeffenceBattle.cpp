@@ -246,7 +246,7 @@ void AMyXR_CharacterDeffenceBattle::UpgradeTurret(ECharacterType characterType)
     PackCharacterValueTransmitForm(outForm);
 
     XRGamePlayMode->SpawnActorForUpgrade(characterType, GetActorLocation(), GetActorRotation(), outForm);
-    Destroy();
+    DestroyMyself();
 }
 
 int32 AMyXR_CharacterDeffenceBattle::GetUpgradeLevel_Implementation()

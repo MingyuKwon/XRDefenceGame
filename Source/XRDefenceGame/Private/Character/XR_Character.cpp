@@ -77,28 +77,7 @@ void AXR_Character::BeginPlay()
 	InitializeCharacter();
 }
 
-void AXR_Character::BeginDestroy()
-{
-	Super::BeginDestroy();
 
-	FString ActorName = GetName();
-	int32 HashValue = FCrc::StrCrc32(*ActorName);
-	FVector SpawnedActorScale = CharacterPropertyUI ? CharacterPropertyUI->GetActorScale3D() : FVector::ZeroVector;
-
-	FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, SpawnCharacterPropertyUI, Death "),
-		*ActorName);
-
-	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-
-
-	if (CharacterPropertyUI)
-	{
-
-
-		CharacterPropertyUI->Destroy();
-		CharacterPropertyUI = nullptr;
-	}
-}
 
 void AXR_Character::PostInitializeComponents()
 {
@@ -183,6 +162,7 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 
 	SetRingProperty();
 }
+
 
 void AXR_Character::SetRingProperty()
 {
@@ -412,17 +392,35 @@ void AXR_Character::Death()
 	bOnBoard = false;
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
 	StartDissolveTimeline(false);
+}
+
+void AXR_Character::DestroyMyself()
+{
+	Destroy();
 
 	if (CharacterPropertyUI)
 	{
+
+		FString ActorName = GetName();
+		int32 HashValue = FCrc::StrCrc32(*ActorName);
+		FVector SpawnedActorScale = CharacterPropertyUI ? CharacterPropertyUI->GetActorScale3D() : FVector::ZeroVector;
+
+		FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, SpawnCharacterPropertyUI, Death "),
+			*ActorName);
+
+		GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+
+
+
 		CharacterPropertyUI->Destroy();
 		CharacterPropertyUI = nullptr;
 	}
 }
 
+
 void AXR_Character::DeathTimerFunction()
 {
-	Destroy();
+	DestroyMyself();
 }
 
 void AXR_Character::DissolveCallBack(float percent)

@@ -88,6 +88,9 @@ public:
 
 
 protected:
+
+	virtual void DestroyMyself();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	TMap<int32, ECharacterType> TurretTypeMap;
 
@@ -109,8 +112,6 @@ protected:
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
 
 	virtual void BeginPlay() override;
-
-	virtual void BeginDestroy() override;
 
 	virtual void PostInitializeComponents() override;
 
