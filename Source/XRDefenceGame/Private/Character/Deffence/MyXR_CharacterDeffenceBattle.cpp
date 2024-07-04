@@ -235,6 +235,8 @@ void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType bu
     {
         UpgradeTurret(*upgradeTurretTypePtr);
     }
+
+    UpdateCharacterPropertyUI();
     
 }
 
@@ -263,8 +265,12 @@ int32 AMyXR_CharacterDeffenceBattle::GetTotalLevel_Implementation()
 void AMyXR_CharacterDeffenceBattle::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
     Super::NonPalletteSpawnInitalize(inheritform);
+
     DamageUpgradeCount = inheritform.DamageUpgradeCount;
     RangeUpgradeCount = inheritform.RangeUpgradeCount;
+
+    UpdateCharacterPropertyUI();
+
 }
 
 void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)

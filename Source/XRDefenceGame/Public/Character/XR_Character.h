@@ -110,6 +110,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void BeginDestroy() override;
+
 	virtual void PostInitializeComponents() override;
 
 	virtual void InitializeCharacter();

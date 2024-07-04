@@ -77,6 +77,29 @@ void AXR_Character::BeginPlay()
 	InitializeCharacter();
 }
 
+void AXR_Character::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	FString ActorName = GetName();
+	int32 HashValue = FCrc::StrCrc32(*ActorName);
+	FVector SpawnedActorScale = CharacterPropertyUI ? CharacterPropertyUI->GetActorScale3D() : FVector::ZeroVector;
+
+	FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, SpawnCharacterPropertyUI, Death "),
+		*ActorName);
+
+	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+
+
+	if (CharacterPropertyUI)
+	{
+
+
+		CharacterPropertyUI->Destroy();
+		CharacterPropertyUI = nullptr;
+	}
+}
+
 void AXR_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -100,7 +123,7 @@ void AXR_Character::SpawnCharacterPropertyUI()
 {
 	if (characterProperyUIClass)
 	{
-		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 5);
+		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 6);
 		FRotator SpawnRotation = GetActorRotation();
 
 		FActorSpawnParameters SpawnParams;
@@ -111,21 +134,10 @@ void AXR_Character::SpawnCharacterPropertyUI()
 		if (CharacterPropertyUI)
 		{
 			CharacterPropertyUI->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepWorldTransform);
-
-			//FVector NewScale(2.0f, 2.0f, 2.0f);
-			//CharacterPropertyUI->SetActorScale3D(NewScale);
 		}
 
 		UpdateCharacterPropertyUI();
 
-		FString ActorName = GetName();
-		int32 HashValue = FCrc::StrCrc32(*ActorName);
-		FVector SpawnedActorScale = CharacterPropertyUI ? CharacterPropertyUI->GetActorScale3D() : FVector::ZeroVector;
-
-		FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, SpawnCharacterPropertyUI, Scale: %s"),
-			*ActorName, *SpawnedActorScale.ToString());
-
-		GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
 	}
 }
 
@@ -242,6 +254,12 @@ void AXR_Character::Tick(float DeltaTime)
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
 
+	if (bOnBoard)
+	{
+		AddMovementInput(GetActorForwardVector(), 0.001f);
+
+	}
+
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -353,6 +371,10 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
 			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
 		}
+
+		FloorRingMesh->bTickReject = true;
+		FloorRingMesh->SetVisibility(true);
+
 	}
 
 	OnBoardCalledFunction(isOnBoard, true);
@@ -390,6 +412,12 @@ void AXR_Character::Death()
 	bOnBoard = false;
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
 	StartDissolveTimeline(false);
+
+	if (CharacterPropertyUI)
+	{
+		CharacterPropertyUI->Destroy();
+		CharacterPropertyUI = nullptr;
+	}
 }
 
 void AXR_Character::DeathTimerFunction()
