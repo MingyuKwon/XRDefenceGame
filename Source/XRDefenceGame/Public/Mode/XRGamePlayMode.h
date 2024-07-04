@@ -9,6 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCustomEvent, bool, isGrab, EObjectType, objectType);
 
+class AXR_Character;
+
 UCLASS()
 class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 {
@@ -22,7 +24,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);
 
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+    AXR_Character* PoolSpawnActor(ECharacterType characterType);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-    class AXR_Character* PoolSpawnActor(ECharacterType characterType);
+    void SpawnActorForUpgrade(ECharacterType characterType, FVector position, FRotator rotation, FCharacterValueTransmitForm form);
+
 };

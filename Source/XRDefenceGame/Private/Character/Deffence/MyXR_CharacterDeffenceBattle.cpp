@@ -50,6 +50,8 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
     EtcMeshComponent5->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
+    GetMesh()->SetCollisionResponseToChannel(ECC_Buffable, ECollisionResponse::ECR_Block);
+
 }
 
 void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
@@ -93,24 +95,45 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
     Super::DissolveCallBack(percent);
 }
 
+void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
+{
+    Super::HighLightMesh(bHighlight);
+
+
+    if (bHighlight)
+    {
+        if (HighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, HighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+        }
+
+    }else
+    {
+        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
+        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+
+        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
+        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
+        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
+        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
+        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+    }
+}
+
+
 
 void AMyXR_CharacterDeffenceBattle::InteractableEffectStart_Implementation()
 {
     Super::InteractableEffectStart_Implementation();
 
-
-    if (HighlightMaterial)
-    {
-        GunMeshComponent->SetMaterial(0, HighlightMaterial);
-        GunMeshComponent2->SetMaterial(0, HighlightMaterial);
-
-        EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
-        EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
-    }
-
+    HighLightMesh(true);
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() * rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
@@ -140,14 +163,7 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 {
     Super::InteractableEffectEnd_Implementation();
 
-    if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
-    if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
-
-    if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
-    if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
-    if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
-    if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
-    if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+    HighLightMesh(false);
 
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() / rescaleAmount;
@@ -172,6 +188,101 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
     NewScale = EtcMeshComponent5->GetRelativeScale3D() / rescaleAmount;
     EtcMeshComponent5->SetRelativeScale3D(NewScale);
 
+}
+
+void AMyXR_CharacterDeffenceBattle::BuffableEffectStart_Implementation()
+{
+    if (bHightLighting) return;
+
+    bBufferHightLighting = true;
+
+    HighLightMesh(true);
+}
+
+void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
+{
+    bBufferHightLighting = false;
+
+    if (bHightLighting) return;
+
+    HighLightMesh(false);
+
+}
+
+void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType buffType)
+{
+    if (ECharacterType::ECT_DefenceH == buffType)
+    {
+        return;
+    }
+    if (GetTotalLevel_Implementation() == 6) return;
+
+
+    switch (buffType)
+    {
+    case ECharacterType::ECT_DefenceF1 :
+        DamageUpgradeCount++;
+        break;
+
+    case ECharacterType::ECT_DefenceF2:
+        RangeUpgradeCount++;
+        break;
+    }
+
+    FString ActorName = GetName();
+    int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+    FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, DamageUpgradeCount : %d, RangeUpgradeCount: %d"),
+        *ActorName,
+        DamageUpgradeCount,
+        RangeUpgradeCount);
+
+    GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+
+
+
+    ECharacterType* upgradeTurretTypePtr = TurretTypeMap.Find(GetUpgradeLevel_Implementation());
+    if (upgradeTurretTypePtr)
+    {
+        UpgradeTurret(*upgradeTurretTypePtr);
+    }
+    
+}
+
+void AMyXR_CharacterDeffenceBattle::UpgradeTurret(ECharacterType characterType)
+{
+    FCharacterValueTransmitForm outForm;
+    PackCharacterValueTransmitForm(outForm);
+
+    XRGamePlayMode->SpawnActorForUpgrade(characterType, GetActorLocation(), GetActorRotation(), outForm);
+    Destroy();
+}
+
+int32 AMyXR_CharacterDeffenceBattle::GetUpgradeLevel_Implementation()
+{
+    int32 returnValue = 0;
+    returnValue += DamageUpgradeCount * 10;
+    returnValue += RangeUpgradeCount;
+    return returnValue;
+}
+
+int32 AMyXR_CharacterDeffenceBattle::GetTotalLevel_Implementation()
+{
+    return DamageUpgradeCount + RangeUpgradeCount;
+}
+
+void AMyXR_CharacterDeffenceBattle::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
+{
+    Super::NonPalletteSpawnInitalize(inheritform);
+    DamageUpgradeCount = inheritform.DamageUpgradeCount;
+    RangeUpgradeCount = inheritform.RangeUpgradeCount;
+}
+
+void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
+{
+    Super::PackCharacterValueTransmitForm(outForm);
+    outForm.DamageUpgradeCount = DamageUpgradeCount;
+    outForm.RangeUpgradeCount = RangeUpgradeCount;
 }
 
 

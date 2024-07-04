@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "XRDefenceEnums.h"
 #include "FloorRingSMC.generated.h"
 
+class AXR_Character;
 /**
  * 
  */
@@ -24,22 +26,29 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ECollisionChannel> beneathTraceChannel;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ECharacterType> ownerCharacterType;
+
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeRingColorRotation(float Percent, float SpinSpeed);
 
 	UFUNCTION(BlueprintCallable)
 	void SetMaterialCall();
 
+	bool bTickReject = false;
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TObjectPtr<class AXR_Character> XRCharacter;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TObjectPtr<AXR_Character> XRCharacter;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	double traceLength = 50.f;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TObjectPtr<AXR_Character> BuffableCharacter;
 
 
 private:
@@ -47,9 +56,12 @@ private:
 
 	void SetMaterialScalarParameterValue(FName ParameterName, float ParameterValue);
 
+	void CheckBeneath(bool bBeneath, FHitResult& FloortraceResult);
+	void CheckBuffable(bool bBuffable, FHitResult& FloortraceResult);
+
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	inline TObjectPtr<AXR_Character> GetBuffableCharacter() { return BuffableCharacter; }
 
 };

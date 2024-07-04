@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "Interface/BuffableInterface.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Mode/XRGamePlayMode.h"
@@ -32,20 +34,43 @@ AXR_Character::AXR_Character()
 	FromCharacterToRing->SetVisibility(false);
 
 	CharacterMovementComponent = GetCharacterMovement();
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	TurretTypeMap.Add(30 , ECharacterType::ECT_DefenceT_Laser_1);
+	TurretTypeMap.Add(60 , ECharacterType::ECT_DefenceT_Laser_2);
+	TurretTypeMap.Add(21 , ECharacterType::ECT_DefenceT_Canon_1);
+	TurretTypeMap.Add(42 , ECharacterType::ECT_DefenceT_Canon_2);
+	TurretTypeMap.Add(12 , ECharacterType::ECT_DefenceT_Fire_1);
+	TurretTypeMap.Add(24 , ECharacterType::ECT_DefenceT_Fire_2);
+	TurretTypeMap.Add(3 , ECharacterType::ECT_DefenceT_Arrow_1);
+	TurretTypeMap.Add(6 , ECharacterType::ECT_DefenceT_Arrow_2);
 }
 
+
+void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+{
+	if (bOnBoard)
+	{
+		StartDissolveTimeline(true);
+
+		if (isSpawnedByHand)
+		{
+			OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+		}
+	}
+
+}
 
 void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitializeCharacter();
-
 }
 
 void AXR_Character::PostInitializeComponents()
@@ -66,6 +91,14 @@ void AXR_Character::InitializeCharacter()
 	SetRingProperty();
 
 }
+
+void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
+{
+	bOnBoard = true;
+	OnBoardCalledFunction(true, false);
+}
+
+
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 {
@@ -124,6 +157,18 @@ void AXR_Character::SetRingProperty()
 		break;
 	}
 
+	switch (CharacterType)
+	{
+	case ECharacterType::ECT_DefenceH :
+	case ECharacterType::ECT_DefenceF1:
+	case ECharacterType::ECT_DefenceF2:
+		FloorRingMesh->SetMaterial(0, DefaultRingMaterial);
+		FloorRingMesh->beneathTraceChannel = ECC_Buffable;
+		break;
+	}
+
+	FloorRingMesh->ownerCharacterType = CharacterType;
+
 	FloorRingMesh->SetMaterialCall();
 
 }
@@ -141,32 +186,13 @@ bool AXR_Character::GetCharacterMesh()
 	return true;
 }
 
+
 void AXR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
 
-	/*
-	
-	FString ActorName = GetName();
-	int32 HashValue = FCrc::StrCrc32(*ActorName);
-	FString MovementModeString = UEnum::GetValueAsString(CharacterMovementComponent->MovementMode);
-	FString MoveInputIgnoredString = IsMoveInputIgnored() ? TEXT("True") : TEXT("False");
-
-	FString DebugMessage = FString::Printf(TEXT("Actor: %s, Movement Mode: %s, Move Input Ignored: %s"),
-		*ActorName,
-		*MovementModeString,
-		*MoveInputIgnoredString);
-
-	GEngine->AddOnScreenDebugMessage(HashValue, 0.1f, FColor::Blue, DebugMessage);
-	
-	*/
-
-	if (bOnBoard)
-	{
-		AddMovementInput(GetActorForwardVector(), 0.001f);
-	}
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -176,17 +202,33 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	bHightLighting = true;
 
-	if (HighlightMaterial)
-	{
-		CharacterMesh->SetMaterial(0, HighlightMaterial);
-		CharacterMesh->SetMaterial(1, HighlightMaterial);
-	}
+	HighLightMesh(true);
 		
-
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 }
+
+void AXR_Character::HighLightMesh(bool bHighlight)
+{
+	if (bHighlight)
+	{
+		if (HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+		}
+	}
+	else
+	{
+		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+
+	}
+
+}
+
+
 
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
@@ -195,8 +237,7 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	bHightLighting = false;
 
-	if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-	if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+	HighLightMesh(false);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -242,29 +283,69 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard) return;
 
-	bOnBoard = FloorRingMesh->bBeneathBoard;
+	SetPalletteCharacterOnBoard(FloorRingMesh->bBeneathBoard, FloorRingMesh->GetBuffableCharacter());
 
-	if (bOnBoard)
-	{
-		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
-
-		if (DissolveCurve && TimelineComponent)
-		{
-			BindDissolveCallBack();
-			TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
-			TimelineComponent->SetLooping(false);
-			TimelineComponent->SetIgnoreTimeDilation(true);
-			TimelineComponent->SetTimelineLength(2.0f);
-			TimelineComponent->Play();
-		}
-
-	}
-	else
+	if (!bOnBoard)
 	{
 		SetInteractPosition_Implementation(PalletteBeamEndPosition);
 	}
 
 
+}
+
+void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter)
+{
+	bOnBoard = isOnBoard;
+
+	if (isOnBoard)
+	{
+		if (beneathBuffableCharacter)
+		{
+			SetInteractPosition_Implementation(beneathBuffableCharacter->GetActorLocation());
+			IBuffableInterface::Execute_BuffableEffectEnd(beneathBuffableCharacter);
+		}
+	}
+
+	OnBoardCalledFunction(isOnBoard, true);
+}
+
+void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
+{
+
+}
+
+void AXR_Character::StartDissolveTimeline(bool bNotReverse)
+{
+	if (DissolveCurve && TimelineComponent)
+	{
+		if (bNotReverse)
+		{
+			BindDissolveCallBack();
+		}
+		else
+		{
+			BindReverseDissolveCallBack();
+		}
+
+		TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
+		TimelineComponent->SetLooping(false);
+		TimelineComponent->SetIgnoreTimeDilation(true);
+		TimelineComponent->SetTimelineLength(2.0f);
+		TimelineComponent->Play();
+	}
+}
+
+void AXR_Character::Death()
+{
+	FloorRingMesh->bTickReject = true;
+	bOnBoard = false;
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+	StartDissolveTimeline(false);
+}
+
+void AXR_Character::DeathTimerFunction()
+{
+	Destroy();
 }
 
 void AXR_Character::DissolveCallBack(float percent)
@@ -273,13 +354,26 @@ void AXR_Character::DissolveCallBack(float percent)
 	FloorRingMesh->ChangeRingColorRotation(percent, 12.f);
 }
 
+void AXR_Character::DissolveCallBackReverse(float percent)
+{
+	DissolveCallBack(1- percent);
+}
+
 void AXR_Character::BindDissolveCallBack()
 {
 	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
 }
 
+void AXR_Character::BindReverseDissolveCallBack()
+{
+	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackReverse);
+}
+
+
 bool AXR_Character::IsOnBoard_Implementation()
 {
 	return bOnBoard;
 }
+
+
 

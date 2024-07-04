@@ -13,6 +13,18 @@ class UNiagaraComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
+USTRUCT(BlueprintType)
+struct FCharacterValueTransmitForm
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
+	int32 DamageUpgradeCount = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
+	int32 RangeUpgradeCount = 0;
+};
 
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
@@ -35,23 +47,36 @@ public:
 	virtual void GrabEnd_Implementation() override;
 	virtual bool IsOnBoard_Implementation() override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
+
 	// Event that invoke when character set on Board
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
-	bool bOnBoard = false;
 
 	UFUNCTION(BlueprintCallable)
 	void CheckNeutralToConvert(EObjectType objectType);
 
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	TMap<int32, ECharacterType> TurretTypeMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	bool bOnBoard = false;
+
+	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
+
 	virtual void BeginPlay() override;
 
 	virtual void PostInitializeComponents() override;
 
 	virtual void InitializeCharacter();
+
+	virtual void SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter);
+
+	virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm);
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
@@ -90,6 +115,15 @@ protected:
 
 	int32 SpawnPlaceIndex;
 
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultSkeletalMaterialFirst;
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultSkeletalMaterialSecond;
+
+	UPROPERTY()
+	USkeletalMeshComponent* CharacterMesh;
+	bool GetCharacterMesh();
+
 
 	//TimeLIne
 	UPROPERTY(VisibleAnywhere)
@@ -99,39 +133,39 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
 	UCurveFloat* DissolveCurve;
+
 	UFUNCTION()
 	virtual void DissolveCallBack(float percent);
+
+	UFUNCTION()
+	virtual void DissolveCallBackReverse(float percent);
+
 	//TimeLIne
 
 	virtual void BindDissolveCallBack();
 
+	virtual void BindReverseDissolveCallBack();
+
+
+	UFUNCTION()
+	virtual void HighLightMesh(bool bHighlight);
+
+	virtual void StartDissolveTimeline(bool bNotReverse);
+
+	virtual void Death();
+
+	virtual void DeathTimerFunction();
+
+	FTimerHandle DeathTimerHandle;
+
 
 private:
 
-	//  =================================== Pool ====================================================== 
-	bool bPool = true;
-
-	FTransform PoolPlacedTransform;
-
-	//  =================================== Pool ====================================================== 
-
 	void SetRingProperty();
-
-
-
 
 	UPROPERTY()
 	class UCharacterMovementComponent* CharacterMovementComponent;
 
-
-	UPROPERTY()
-	USkeletalMeshComponent* CharacterMesh;
-	bool GetCharacterMesh();
-
-	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultSkeletalMaterialFirst;
-	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
-	UMaterialInstance* DefaultSkeletalMaterialSecond;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
 	UMaterialInstance* OffenceRingMaterial;
@@ -143,12 +177,6 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
-
-	UFUNCTION(BlueprintCallable)
-	bool GetPool() { return bPool; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetPool(bool b) { bPool = b; }
 
 
 };

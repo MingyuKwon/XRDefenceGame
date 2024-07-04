@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Character/Deffence/XR_CharacterDeffence.h"
+#include "Interface/BuffableInterface.h"
 #include "MyXR_CharacterDeffenceBattle.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeffence
+class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeffence, public IBuffableInterface
 {
 	GENERATED_BODY()
 
@@ -20,13 +21,24 @@ public:
     virtual void InteractableEffectStart_Implementation() override;
     virtual void InteractableEffectEnd_Implementation() override;
 
+    virtual void BuffableEffectStart_Implementation() override;
+    virtual void BuffableEffectEnd_Implementation() override;
+    virtual void BuffApplied_Implementation(ECharacterType buffType) override;
+    virtual int32 GetUpgradeLevel_Implementation() override;
+    virtual int32 GetTotalLevel_Implementation() override;
+
+    virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform) override;
+
+    
+
 protected:
+    virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkeletalMeshComponent* GunMeshComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkeletalMeshComponent* GunMeshComponent2;
-
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent1;
@@ -50,6 +62,18 @@ protected:
 
     virtual void DissolveCallBack(float percent) override;
 
+    UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+    bool bBufferHightLighting = false;
+
+    virtual void HighLightMesh(bool bHighlight) override;
+
+    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    int32 DamageUpgradeCount = 0;
+
+    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    int32 RangeUpgradeCount = 0;
+
+    void UpgradeTurret(ECharacterType characterType);
 
 private:
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
@@ -72,7 +96,5 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultEtcMaterialFifth;
-
-
 
 };
