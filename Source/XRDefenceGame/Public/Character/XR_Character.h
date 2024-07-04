@@ -37,7 +37,7 @@ struct FCharacterStatus
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
-	float Health = 10;
+	float currentHealth = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float MaxHealth = 20;

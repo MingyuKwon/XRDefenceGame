@@ -125,17 +125,27 @@ void AXR_Character::UpdateCharacterPropertyUI()
 {
 	if (CharacterPropertyUI)
 	{
-		CharacterPropertyUI->SetHealthPercent(CharacterProperty.Health / CharacterProperty.MaxHealth);
+		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
 		CharacterPropertyUI->SetDamageCount(CharacterProperty.Damage);
 		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
 	}
-
 }
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
 	bOnBoard = true;
-	CharacterProperty.Health = inheritform.currentHealth;
+	CharacterProperty.currentHealth = inheritform.currentHealth;
+
+	FString ActorName = GetName();
+	int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+	// DebugMessage를 수정하여 currentHealth와 MaxHealth를 출력
+	FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s, Current Health: %.2f, Max Health: %.2f"),
+		*ActorName, CharacterProperty.currentHealth, CharacterProperty.MaxHealth);
+
+	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+
+
 	OnBoardCalledFunction(true, false);
 }
 
@@ -361,7 +371,7 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 
 void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
 {
-
+	outForm.currentHealth = CharacterProperty.currentHealth;
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)
@@ -399,17 +409,6 @@ void AXR_Character::DestroyMyself()
 
 	if (CharacterPropertyUI)
 	{
-
-		FString ActorName = GetName();
-		int32 HashValue = FCrc::StrCrc32(*ActorName);
-		FVector SpawnedActorScale = CharacterPropertyUI ? CharacterPropertyUI->GetActorScale3D() : FVector::ZeroVector;
-
-		FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, SpawnCharacterPropertyUI, Death "),
-			*ActorName);
-
-		GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-
-
 
 		CharacterPropertyUI->Destroy();
 		CharacterPropertyUI = nullptr;
