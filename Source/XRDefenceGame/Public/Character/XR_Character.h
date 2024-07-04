@@ -26,6 +26,31 @@ public:
 	int32 RangeUpgradeCount = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FCharacterStatus
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Health = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float MaxHealth = 20;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Damage = 0;
+
+	//Only Uses Attacker
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Util_Fast = 0;
+	
+	// Use Both
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Util_Range = 0;
+
+};
+
 UCLASS()
 class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractInterface
 {
@@ -61,6 +86,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	TMap<int32, ECharacterType> TurretTypeMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	FCharacterStatus CharacterProperty;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
