@@ -9,7 +9,7 @@
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "Interface/BuffableInterface.h"
-
+#include "UI/CharacterUI.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Mode/XRGamePlayMode.h"
@@ -52,11 +52,15 @@ AXR_Character::AXR_Character()
 }
 
 
+
+
 void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 {
 	if (bOnBoard)
 	{
 		StartDissolveTimeline(true);
+
+		SpawnCharacterPropertyUI();
 
 		if (isSpawnedByHand)
 		{
@@ -92,9 +96,54 @@ void AXR_Character::InitializeCharacter()
 
 }
 
+void AXR_Character::SpawnCharacterPropertyUI()
+{
+	if (characterProperyUIClass)
+	{
+		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 5);
+		FRotator SpawnRotation = GetActorRotation();
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		CharacterPropertyUI = GetWorld()->SpawnActor<ACharacterUI>(characterProperyUIClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (CharacterPropertyUI)
+		{
+			CharacterPropertyUI->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepWorldTransform);
+
+			//FVector NewScale(2.0f, 2.0f, 2.0f);
+			//CharacterPropertyUI->SetActorScale3D(NewScale);
+		}
+
+		UpdateCharacterPropertyUI();
+
+		FString ActorName = GetName();
+		int32 HashValue = FCrc::StrCrc32(*ActorName);
+		FVector SpawnedActorScale = CharacterPropertyUI ? CharacterPropertyUI->GetActorScale3D() : FVector::ZeroVector;
+
+		FString DebugMessage = FString::Printf(TEXT("\n                                                                                   Actor: %s, SpawnCharacterPropertyUI, Scale: %s"),
+			*ActorName, *SpawnedActorScale.ToString());
+
+		GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+	}
+}
+
+void AXR_Character::UpdateCharacterPropertyUI()
+{
+	if (CharacterPropertyUI)
+	{
+		CharacterPropertyUI->SetHealthPercent(CharacterProperty.Health / CharacterProperty.MaxHealth);
+		CharacterPropertyUI->SetDamageCount(CharacterProperty.Damage);
+		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
+	}
+
+}
+
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
 	bOnBoard = true;
+	CharacterProperty.Health = inheritform.currentHealth;
 	OnBoardCalledFunction(true, false);
 }
 

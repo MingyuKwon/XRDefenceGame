@@ -34,6 +34,9 @@ public:
 protected:
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
+    virtual void UpdateCharacterPropertyUI() override;
+
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USkeletalMeshComponent* GunMeshComponent;
 
