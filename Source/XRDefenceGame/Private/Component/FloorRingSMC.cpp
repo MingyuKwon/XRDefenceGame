@@ -74,13 +74,15 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 	AXR_Character* NewBuffableCharacter = Cast<AXR_Character>(FloortraceResult.GetActor());
 
 	bool isMaxLevel = false;
+	bool isHeal = ownerCharacterType == ECharacterType::ECT_DefenceH;
 
 	if (NewBuffableCharacter)
 	{
 		isMaxLevel = IBuffableInterface::Execute_GetTotalLevel(NewBuffableCharacter) >= 6;
 	}
 
-	if (bBuffable && !isMaxLevel)
+
+	if (bBuffable && (!isMaxLevel || isHeal))
 	{
 		if (NewBuffableCharacter != BuffableCharacter)
 		{
@@ -101,7 +103,7 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 		}
 		BuffableCharacter = nullptr;
 
-		if (isMaxLevel)
+		if (isMaxLevel && ownerCharacterType != ECharacterType::ECT_DefenceH)
 		{
 			bBeneathBoard = false;
 		}

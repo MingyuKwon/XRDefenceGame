@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "XRDefenceEnums.h"
 #include "FloorRingSMC.generated.h"
 
 class AXR_Character;
@@ -24,6 +25,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ECollisionChannel> beneathTraceChannel;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TEnumAsByte<ECharacterType> ownerCharacterType;
+
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeRingColorRotation(float Percent, float SpinSpeed);

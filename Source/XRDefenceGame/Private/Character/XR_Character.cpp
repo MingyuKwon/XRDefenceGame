@@ -167,6 +167,8 @@ void AXR_Character::SetRingProperty()
 		break;
 	}
 
+	FloorRingMesh->ownerCharacterType = CharacterType;
+
 	FloorRingMesh->SetMaterialCall();
 
 }
