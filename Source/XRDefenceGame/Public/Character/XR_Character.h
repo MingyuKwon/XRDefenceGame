@@ -53,6 +53,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float Util_Range = 4;
 
+	//Only Uses Defender
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float ObjectAccessRadius = 1;
+
 };
 
 UCLASS()
@@ -260,4 +264,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetAttackRange() { return CharacterProperty.Util_Range; }
 
+	UFUNCTION(BlueprintCallable)
+	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
+	
 };
