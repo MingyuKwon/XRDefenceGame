@@ -11,8 +11,11 @@
 #include "Interface/BuffableInterface.h"
 #include "UI/CharacterUI.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "AI/XRAIController.h"
 #include "Mode/XRGamePlayMode.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 
 AXR_Character::AXR_Character()
 {
@@ -79,8 +82,35 @@ void AXR_Character::BeginPlay()
 
 	if (DefaultPlaceInBoard)
 	{
-		bOnBoard = true;
-		OnBoardCalledFunction(true, false);
+		SetOnBoardAuto();
+	}
+}
+
+void AXR_Character::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (BehaviorTree && NewController)
+	{
+		XRAIController = Cast<AXRAIController>(NewController);
+		if (XRAIController)
+		{
+			
+			XRAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+			XRAIController->RunBehaviorTree(BehaviorTree);
+
+			/*
+			FString ActorName = GetName();
+			int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+			FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s"),
+			*ActorName);
+
+			GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+			*/
+
+
+		}
 	}
 }
 
@@ -95,6 +125,20 @@ void AXR_Character::InitializeCharacter()
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
 	SetRingProperty();
+
+}
+
+void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
+{
+	CharacterProperty.currentHealth = inheritform.currentHealth;
+
+	SetOnBoardAuto();
+}
+
+void AXR_Character::SetOnBoardAuto()
+{
+	bOnBoard = true;
+	OnBoardCalledFunction(true, false);
 
 }
 
@@ -147,21 +191,7 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 	CharacterPropertyUI->SetDamgeUtilVisible(flag);
 }
 
-void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
-{
-	bOnBoard = true;
-	CharacterProperty.currentHealth = inheritform.currentHealth;
-	/*
-		FString ActorName = GetName();
-	int32 HashValue = FCrc::StrCrc32(*ActorName);
 
-	FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s, Current Health: %.2f, Max Health: %.2f"),
-		*ActorName, CharacterProperty.currentHealth, CharacterProperty.MaxHealth);
-
-	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-	*/
-	OnBoardCalledFunction(true, false);
-}
 
 
 
@@ -429,7 +459,6 @@ void AXR_Character::DestroyMyself()
 		CharacterPropertyUI = nullptr;
 	}
 }
-
 
 
 void AXR_Character::DeathTimerFunction()

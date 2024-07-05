@@ -90,10 +90,20 @@ public:
 
 
 protected:
+
+	UPROPERTY()
+	class AXRAIController* XRAIController;
+
+	UPROPERTY(EditAnywhere, Category = "AI Parameter")
+	class UBehaviorTree* BehaviorTree = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool DefaultPlaceInBoard = false;
 
 	virtual void DestroyMyself();
+
+	virtual void SetOnBoardAuto();
+
 
 	virtual void SetPropertyUIVisible(bool flag);
 
@@ -119,6 +129,9 @@ protected:
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
 
 	virtual void BeginPlay() override;
+
+	virtual void PossessedBy(AController* NewController) override;
+
 
 	virtual void InitializeCharacter();
 

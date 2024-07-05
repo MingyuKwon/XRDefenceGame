@@ -47,7 +47,6 @@ void UFloorRingSMC::SetMaterialScalarParameterValue(FName ParameterName, float P
 {
 	if (DynamicMaterialInstance)
 	{
-		UE_LOG(LogTemp, Display, TEXT("%f"), ParameterValue);
 		DynamicMaterialInstance->SetScalarParameterValue(ParameterName, ParameterValue);
 	}
 }
