@@ -257,4 +257,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsBehaviorAvailable() { return bBehaviorAvailable; }
 
+	UFUNCTION(BlueprintCallable)
+	float GetAttackRange() { return CharacterProperty.Util_Range; }
+
 };
