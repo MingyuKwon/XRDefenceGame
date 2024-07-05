@@ -63,6 +63,8 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 	{
 		StartDissolveTimeline(true);
 
+		GetWorld()->GetTimerManager().SetTimer(BehaviorAvailableTimerHandle, this, &AXR_Character::BehaviorAvailableTimerFunction, 2.0f, false);
+
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
@@ -125,6 +127,8 @@ void AXR_Character::InitializeCharacter()
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
 	SetRingProperty();
+
+	CharacterMovementComponent->MaxWalkSpeed = 3.f;
 
 }
 
@@ -464,6 +468,11 @@ void AXR_Character::DestroyMyself()
 void AXR_Character::DeathTimerFunction()
 {
 	DestroyMyself();
+}
+
+void AXR_Character::BehaviorAvailableTimerFunction()
+{
+	bBehaviorAvailable = true;
 }
 
 void AXR_Character::DissolveCallBack(float percent)

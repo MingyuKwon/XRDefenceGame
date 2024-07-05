@@ -216,10 +216,18 @@ protected:
 
 	virtual void Death();
 
+	UFUNCTION()
 	virtual void DeathTimerFunction();
+
+	UFUNCTION()
+	virtual void BehaviorAvailableTimerFunction();
+
 
 	FTimerHandle DeathTimerHandle;
 
+	FTimerHandle BehaviorAvailableTimerHandle;
+
+	bool bBehaviorAvailable = false;
 
 private:
 
@@ -245,5 +253,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ECharacterType GetCharacterType() { return CharacterType; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsBehaviorAvailable() { return bBehaviorAvailable; }
 
 };
