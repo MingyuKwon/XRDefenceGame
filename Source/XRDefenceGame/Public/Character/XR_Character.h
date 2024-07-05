@@ -240,5 +240,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
 
+	UFUNCTION(BlueprintCallable)
+	EObjectType GetObjectType() { return ObjectType; }
+
+	UFUNCTION(BlueprintCallable)
+	ECharacterType GetCharacterType() { return CharacterType; }
 
 };
