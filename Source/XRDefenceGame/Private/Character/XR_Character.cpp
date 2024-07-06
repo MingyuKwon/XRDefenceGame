@@ -115,8 +115,10 @@ void AXR_Character::InitializeCharacter()
 	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
-
-	XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
+	}
 
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 4.f;
