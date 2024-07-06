@@ -92,8 +92,27 @@ public:
 
 	virtual void Heal(float healAmount);
 
+	UFUNCTION(BlueprintCallable)
+	void CharacterActionCall();
+
+	UFUNCTION(BlueprintCallable)
+	void CharacterActionEnd();
+
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
+
+	UFUNCTION(BlueprintCallable)
+	void SetAnimState(EAnimationState state);
+
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionStart();
+
+	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+	class UAnimMontage* CharacterActionMontage = nullptr;
 
 	UPROPERTY()
 	class AXRAIController* XRAIController;
@@ -266,5 +285,5 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
-	
+
 };

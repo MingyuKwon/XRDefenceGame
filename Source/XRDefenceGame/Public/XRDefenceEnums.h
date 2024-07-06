@@ -27,6 +27,7 @@ enum class EObjectType : uint8
     EOT_None
 };
 
+UENUM(BlueprintType)
 enum class EAnimationState : uint8
 {
     EAS_IdleAndWalk,

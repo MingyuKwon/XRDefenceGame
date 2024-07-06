@@ -15,6 +15,8 @@
 #include "Mode/XRGamePlayMode.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Animation/AnimMontage.h"
+
 
 
 AXR_Character::AXR_Character()
@@ -100,18 +102,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 			
 			XRAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 			XRAIController->RunBehaviorTree(BehaviorTree);
-
-			/*
-			FString ActorName = GetName();
-			int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-			FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s"),
-			*ActorName);
-
-			GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-			*/
-
-
 		}
 	}
 }
@@ -128,7 +118,7 @@ void AXR_Character::InitializeCharacter()
 
 	SetRingProperty();
 
-	CharacterMovementComponent->MaxWalkSpeed = 3.f;
+	CharacterMovementComponent->MaxWalkSpeed = 4.f;
 
 }
 
@@ -507,5 +497,34 @@ void AXR_Character::Heal(float healAmount)
 	CharacterProperty.currentHealth += healAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
 	UpdateCharacterPropertyUI();
+}
+
+void AXR_Character::CharacterActionCall()
+{
+
+	if (AnimState <= EAnimationState::EAS_IdleAndWalk)
+	{
+		CharacterActionStart();
+	}
+}
+
+void AXR_Character::CharacterActionEnd()
+{
+	SetAnimState(EAnimationState::EAS_IdleAndWalk);
+}
+
+void AXR_Character::SetAnimState(EAnimationState state)
+{
+	AnimState = state; 
+}
+
+void AXR_Character::CharacterActionStart()
+{
+
+	if (CharacterActionMontage && GetMesh()->GetAnimInstance())
+	{
+		SetAnimState(EAnimationState::EAS_Action);
+		GetMesh()->GetAnimInstance()->Montage_Play(CharacterActionMontage);
+	}
 }
 

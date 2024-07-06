@@ -14,4 +14,7 @@ class XRDEFENCEGAME_API AMyXR_CharacterOffenceBattle : public AXR_CharacterOffen
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void CharacterActionStart() override;
+
 };
