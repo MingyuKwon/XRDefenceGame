@@ -106,6 +106,9 @@ protected:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION()
+	virtual void TargetDieCallBack(AXR_Character* DieTarget);
+
 	UPROPERTY()
 	AXR_Character* TargetCharacter = nullptr;
 
@@ -295,7 +298,23 @@ public:
 	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
 
 	UFUNCTION(BlueprintCallable)
-	AXR_Character* GetTargetCharacter() { return TargetCharacter; }
+	AXR_Character* GetTargetCharacter() { 
+		
+		FString ActorName = GetName();
+		int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+		FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
+
+		FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s"),
+			*ActorName, *TargetCharacterName);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(HashValue, 0.1f, FColor::Red, DebugMessage);
+		}
+		
+		
+		return TargetCharacter; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetTargetCharacter(AXR_Character* target) { TargetCharacter = target; }

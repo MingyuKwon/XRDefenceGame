@@ -7,9 +7,11 @@
 #include "XRDefenceEnums.h"
 #include "XRGamePlayMode.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCustomEvent, bool, isGrab, EObjectType, objectType);
-
 class AXR_Character;
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCustomEvent, bool, isGrab, EObjectType, objectType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChrarcterDieEvent, AXR_Character*, DieCharacter);
 
 UCLASS()
 class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
@@ -20,6 +22,9 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnCustomEvent OnObjectGrabEvent;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnChrarcterDieEvent OnChrarcterDieEvent;
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);

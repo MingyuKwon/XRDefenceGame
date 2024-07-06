@@ -116,10 +116,11 @@ void AXR_Character::InitializeCharacter()
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
+	XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
+
 	SetRingProperty();
-
 	CharacterMovementComponent->MaxWalkSpeed = 4.f;
-
+	
 }
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
@@ -282,12 +283,6 @@ void AXR_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
-
-	if (bOnBoard)
-	{
-		//AddMovementInput(GetActorForwardVector(), 0.001f);
-	}
-
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -441,6 +436,8 @@ void AXR_Character::Death()
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
 	StartDissolveTimeline(false);
 
+
+	XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
 	///         여기에 죽는 애니메이션 출력
 	SetAnimState(EAnimationState::EAS_Death);
 }
@@ -538,6 +535,41 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	}
 
 	return DamageAmount;
+}
+
+void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
+{
+	if (!TargetCharacter) return;
+	if (!DieTarget) return;
+
+	if (DieTarget == TargetCharacter)
+	{
+		
+		/*
+		FString ActorName = GetName();
+		int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+		FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
+		FString DieTargetName = DieTarget ? DieTarget->GetName() : TEXT("None");
+
+		FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s, DieTarget: %s"),
+			*ActorName, *TargetCharacterName, *DieTargetName);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(HashValue, 5.0f, FColor::Blue, DebugMessage);
+		}
+		*/
+
+		
+
+		
+
+
+		TargetCharacter = nullptr;
+	}
+
+
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)
