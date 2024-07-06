@@ -121,7 +121,7 @@ void AXR_Character::InitializeCharacter()
 	}
 
 	SetRingProperty();
-	CharacterMovementComponent->MaxWalkSpeed = 4.f;
+	CharacterMovementComponent->MaxWalkSpeed = 5.f;
 	
 }
 
