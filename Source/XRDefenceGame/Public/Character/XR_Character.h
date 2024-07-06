@@ -96,10 +96,18 @@ public:
 	void CharacterActionCall();
 
 	UFUNCTION(BlueprintCallable)
-	void CharacterActionEnd();
+	virtual void CharacterActionImpact();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionEnd();
 
 
 protected:
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY()
+	AXR_Character* TargetCharacter = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
@@ -285,5 +293,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
+
+	UFUNCTION(BlueprintCallable)
+	AXR_Character* GetTargetCharacter() { return TargetCharacter; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetTargetCharacter(AXR_Character* target) { TargetCharacter = target; }
 
 };

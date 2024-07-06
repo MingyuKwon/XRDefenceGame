@@ -440,6 +440,9 @@ void AXR_Character::Death()
 	bOnBoard = false;
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
 	StartDissolveTimeline(false);
+
+	///         여기에 죽는 애니메이션 출력
+	SetAnimState(EAnimationState::EAS_Death);
 }
 
 void AXR_Character::DestroyMyself()
@@ -508,9 +511,33 @@ void AXR_Character::CharacterActionCall()
 	}
 }
 
+void AXR_Character::CharacterActionImpact()
+{
+
+}
+
 void AXR_Character::CharacterActionEnd()
 {
 	SetAnimState(EAnimationState::EAS_IdleAndWalk);
+}
+
+float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (CharacterProperty.currentHealth == 0) return 0;
+
+	CharacterProperty.currentHealth -= DamageAmount;
+	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+
+	UpdateCharacterPropertyUI();
+
+	if (CharacterProperty.currentHealth <= 0)
+	{
+		Death();
+	}
+
+	return DamageAmount;
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)
