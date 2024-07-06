@@ -64,5 +64,12 @@ private:
 
     FTimerHandle LifeTimeTimerHandle;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Heal Parameter")
+    float healAmount = 1.f;
+
+    FTimerHandle HealTimerHandle;
+
+    UFUNCTION()
+    void OnHealTimerTick();
 
 };

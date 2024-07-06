@@ -11,8 +11,11 @@
 #include "Interface/BuffableInterface.h"
 #include "UI/CharacterUI.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "AI/XRAIController.h"
 #include "Mode/XRGamePlayMode.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 
 AXR_Character::AXR_Character()
 {
@@ -60,6 +63,8 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 	{
 		StartDissolveTimeline(true);
 
+		GetWorld()->GetTimerManager().SetTimer(BehaviorAvailableTimerHandle, this, &AXR_Character::BehaviorAvailableTimerFunction, 2.0f, false);
+
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
@@ -76,15 +81,41 @@ void AXR_Character::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeCharacter();
+
+	if (DefaultPlaceInBoard)
+	{
+		SetOnBoardAuto();
+	}
 }
 
-
-
-void AXR_Character::PostInitializeComponents()
+void AXR_Character::PossessedBy(AController* NewController)
 {
-	Super::PostInitializeComponents();
+	Super::PossessedBy(NewController);
 
+	if (BehaviorTree && NewController)
+	{
+		XRAIController = Cast<AXRAIController>(NewController);
+		if (XRAIController)
+		{
+			
+			XRAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+			XRAIController->RunBehaviorTree(BehaviorTree);
+
+			/*
+			FString ActorName = GetName();
+			int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+			FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s"),
+			*ActorName);
+
+			GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
+			*/
+
+
+		}
+	}
 }
+
 
 void AXR_Character::InitializeCharacter()
 {
@@ -96,6 +127,22 @@ void AXR_Character::InitializeCharacter()
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
 	SetRingProperty();
+
+	CharacterMovementComponent->MaxWalkSpeed = 3.f;
+
+}
+
+void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
+{
+	CharacterProperty.currentHealth = inheritform.currentHealth;
+
+	SetOnBoardAuto();
+}
+
+void AXR_Character::SetOnBoardAuto()
+{
+	bOnBoard = true;
+	OnBoardCalledFunction(true, false);
 
 }
 
@@ -148,23 +195,7 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 	CharacterPropertyUI->SetDamgeUtilVisible(flag);
 }
 
-void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
-{
-	bOnBoard = true;
-	CharacterProperty.currentHealth = inheritform.currentHealth;
 
-	FString ActorName = GetName();
-	int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-	// DebugMessage를 수정하여 currentHealth와 MaxHealth를 출력
-	FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s, Current Health: %.2f, Max Health: %.2f"),
-		*ActorName, CharacterProperty.currentHealth, CharacterProperty.MaxHealth);
-
-	GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-
-
-	OnBoardCalledFunction(true, false);
-}
 
 
 
@@ -434,10 +465,14 @@ void AXR_Character::DestroyMyself()
 }
 
 
-
 void AXR_Character::DeathTimerFunction()
 {
 	DestroyMyself();
+}
+
+void AXR_Character::BehaviorAvailableTimerFunction()
+{
+	bBehaviorAvailable = true;
 }
 
 void AXR_Character::DissolveCallBack(float percent)
@@ -467,5 +502,10 @@ bool AXR_Character::IsOnBoard_Implementation()
 	return bOnBoard;
 }
 
-
+void AXR_Character::Heal(float healAmount)
+{
+	CharacterProperty.currentHealth += healAmount;
+	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+	UpdateCharacterPropertyUI();
+}
 

@@ -58,7 +58,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
 
-    virtual void InitializeCharacter() override;  // override Å°¿öµå »ç¿ë
+    virtual void InitializeCharacter() override;  // override Å°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
     UFUNCTION()
     void BindDissolveCallBack() override;

@@ -53,6 +53,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float Util_Range = 4;
 
+	//Only Uses Defender
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float ObjectAccessRadius = 1;
+
 };
 
 UCLASS()
@@ -86,10 +90,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheckNeutralToConvert(EObjectType objectType);
 
+	virtual void Heal(float healAmount);
+
 
 protected:
 
+	UPROPERTY()
+	class AXRAIController* XRAIController;
+
+	UPROPERTY(EditAnywhere, Category = "AI Parameter")
+	class UBehaviorTree* BehaviorTree = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	bool DefaultPlaceInBoard = false;
+
 	virtual void DestroyMyself();
+
+	virtual void SetOnBoardAuto();
+
 
 	virtual void SetPropertyUIVisible(bool flag);
 
@@ -116,7 +134,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void PostInitializeComponents() override;
+	virtual void PossessedBy(AController* NewController) override;
+
 
 	virtual void InitializeCharacter();
 
@@ -201,10 +220,18 @@ protected:
 
 	virtual void Death();
 
+	UFUNCTION()
 	virtual void DeathTimerFunction();
+
+	UFUNCTION()
+	virtual void BehaviorAvailableTimerFunction();
+
 
 	FTimerHandle DeathTimerHandle;
 
+	FTimerHandle BehaviorAvailableTimerHandle;
+
+	bool bBehaviorAvailable = false;
 
 private:
 
@@ -225,5 +252,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnPlaceIndex(int32 index) { SpawnPlaceIndex = index; }
 
+	UFUNCTION(BlueprintCallable)
+	EObjectType GetObjectType() { return ObjectType; }
 
+	UFUNCTION(BlueprintCallable)
+	ECharacterType GetCharacterType() { return CharacterType; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsBehaviorAvailable() { return bBehaviorAvailable; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetAttackRange() { return CharacterProperty.Util_Range; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
+	
 };
