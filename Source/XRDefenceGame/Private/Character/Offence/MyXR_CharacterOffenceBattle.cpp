@@ -19,3 +19,4 @@ void AMyXR_CharacterOffenceBattle::CharacterActionStart()
 {
 	Super::CharacterActionStart();
 }
+

@@ -414,12 +414,17 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 {
 	if (DissolveCurve && TimelineComponent)
 	{
+		TimelineComponent->Stop(); 
+		TimelineComponent->SetNewTime(0.f); 
+
 		if (bNotReverse)
 		{
+			TimelineComponent->SetPlayRate(1.0f);
 			BindDissolveCallBack();
 		}
 		else
 		{
+			TimelineComponent->SetPlayRate(2.0f);
 			BindReverseDissolveCallBack();
 		}
 
@@ -435,12 +440,18 @@ void AXR_Character::Death()
 {
 	FloorRingMesh->bTickReject = true;
 	bOnBoard = false;
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+
 	StartDissolveTimeline(false);
-
-
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+	
 	XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
-	///         여기에 죽는 애니메이션 출력
+
+	if (CharacterPropertyUI)
+	{
+		CharacterPropertyUI->Destroy();
+		CharacterPropertyUI = nullptr;
+	}
+
 	SetAnimState(EAnimationState::EAS_Death);
 }
 
@@ -450,7 +461,6 @@ void AXR_Character::DestroyMyself()
 
 	if (CharacterPropertyUI)
 	{
-
 		CharacterPropertyUI->Destroy();
 		CharacterPropertyUI = nullptr;
 	}
@@ -475,7 +485,10 @@ void AXR_Character::DissolveCallBack(float percent)
 
 void AXR_Character::DissolveCallBackReverse(float percent)
 {
-	DissolveCallBack(1- percent);
+	percent = 1 - percent;
+	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	FloorRingMesh->ChangeRingColorRotation(percent, -12.f);
+
 }
 
 void AXR_Character::BindDissolveCallBack()
@@ -563,9 +576,6 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 		}
 		*/
 
-		
-
-		
 
 
 		TargetCharacter = nullptr;

@@ -96,6 +96,12 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
     Super::DissolveCallBack(percent);
 }
 
+void AMyXR_CharacterDeffenceBattle::DissolveCallBackReverse(float percent)
+{
+    Super::DissolveCallBackReverse(percent);
+    DissolveCallBack(1-percent);
+}
+
 void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
 {
     Super::HighLightMesh(bHighlight);

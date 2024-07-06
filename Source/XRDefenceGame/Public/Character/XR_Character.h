@@ -298,23 +298,7 @@ public:
 	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
 
 	UFUNCTION(BlueprintCallable)
-	AXR_Character* GetTargetCharacter() { 
-		
-		FString ActorName = GetName();
-		int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-		FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
-
-		FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s"),
-			*ActorName, *TargetCharacterName);
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(HashValue, 0.1f, FColor::Red, DebugMessage);
-		}
-		
-		
-		return TargetCharacter; }
+	AXR_Character* GetTargetCharacter() { return TargetCharacter; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetTargetCharacter(AXR_Character* target) { TargetCharacter = target; }
