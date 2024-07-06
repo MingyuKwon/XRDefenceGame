@@ -92,8 +92,38 @@ public:
 
 	virtual void Heal(float healAmount);
 
+	UFUNCTION(BlueprintCallable)
+	void CharacterActionCall();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionImpact();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionEnd();
+
 
 protected:
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION()
+	virtual void TargetDieCallBack(AXR_Character* DieTarget);
+
+	UPROPERTY()
+	AXR_Character* TargetCharacter = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
+
+	UFUNCTION(BlueprintCallable)
+	void SetAnimState(EAnimationState state);
+
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionStart();
+
+	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+	class UAnimMontage* CharacterActionMontage = nullptr;
 
 	UPROPERTY()
 	class AXRAIController* XRAIController;
@@ -266,5 +296,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetAccessRadius() { return CharacterProperty.ObjectAccessRadius; }
-	
+
+	UFUNCTION(BlueprintCallable)
+	AXR_Character* GetTargetCharacter() { return TargetCharacter; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetTargetCharacter(AXR_Character* target) { TargetCharacter = target; }
+
 };

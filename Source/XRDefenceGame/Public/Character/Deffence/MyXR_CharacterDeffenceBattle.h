@@ -65,6 +65,9 @@ protected:
 
     virtual void DissolveCallBack(float percent) override;
 
+    virtual void DissolveCallBackReverse(float percent) override;
+
+
     UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
     bool bBufferHightLighting = false;
 

@@ -15,6 +15,8 @@
 #include "Mode/XRGamePlayMode.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Animation/AnimMontage.h"
+
 
 
 AXR_Character::AXR_Character()
@@ -100,18 +102,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 			
 			XRAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 			XRAIController->RunBehaviorTree(BehaviorTree);
-
-			/*
-			FString ActorName = GetName();
-			int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-			FString DebugMessage = FString::Printf(TEXT("                                                                Actor: %s"),
-			*ActorName);
-
-			GEngine->AddOnScreenDebugMessage(HashValue, 10.f, FColor::Blue, DebugMessage);
-			*/
-
-
 		}
 	}
 }
@@ -125,11 +115,14 @@ void AXR_Character::InitializeCharacter()
 	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
+	}
 
 	SetRingProperty();
-
-	CharacterMovementComponent->MaxWalkSpeed = 3.f;
-
+	CharacterMovementComponent->MaxWalkSpeed = 5.f;
+	
 }
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
@@ -292,12 +285,6 @@ void AXR_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
-
-	if (bOnBoard)
-	{
-		//AddMovementInput(GetActorForwardVector(), 0.001f);
-	}
-
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -427,12 +414,17 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 {
 	if (DissolveCurve && TimelineComponent)
 	{
+		TimelineComponent->Stop(); 
+		TimelineComponent->SetNewTime(0.f); 
+
 		if (bNotReverse)
 		{
+			TimelineComponent->SetPlayRate(1.0f);
 			BindDissolveCallBack();
 		}
 		else
 		{
+			TimelineComponent->SetPlayRate(2.0f);
 			BindReverseDissolveCallBack();
 		}
 
@@ -448,8 +440,19 @@ void AXR_Character::Death()
 {
 	FloorRingMesh->bTickReject = true;
 	bOnBoard = false;
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+
 	StartDissolveTimeline(false);
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+	
+	XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+
+	if (CharacterPropertyUI)
+	{
+		CharacterPropertyUI->Destroy();
+		CharacterPropertyUI = nullptr;
+	}
+
+	SetAnimState(EAnimationState::EAS_Death);
 }
 
 void AXR_Character::DestroyMyself()
@@ -458,7 +461,6 @@ void AXR_Character::DestroyMyself()
 
 	if (CharacterPropertyUI)
 	{
-
 		CharacterPropertyUI->Destroy();
 		CharacterPropertyUI = nullptr;
 	}
@@ -483,7 +485,10 @@ void AXR_Character::DissolveCallBack(float percent)
 
 void AXR_Character::DissolveCallBackReverse(float percent)
 {
-	DissolveCallBack(1- percent);
+	percent = 1 - percent;
+	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	FloorRingMesh->ChangeRingColorRotation(percent, -12.f);
+
 }
 
 void AXR_Character::BindDissolveCallBack()
@@ -507,5 +512,90 @@ void AXR_Character::Heal(float healAmount)
 	CharacterProperty.currentHealth += healAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
 	UpdateCharacterPropertyUI();
+}
+
+void AXR_Character::CharacterActionCall()
+{
+
+	if (AnimState <= EAnimationState::EAS_IdleAndWalk)
+	{
+		CharacterActionStart();
+	}
+}
+
+void AXR_Character::CharacterActionImpact()
+{
+
+}
+
+void AXR_Character::CharacterActionEnd()
+{
+	SetAnimState(EAnimationState::EAS_IdleAndWalk);
+}
+
+float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (CharacterProperty.currentHealth == 0) return 0;
+
+	CharacterProperty.currentHealth -= DamageAmount;
+	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+
+	UpdateCharacterPropertyUI();
+
+	if (CharacterProperty.currentHealth <= 0)
+	{
+		Death();
+	}
+
+	return DamageAmount;
+}
+
+void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
+{
+	if (!TargetCharacter) return;
+	if (!DieTarget) return;
+
+	if (DieTarget == TargetCharacter)
+	{
+		
+		/*
+		FString ActorName = GetName();
+		int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+		FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
+		FString DieTargetName = DieTarget ? DieTarget->GetName() : TEXT("None");
+
+		FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s, DieTarget: %s"),
+			*ActorName, *TargetCharacterName, *DieTargetName);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(HashValue, 5.0f, FColor::Blue, DebugMessage);
+		}
+		*/
+
+
+
+		TargetCharacter = nullptr;
+	}
+
+
+}
+
+void AXR_Character::SetAnimState(EAnimationState state)
+{
+	AnimState = state; 
+}
+
+void AXR_Character::CharacterActionStart()
+{
+
+	if (CharacterActionMontage && GetMesh()->GetAnimInstance())
+	{
+		SetAnimState(EAnimationState::EAS_Action);
+		GetMesh()->GetAnimInstance()->Montage_Play(CharacterActionMontage);
+	}
 }
 
