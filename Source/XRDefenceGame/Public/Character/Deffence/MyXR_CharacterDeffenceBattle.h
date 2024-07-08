@@ -32,9 +32,12 @@ public:
 
     virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform) override;
 
-    
+    virtual void CharacterActionImpact() override;
+
 
 protected:
+    virtual void FireBullet();
+
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
     virtual void UpdateCharacterPropertyUI() override;
@@ -72,7 +75,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
 
-    virtual void InitializeCharacter() override;  // override Ű���� ���
+    virtual void InitializeCharacter() override;  
 
     UFUNCTION()
     void BindDissolveCallBack() override;
@@ -80,6 +83,10 @@ protected:
     virtual void DissolveCallBack(float percent) override;
 
     virtual void DissolveCallBackReverse(float percent) override;
+
+
+    UPROPERTY(EditAnywhere, Category = "Battle Parameter")
+    TSubclassOf<class AProjectile> BulletClass;
 
 
     UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")

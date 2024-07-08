@@ -12,8 +12,9 @@
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/CharacterUI.h"
-#include "DrawDebugHelpers.h"  
 #include "Mode/XRGamePlayMode.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Battle/Projectile.h"
 
 
 void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
@@ -38,12 +39,8 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
             TargetRotation = DefaultTargetRotation;
         }
 
-        FRotator InterpRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 3.f);
+        FRotator InterpRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 6.f);
         SetActorRotation(InterpRotation);
-
-        FVector DebugStartLocation = GunMeshComponent->GetComponentLocation();
-        FVector DebugEndLocation = DebugStartLocation + (InterpRotation.Vector() * 100.0f);
-        DrawDebugLine(GetWorld(), DebugStartLocation, DebugEndLocation, FColor::Red, false, -1, 0, 1.0f);
     }
 }
 
@@ -311,6 +308,42 @@ void AMyXR_CharacterDeffenceBattle::NonPalletteSpawnInitalize(FCharacterValueTra
 
     UpdateCharacterPropertyUI();
 
+}
+
+void AMyXR_CharacterDeffenceBattle::CharacterActionImpact()
+{
+    Super::CharacterActionImpact();
+    FireBullet();
+}
+
+void AMyXR_CharacterDeffenceBattle::FireBullet()
+{
+    const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(FName("MuzzleSocket"));
+    if (MuzzleSocket && TargetCharacter)
+    {
+        FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
+        FVector ToTarget = TargetCharacter->GetActorLocation() - MuzzleTransform.GetLocation();
+        FRotator ToTargetRotation = ToTarget.Rotation();
+
+        FActorSpawnParameters SpawnParam;
+        SpawnParam.Instigator = GetInstigator();
+        SpawnParam.Owner = this;
+
+
+        if (BulletClass)
+        {
+            AProjectile* Bullet = GetWorld()->SpawnActor<AProjectile>(
+                BulletClass,
+                MuzzleTransform.GetLocation(),
+                ToTargetRotation,
+                SpawnParam
+            );
+
+            Bullet->SetTarget(TargetCharacter);
+            Bullet->SetDamage(CharacterProperty.Damage);
+
+        }
+    }
 }
 
 void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
