@@ -427,7 +427,7 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 		}
 		else
 		{
-			TimelineComponent->SetPlayRate(2.5f);
+			TimelineComponent->SetPlayRate(2.0f);
 			BindReverseDissolveCallBack();
 		}
 

@@ -346,6 +346,10 @@ void AMyXR_CharacterDeffenceBattle::FireBullet()
                 beamTrailNiagara->SetVariableVec3(FName("TrailEnd"), EndPosition);
             }
 
+            if (shootParticle)
+            {
+                UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+            }
         }
 
  

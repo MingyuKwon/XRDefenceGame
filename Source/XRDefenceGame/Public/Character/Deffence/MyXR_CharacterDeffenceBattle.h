@@ -40,6 +40,10 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
     class UNiagaraSystem* trailBeam;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
+    UNiagaraSystem* shootParticle;
+
+
     virtual void FireBullet();
 
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
