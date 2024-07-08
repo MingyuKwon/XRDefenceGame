@@ -12,9 +12,40 @@
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/CharacterUI.h"
-
+#include "DrawDebugHelpers.h"  
 #include "Mode/XRGamePlayMode.h"
 
+
+void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (bOnBoard)
+    {
+        if (TargetCharacter)
+        {
+            FVector StartLocation = GunMeshComponent->GetComponentLocation();
+            FVector TargetLocation = TargetCharacter->GetActorLocation();
+            FVector Direction = TargetLocation - StartLocation;
+            Direction.Z = 0;
+            Direction.Normalize();
+
+            FRotator TargetRot = Direction.Rotation();
+            TargetRotation = TargetRot;
+        }
+        else
+        {
+            TargetRotation = DefaultTargetRotation;
+        }
+
+        FRotator InterpRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 3.f);
+        SetActorRotation(InterpRotation);
+
+        FVector DebugStartLocation = GunMeshComponent->GetComponentLocation();
+        FVector DebugEndLocation = DebugStartLocation + (InterpRotation.Vector() * 100.0f);
+        DrawDebugLine(GetWorld(), DebugStartLocation, DebugEndLocation, FColor::Red, false, -1, 0, 1.0f);
+    }
+}
 
 AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
 {
@@ -72,6 +103,9 @@ void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
     DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
     DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
     DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
+
+    DefaultTargetRotation = GetActorRotation();
+    TargetRotation = DefaultTargetRotation;
 
     Super::InitializeCharacter();
 }

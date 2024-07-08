@@ -17,6 +17,8 @@ class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeff
 	GENERATED_BODY()
 
 public:
+    virtual void Tick(float DeltaTime) override;
+
 	AMyXR_CharacterDeffenceBattle();
 	
     virtual void InteractableEffectStart_Implementation() override;
@@ -114,5 +116,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultEtcMaterialFifth;
+
+
+    FRotator DefaultTargetRotation;
+    FRotator TargetRotation;
 
 };
