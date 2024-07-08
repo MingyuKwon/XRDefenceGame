@@ -34,13 +34,30 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
 
             FRotator TargetRot = Direction.Rotation();
             TargetRotation = TargetRot;
+
+            FString ActorName = GetName();
+            int32 HashValue = FCrc::StrCrc32(*ActorName);
+            FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
+
+            FString DebugMessage = FString::Printf(TEXT("Actor: %s , Target : %s"),
+                *ActorName, *TargetCharacterName);
+
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(HashValue, -1, FColor::Red, DebugMessage);
+            }
+
         }
         else
         {
+            
+
+
+
             TargetRotation = DefaultTargetRotation;
         }
 
-        FRotator InterpRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 6.f);
+        FRotator InterpRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 5.f);
         SetActorRotation(InterpRotation);
     }
 }
@@ -330,7 +347,6 @@ void AMyXR_CharacterDeffenceBattle::FireBullet()
         
         if (BulletScan.bBlockingHit)
         {
-            UE_LOG(LogTemp, Warning, TEXT("ImpactPoint"));
             EndPosition = BulletScan.ImpactPoint;
         }
 
