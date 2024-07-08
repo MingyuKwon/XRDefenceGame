@@ -40,10 +40,12 @@ AXR_Character::AXR_Character()
 
 	CharacterMovementComponent = GetCharacterMovement();
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECollisionResponse::ECR_Overlap);
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Bullet, ECollisionResponse::ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -425,7 +427,7 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 		}
 		else
 		{
-			TimelineComponent->SetPlayRate(2.0f);
+			TimelineComponent->SetPlayRate(2.5f);
 			BindReverseDissolveCallBack();
 		}
 
@@ -455,6 +457,14 @@ void AXR_Character::Death()
 	}
 
 	SetAnimState(EAnimationState::EAS_Death);
+	if (CharacterDeathMontage)
+	{
+		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
+	}
+
+	CharacterMovementComponent->MaxWalkSpeed = 0.f;
+
+
 }
 
 void AXR_Character::DestroyMyself()

@@ -15,6 +15,7 @@
 #include "Mode/XRGamePlayMode.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Battle/Projectile.h"
+#include "NiagaraFunctionLibrary.h"
 
 
 void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
@@ -322,27 +323,32 @@ void AMyXR_CharacterDeffenceBattle::FireBullet()
     if (MuzzleSocket && TargetCharacter)
     {
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
-        FVector ToTarget = TargetCharacter->GetActorLocation() - MuzzleTransform.GetLocation();
-        FRotator ToTargetRotation = ToTarget.Rotation();
+        FVector EndPosition = TargetCharacter->GetActorLocation();
 
-        FActorSpawnParameters SpawnParam;
-        SpawnParam.Instigator = GetInstigator();
-        SpawnParam.Owner = this;
-
-
-        if (BulletClass)
+        FHitResult BulletScan;
+        GetWorld()->LineTraceSingleByChannel(BulletScan, MuzzleTransform.GetLocation(), EndPosition, ECC_Bullet);
+        
+        if (BulletScan.bBlockingHit)
         {
-            AProjectile* Bullet = GetWorld()->SpawnActor<AProjectile>(
-                BulletClass,
-                MuzzleTransform.GetLocation(),
-                ToTargetRotation,
-                SpawnParam
-            );
+            UE_LOG(LogTemp, Warning, TEXT("ImpactPoint"));
+            EndPosition = BulletScan.ImpactPoint;
+        }
 
-            Bullet->SetTarget(TargetCharacter);
-            Bullet->SetDamage(CharacterProperty.Damage);
+        UGameplayStatics::ApplyDamage(TargetCharacter, CharacterProperty.Damage, GetController(), this, nullptr);
+
+        if (trailBeam)
+        {
+            UNiagaraComponent* beamTrailNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), trailBeam, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+
+            if (beamTrailNiagara)
+            {
+                beamTrailNiagara->SetVariableVec3(FName("TrailStart"), MuzzleTransform.GetLocation());
+                beamTrailNiagara->SetVariableVec3(FName("TrailEnd"), EndPosition);
+            }
 
         }
+
+ 
     }
 }
 

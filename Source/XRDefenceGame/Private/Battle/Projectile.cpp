@@ -26,9 +26,9 @@ AProjectile::AProjectile()
 
     Capsule = CreateDefaultSubobject<UCapsuleComponent>(FName("Capsule collision"));
     Capsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    Capsule->SetCollisionObjectType(ECC_Projectile);
+    Capsule->SetCollisionObjectType(ECC_Bullet);
     Capsule->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+    Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
     Capsule->SetGenerateOverlapEvents(true);
     Capsule->SetupAttachment(RootComponent);
 
@@ -74,8 +74,10 @@ void AProjectile::SetDamage(float Damage)
     BulletDamage = Damage;
 }
 
-void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+    UE_LOG(LogTemp, Warning, TEXT("OnHit"));
+
     if (OtherActor && (OtherActor != this) && OtherComp)
     {
         if (HitImpactParticle)
