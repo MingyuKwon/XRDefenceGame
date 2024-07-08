@@ -103,6 +103,13 @@ public:
 
 
 protected:
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionStart();
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetAnimState(EAnimationState state);
+
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -115,15 +122,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
 
-	UFUNCTION(BlueprintCallable)
-	void SetAnimState(EAnimationState state);
-
-
-	UFUNCTION(BlueprintCallable)
-	virtual void CharacterActionStart();
 
 	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
 	class UAnimMontage* CharacterActionMontage = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+	class UAnimMontage* CharacterDeathMontage = nullptr;
+
 
 	UPROPERTY()
 	class AXRAIController* XRAIController;

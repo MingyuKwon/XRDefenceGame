@@ -7,6 +7,7 @@
 #include "Interface/BuffableInterface.h"
 #include "MyXR_CharacterDeffenceBattle.generated.h"
 
+class UAnimMontage;
 /**
  * 
  */
@@ -35,6 +36,17 @@ protected:
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
     virtual void UpdateCharacterPropertyUI() override;
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunFireMontage = nullptr;
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunSetStartFireMontage = nullptr;
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunSetEndFireMontage = nullptr;
+
+    virtual void CharacterActionStart() override;
 
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

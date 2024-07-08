@@ -297,4 +297,21 @@ void AMyXR_CharacterDeffenceBattle::UpdateCharacterPropertyUI()
     }
 }
 
+void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
+{
+    if (GunFireMontage && GunMeshComponent->GetAnimInstance())
+    {
+        SetAnimState(EAnimationState::EAS_Action);
+        GunMeshComponent->GetAnimInstance()->Montage_Play(GunFireMontage);
+
+        if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance())
+        {
+            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage);
+        }
+    }
+
+
+
+}
+
 

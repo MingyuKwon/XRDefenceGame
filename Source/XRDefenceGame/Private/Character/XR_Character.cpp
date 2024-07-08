@@ -440,6 +440,7 @@ void AXR_Character::Death()
 {
 	FloorRingMesh->bTickReject = true;
 	bOnBoard = false;
+	bBehaviorAvailable = false;
 
 	StartDissolveTimeline(false);
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
@@ -591,7 +592,6 @@ void AXR_Character::SetAnimState(EAnimationState state)
 
 void AXR_Character::CharacterActionStart()
 {
-
 	if (CharacterActionMontage && GetMesh()->GetAnimInstance())
 	{
 		SetAnimState(EAnimationState::EAS_Action);
