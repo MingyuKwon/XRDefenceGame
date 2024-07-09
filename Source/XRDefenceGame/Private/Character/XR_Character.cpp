@@ -540,6 +540,10 @@ void AXR_Character::CharacterActionImpact()
 
 }
 
+void AXR_Character::CharacterActionImpact2()
+{
+}
+
 void AXR_Character::CharacterActionEnd()
 {
 	SetAnimState(EAnimationState::EAS_IdleAndWalk);
@@ -566,34 +570,40 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 {
-	if (!TargetCharacter) return;
 	if (!DieTarget) return;
 
-	if (DieTarget == TargetCharacter)
+	if (TargetCharacter && DieTarget == TargetCharacter)
 	{
-		
-		/*
-		FString ActorName = GetName();
-		int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-		FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
-		FString DieTargetName = DieTarget ? DieTarget->GetName() : TEXT("None");
-
-		FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s, DieTarget: %s"),
-			*ActorName, *TargetCharacterName, *DieTargetName);
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(HashValue, 5.0f, FColor::Blue, DebugMessage);
-		}
-		*/
-
-
-
 		TargetCharacter = nullptr;
+
+		if (TargetCharacter2)
+		{
+			TargetCharacter = TargetCharacter2;
+			TargetCharacter2 = nullptr;
+		}
+	}
+
+	if (TargetCharacter2 && DieTarget == TargetCharacter2)
+	{
+		TargetCharacter2 = nullptr;
 	}
 
 
+	/*
+	FString ActorName = GetName();
+	int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+	FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
+	FString DieTargetName = DieTarget ? DieTarget->GetName() : TEXT("None");
+
+	FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s, DieTarget: %s"),
+	*ActorName, *TargetCharacterName, *DieTargetName);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(HashValue, 5.0f, FColor::Blue, DebugMessage);
+	}
+*/
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)

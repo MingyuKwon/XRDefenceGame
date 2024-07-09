@@ -99,6 +99,10 @@ public:
 	virtual void CharacterActionImpact();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionImpact2();
+
+
+	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionEnd();
 
 
@@ -118,6 +122,10 @@ protected:
 
 	UPROPERTY()
 	AXR_Character* TargetCharacter = nullptr;
+
+	UPROPERTY()
+	AXR_Character* TargetCharacter2 = nullptr;
+
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
@@ -306,6 +314,13 @@ public:
 	AXR_Character* GetTargetCharacter() { return TargetCharacter; }
 
 	UFUNCTION(BlueprintCallable)
+	AXR_Character* GetTargetCharacter2() { return TargetCharacter2; }
+
+
+	UFUNCTION(BlueprintCallable)
 	void SetTargetCharacter(AXR_Character* target) { TargetCharacter = target; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetTargetCharacter2(AXR_Character* target) { TargetCharacter2 = target; }
 
 };

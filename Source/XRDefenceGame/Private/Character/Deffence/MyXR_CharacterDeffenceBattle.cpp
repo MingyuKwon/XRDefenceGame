@@ -318,9 +318,17 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionImpact()
     FireBullet();
 }
 
-void AMyXR_CharacterDeffenceBattle::FireBullet()
+void AMyXR_CharacterDeffenceBattle::CharacterActionImpact2()
 {
-    const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(FName("MuzzleSocket"));
+    Super::CharacterActionImpact2();
+    FireBullet(true);
+}
+
+void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
+{
+    FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
+
+    const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(SockeName);
     if (MuzzleSocket && TargetCharacter)
     {
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);

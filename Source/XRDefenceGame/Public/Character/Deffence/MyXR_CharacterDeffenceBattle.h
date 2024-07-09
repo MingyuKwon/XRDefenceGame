@@ -33,6 +33,7 @@ public:
     virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform) override;
 
     virtual void CharacterActionImpact() override;
+    virtual void CharacterActionImpact2() override;
 
 
 protected:
@@ -44,7 +45,7 @@ protected:
     UNiagaraSystem* shootParticle;
 
 
-    virtual void FireBullet();
+    virtual void FireBullet(bool isDouble = false);
 
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
