@@ -17,6 +17,9 @@ class XRDEFENCEGAME_API AMyXR_CharacterOffenceBattle : public AXR_CharacterOffen
 public:
 	virtual void CharacterActionImpact() override;
 
+	virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear) override;
+
+
 protected:
 	virtual void CharacterActionStart() override;
 

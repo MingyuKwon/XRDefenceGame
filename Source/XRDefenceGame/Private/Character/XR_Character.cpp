@@ -549,6 +549,11 @@ void AXR_Character::CharacterActionEnd()
 	SetAnimState(EAnimationState::EAS_IdleAndWalk);
 }
 
+void AXR_Character::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
+{
+	
+}
+
 float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);

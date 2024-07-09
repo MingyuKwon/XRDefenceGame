@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "Character/Offence/MyXR_CharacterOffenceBattle.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/CharacterUI.h"
 #include "Mode/XRGamePlayMode.h"
@@ -322,6 +323,44 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionImpact2()
 {
     Super::CharacterActionImpact2();
     FireBullet(true);
+}
+
+void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
+{
+    Super::FindNearbyEnemy(outFirstNear, outSecondNear);
+
+    TArray<AActor*> AllCharacters;
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyXR_CharacterOffenceBattle::StaticClass(), AllCharacters);
+
+    TArray<AXR_Character*> NearbyCharacters;
+
+    for (AActor* Actor : AllCharacters)
+    {
+        if (Actor && Actor != this)
+        {
+            AXR_Character* xrChar = Cast<AXR_Character>(Actor);
+
+            if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
+            {
+                float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
+                if (Distance <= CharacterProperty.Util_Range)
+                {
+                    NearbyCharacters.Add(xrChar);
+                }
+
+            }
+        }
+    }
+
+    NearbyCharacters.Sort([this](const AXR_Character& A, const AXR_Character& B)
+        {
+            return FVector::Dist2D(this->GetActorLocation(), A.GetActorLocation()) < FVector::Dist2D(this->GetActorLocation(), B.GetActorLocation());
+        }
+    );
+
+    outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
+    outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
 }
 
 void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)

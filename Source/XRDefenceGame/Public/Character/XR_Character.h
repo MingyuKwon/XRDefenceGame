@@ -105,6 +105,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionEnd();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear);
+
 
 protected:
 	UFUNCTION(BlueprintCallable)
