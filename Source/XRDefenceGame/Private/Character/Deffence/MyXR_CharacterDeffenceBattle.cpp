@@ -365,13 +365,18 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
 
 void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
 {
+    if (isDouble && !TargetCharacter2) return;
+
     FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
 
     const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(SockeName);
-    if (MuzzleSocket && TargetCharacter)
+    AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
+
+
+    if (MuzzleSocket && TempChar)
     {
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
-        FVector EndPosition = TargetCharacter->GetActorLocation();
+        FVector EndPosition = TempChar->GetActorLocation();
 
         FHitResult BulletScan;
         GetWorld()->LineTraceSingleByChannel(BulletScan, MuzzleTransform.GetLocation(), EndPosition, ECC_Bullet);
@@ -381,7 +386,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
             EndPosition = BulletScan.ImpactPoint;
         }
 
-        UGameplayStatics::ApplyDamage(TargetCharacter, CharacterProperty.Damage, GetController(), this, nullptr);
+        UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.Damage, GetController(), this, nullptr);
 
         if (trailBeam)
         {
