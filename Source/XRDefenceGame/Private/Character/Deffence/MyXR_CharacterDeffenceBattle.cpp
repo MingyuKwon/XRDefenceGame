@@ -35,25 +35,9 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
             FRotator TargetRot = Direction.Rotation();
             TargetRotation = TargetRot;
 
-            FString ActorName = GetName();
-            int32 HashValue = FCrc::StrCrc32(*ActorName);
-            FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
-
-            FString DebugMessage = FString::Printf(TEXT("Actor: %s , Target : %s"),
-                *ActorName, *TargetCharacterName);
-
-            if (GEngine)
-            {
-                GEngine->AddOnScreenDebugMessage(HashValue, -1, FColor::Red, DebugMessage);
-            }
-
         }
         else
         {
-            
-
-
-
             TargetRotation = DefaultTargetRotation;
         }
 
