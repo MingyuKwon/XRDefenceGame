@@ -443,4 +443,35 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
 
 }
 
+void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    Super::OnSphereOverlapBegin( OverlappedComp,  OtherActor,  OtherComp,  OtherBodyIndex,  bFromSweep, SweepResult);
+
+    if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
+    {
+        /*
+        
+        FString ActorName = GetName();
+        int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+        FString TargetCharacterName = OtherActor->GetName();
+
+        FString DebugMessage = FString::Printf(TEXT("Actor: %s, Overlap Target: %s"),
+            *ActorName, *TargetCharacterName);
+
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(HashValue, 1.0f, FColor::Blue, DebugMessage);
+        }
+
+        */
+        AXR_Character* tempNearest1;
+        AXR_Character* tempNearest2;
+        FindNearbyEnemy(tempNearest1, tempNearest2);
+
+        TargetCharacter = tempNearest1;
+        TargetCharacter2 = tempNearest2;
+    }
+}
+
 

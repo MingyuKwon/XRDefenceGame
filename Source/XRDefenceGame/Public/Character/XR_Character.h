@@ -241,6 +241,13 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UTimelineComponent* TimelineComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* sphereOverlapCheck;
+
+	UFUNCTION()
+	virtual void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
 	FOnTimelineFloat InterpFunction;
 
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")

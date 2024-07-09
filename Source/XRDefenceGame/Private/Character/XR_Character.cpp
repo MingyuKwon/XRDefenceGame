@@ -16,7 +16,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Animation/AnimMontage.h"
-
+#include "Components/SphereComponent.h"
+#include "DrawDebugHelpers.h"
 
 
 AXR_Character::AXR_Character()
@@ -46,6 +47,11 @@ AXR_Character::AXR_Character()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
+
+	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
+	sphereOverlapCheck->SetupAttachment(GetCapsuleComponent());
+	sphereOverlapCheck->SetCollisionResponseToAllChannels(ECR_Ignore);
+	sphereOverlapCheck->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -125,6 +131,13 @@ void AXR_Character::InitializeCharacter()
 
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
+
+
+	sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
+	sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
+
+	sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
+
 	
 }
 
@@ -489,6 +502,14 @@ void AXR_Character::BehaviorAvailableTimerFunction()
 	bBehaviorAvailable = true;
 }
 
+void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp && Cast<AXR_Character>(OtherActor))
+	{
+
+	}
+}
+
 void AXR_Character::DissolveCallBack(float percent)
 {
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
@@ -592,23 +613,6 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 	{
 		TargetCharacter2 = nullptr;
 	}
-
-
-	/*
-	FString ActorName = GetName();
-	int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-	FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
-	FString DieTargetName = DieTarget ? DieTarget->GetName() : TEXT("None");
-
-	FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s, DieTarget: %s"),
-	*ActorName, *TargetCharacterName, *DieTargetName);
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(HashValue, 5.0f, FColor::Blue, DebugMessage);
-	}
-*/
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)
