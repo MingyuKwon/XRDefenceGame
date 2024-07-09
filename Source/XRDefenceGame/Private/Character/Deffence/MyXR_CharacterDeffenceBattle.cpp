@@ -36,6 +36,19 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
             FRotator TargetRot = Direction.Rotation();
             TargetRotation = TargetRot;
 
+            if (TargetCharacter2)
+            {
+                FVector TargetLocation2 = TargetCharacter2->GetActorLocation();
+                FVector Direction2 = TargetLocation2 - StartLocation;
+                Direction2.Z = 0;
+                Direction2.Normalize();
+
+                FVector AverageDirection = (Direction + Direction2).GetSafeNormal();
+                FRotator AverageRot = AverageDirection.Rotation();
+
+                TargetRotation = AverageRot;
+            }
+
         }
         else
         {
