@@ -36,12 +36,7 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 
 			if (IHandInteractInterface::Execute_IsOnBoard(xrChar) && Cast<AMyXR_CharacterDeffenceBuff>(xrChar) == nullptr)
 			{
-				float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
-				if (Distance <= CharacterProperty.Util_Range)
-				{
-					NearbyCharacters.Add(xrChar);
-				}
-
+				NearbyCharacters.Add(xrChar);
 			}
 		}
 	}
