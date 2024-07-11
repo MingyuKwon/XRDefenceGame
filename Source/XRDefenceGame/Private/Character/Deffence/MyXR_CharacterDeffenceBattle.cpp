@@ -10,11 +10,55 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialInstance.h"
 #include "XRDefenceGame/XRDefenceGame.h"
+#include "Character/Offence/MyXR_CharacterOffenceBattle.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/CharacterUI.h"
-
 #include "Mode/XRGamePlayMode.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Battle/Projectile.h"
+#include "NiagaraFunctionLibrary.h"
 
+
+void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (bOnBoard)
+    {
+        if (TargetCharacter)
+        {
+            FVector StartLocation = GunMeshComponent->GetComponentLocation();
+            FVector TargetLocation = TargetCharacter->GetActorLocation();
+            FVector Direction = TargetLocation - StartLocation;
+            Direction.Z = 0;
+            Direction.Normalize();
+
+            FRotator TargetRot = Direction.Rotation();
+            TargetRotation = TargetRot;
+
+            if (TargetCharacter2 && bAttackBoth)
+            {
+                FVector TargetLocation2 = TargetCharacter2->GetActorLocation();
+                FVector Direction2 = TargetLocation2 - StartLocation;
+                Direction2.Z = 0;
+                Direction2.Normalize();
+
+                FVector AverageDirection = (Direction + Direction2).GetSafeNormal();
+                FRotator AverageRot = AverageDirection.Rotation();
+
+                TargetRotation = AverageRot;
+            }
+
+        }
+        else
+        {
+            TargetRotation = DefaultTargetRotation;
+        }
+
+        FRotator InterpRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 5.f);
+        SetActorRotation(InterpRotation);
+    }
+}
 
 AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
 {
@@ -72,6 +116,9 @@ void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
     DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
     DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
     DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
+
+    DefaultTargetRotation = GetActorRotation();
+    TargetRotation = DefaultTargetRotation;
 
     Super::InitializeCharacter();
 }
@@ -279,6 +326,123 @@ void AMyXR_CharacterDeffenceBattle::NonPalletteSpawnInitalize(FCharacterValueTra
 
 }
 
+void AMyXR_CharacterDeffenceBattle::CharacterActionImpact()
+{
+    Super::CharacterActionImpact();
+    FireBullet();
+}
+
+void AMyXR_CharacterDeffenceBattle::CharacterActionImpact2()
+{
+    Super::CharacterActionImpact2();
+    FireBullet(true);
+}
+
+void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
+{
+    Super::FindNearbyEnemy(outFirstNear, outSecondNear);
+
+    TArray<AActor*> AllCharacters;
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyXR_CharacterOffenceBattle::StaticClass(), AllCharacters);
+
+    TArray<AXR_Character*> NearbyCharacters;
+
+    for (AActor* Actor : AllCharacters)
+    {
+        if (Actor && Actor != this)
+        {
+            AXR_Character* xrChar = Cast<AXR_Character>(Actor);
+
+            if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
+            {
+                float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
+                if (Distance <= CharacterProperty.Util_Range)
+                {
+                    NearbyCharacters.Add(xrChar);
+                }
+
+            }
+        }
+    }
+
+    NearbyCharacters.Sort([this](const AXR_Character& A, const AXR_Character& B)
+        {
+            return FVector::Dist2D(this->GetActorLocation(), A.GetActorLocation()) < FVector::Dist2D(this->GetActorLocation(), B.GetActorLocation());
+        }
+    );
+
+    outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
+    outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
+}
+
+void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
+{
+    if (isDouble && !TargetCharacter2) return;
+
+    FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
+
+    const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(SockeName);
+    AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
+
+
+    if (MuzzleSocket && TempChar)
+    {
+        FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
+
+
+        if (bRangeAttack)
+        {
+            FVector StartLocation = MuzzleTransform.GetLocation();
+            FVector EndLocation = TempChar->GetRingPosition();
+
+            FVector Direction = (EndLocation - StartLocation).GetSafeNormal();
+            FRotator ProjectileRotation = Direction.Rotation();
+
+            AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(BulletClass, StartLocation, ProjectileRotation);
+
+            if (Projectile)
+            {
+                Projectile->SetDamage(CharacterProperty.Damage);
+                Projectile->SetTarget(EndLocation);
+                Projectile->SetDamageRadius(3.f);
+            }
+
+        }
+        else
+        {
+            FVector EndPosition = TempChar->GetActorLocation();
+
+            FHitResult BulletScan;
+            GetWorld()->LineTraceSingleByChannel(BulletScan, MuzzleTransform.GetLocation(), EndPosition, ECC_Bullet);
+
+            if (BulletScan.bBlockingHit)
+            {
+                EndPosition = BulletScan.ImpactPoint;
+            }
+
+            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.Damage, GetController(), this, nullptr);
+
+            if (trailBeam)
+            {
+                UNiagaraComponent* beamTrailNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), trailBeam, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+
+                if (beamTrailNiagara)
+                {
+                    beamTrailNiagara->SetVariableVec3(FName("TrailStart"), MuzzleTransform.GetLocation());
+                    beamTrailNiagara->SetVariableVec3(FName("TrailEnd"), EndPosition);
+                }
+            }
+        }
+
+ 
+        if (shootParticle)
+        {
+            UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+        }
+    }
+}
+
 void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
 {
     Super::PackCharacterValueTransmitForm(outForm);
@@ -294,6 +458,54 @@ void AMyXR_CharacterDeffenceBattle::UpdateCharacterPropertyUI()
     {
         CharacterPropertyUI->SetDamageCount(DamageUpgradeCount);
         CharacterPropertyUI->SetUtilCount(RangeUpgradeCount);
+    }
+}
+
+void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
+{
+    if (GunFireMontage && GunMeshComponent->GetAnimInstance())
+    {
+        SetAnimState(EAnimationState::EAS_Action);
+        GunMeshComponent->GetAnimInstance()->Montage_Play(GunFireMontage);
+
+        if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance())
+        {
+            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage);
+        }
+    }
+
+
+
+}
+
+void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    Super::OnSphereOverlapBegin( OverlappedComp,  OtherActor,  OtherComp,  OtherBodyIndex,  bFromSweep, SweepResult);
+
+    if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
+    {
+        /*
+        
+        FString ActorName = GetName();
+        int32 HashValue = FCrc::StrCrc32(*ActorName);
+
+        FString TargetCharacterName = OtherActor->GetName();
+
+        FString DebugMessage = FString::Printf(TEXT("Actor: %s, Overlap Target: %s"),
+            *ActorName, *TargetCharacterName);
+
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(HashValue, 1.0f, FColor::Blue, DebugMessage);
+        }
+
+        */
+        AXR_Character* tempNearest1;
+        AXR_Character* tempNearest2;
+        FindNearbyEnemy(tempNearest1, tempNearest2);
+
+        TargetCharacter = tempNearest1;
+        TargetCharacter2 = tempNearest2;
     }
 }
 

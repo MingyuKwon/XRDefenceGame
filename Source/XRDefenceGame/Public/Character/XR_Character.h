@@ -99,10 +99,24 @@ public:
 	virtual void CharacterActionImpact();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionImpact2();
+
+
+	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionEnd();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear);
 
 
 protected:
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionStart();
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetAnimState(EAnimationState state);
+
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -112,18 +126,20 @@ protected:
 	UPROPERTY()
 	AXR_Character* TargetCharacter = nullptr;
 
+	UPROPERTY()
+	AXR_Character* TargetCharacter2 = nullptr;
+
+
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
 
-	UFUNCTION(BlueprintCallable)
-	void SetAnimState(EAnimationState state);
-
-
-	UFUNCTION(BlueprintCallable)
-	virtual void CharacterActionStart();
 
 	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
 	class UAnimMontage* CharacterActionMontage = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+	class UAnimMontage* CharacterDeathMontage = nullptr;
+
 
 	UPROPERTY()
 	class AXRAIController* XRAIController;
@@ -225,6 +241,13 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UTimelineComponent* TimelineComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* sphereOverlapCheck;
+
+	UFUNCTION()
+	virtual void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
 	FOnTimelineFloat InterpFunction;
 
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
@@ -301,6 +324,16 @@ public:
 	AXR_Character* GetTargetCharacter() { return TargetCharacter; }
 
 	UFUNCTION(BlueprintCallable)
+	AXR_Character* GetTargetCharacter2() { return TargetCharacter2; }
+
+
+	UFUNCTION(BlueprintCallable)
 	void SetTargetCharacter(AXR_Character* target) { TargetCharacter = target; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetTargetCharacter2(AXR_Character* target) { TargetCharacter2 = target; }
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetRingPosition();
 
 };

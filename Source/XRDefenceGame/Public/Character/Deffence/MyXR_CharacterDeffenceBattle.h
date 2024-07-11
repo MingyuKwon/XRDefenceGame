@@ -7,6 +7,7 @@
 #include "Interface/BuffableInterface.h"
 #include "MyXR_CharacterDeffenceBattle.generated.h"
 
+class UAnimMontage;
 /**
  * 
  */
@@ -16,6 +17,8 @@ class XRDEFENCEGAME_API AMyXR_CharacterDeffenceBattle : public AXR_CharacterDeff
 	GENERATED_BODY()
 
 public:
+    virtual void Tick(float DeltaTime) override;
+
 	AMyXR_CharacterDeffenceBattle();
 	
     virtual void InteractableEffectStart_Implementation() override;
@@ -29,12 +32,38 @@ public:
 
     virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform) override;
 
-    
+    virtual void CharacterActionImpact() override;
+    virtual void CharacterActionImpact2() override;
+
+    virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear) override;
 
 protected:
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
+    class UNiagaraSystem* trailBeam;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
+    UNiagaraSystem* shootParticle;
+
+
+    virtual void FireBullet(bool isDouble = false);
+
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
     virtual void UpdateCharacterPropertyUI() override;
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunFireMontage = nullptr;
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunSetStartFireMontage = nullptr;
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunSetEndFireMontage = nullptr;
+
+    virtual void CharacterActionStart() override;
+
+    virtual void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -58,7 +87,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
 
-    virtual void InitializeCharacter() override;  // override Ű���� ���
+    virtual void InitializeCharacter() override;  
 
     UFUNCTION()
     void BindDissolveCallBack() override;
@@ -66,6 +95,16 @@ protected:
     virtual void DissolveCallBack(float percent) override;
 
     virtual void DissolveCallBackReverse(float percent) override;
+
+
+    UPROPERTY(EditAnywhere, Category = "Battle Parameter")
+    TSubclassOf<class AProjectile> BulletClass;
+
+    UPROPERTY(EditAnywhere, Category = "Battle Parameter")
+    bool bAttackBoth = false;
+
+    UPROPERTY(EditAnywhere, Category = "Battle Parameter")
+    bool bRangeAttack = false;
 
 
     UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
@@ -102,5 +141,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
     UMaterialInstance* DefaultEtcMaterialFifth;
+
+
+    FRotator DefaultTargetRotation;
+    FRotator TargetRotation;
 
 };

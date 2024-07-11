@@ -16,7 +16,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Animation/AnimMontage.h"
-
+#include "Components/SphereComponent.h"
+#include "DrawDebugHelpers.h"
 
 
 AXR_Character::AXR_Character()
@@ -40,9 +41,18 @@ AXR_Character::AXR_Character()
 
 	CharacterMovementComponent = GetCharacterMovement();
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Bullet, ECollisionResponse::ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+
+	GetCapsuleComponent()->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
+
+	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
+	sphereOverlapCheck->SetupAttachment(GetCapsuleComponent());
+	sphereOverlapCheck->SetCollisionResponseToAllChannels(ECR_Ignore);
+	sphereOverlapCheck->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -122,6 +132,13 @@ void AXR_Character::InitializeCharacter()
 
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
+
+
+	sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
+	sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
+
+	sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
+
 	
 }
 
@@ -264,6 +281,11 @@ void AXR_Character::SetRingProperty()
 
 	FloorRingMesh->SetMaterialCall();
 
+}
+
+FVector AXR_Character::GetRingPosition()
+{
+	 return FloorRingMesh->GetComponentLocation(); 
 }
 
 bool AXR_Character::GetCharacterMesh()
@@ -440,6 +462,7 @@ void AXR_Character::Death()
 {
 	FloorRingMesh->bTickReject = true;
 	bOnBoard = false;
+	bBehaviorAvailable = false;
 
 	StartDissolveTimeline(false);
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
@@ -453,6 +476,14 @@ void AXR_Character::Death()
 	}
 
 	SetAnimState(EAnimationState::EAS_Death);
+	if (CharacterDeathMontage)
+	{
+		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
+	}
+
+	CharacterMovementComponent->MaxWalkSpeed = 0.f;
+
+
 }
 
 void AXR_Character::DestroyMyself()
@@ -475,6 +506,14 @@ void AXR_Character::DeathTimerFunction()
 void AXR_Character::BehaviorAvailableTimerFunction()
 {
 	bBehaviorAvailable = true;
+}
+
+void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp && Cast<AXR_Character>(OtherActor))
+	{
+
+	}
 }
 
 void AXR_Character::DissolveCallBack(float percent)
@@ -528,9 +567,19 @@ void AXR_Character::CharacterActionImpact()
 
 }
 
+void AXR_Character::CharacterActionImpact2()
+{
+}
+
 void AXR_Character::CharacterActionEnd()
 {
 	SetAnimState(EAnimationState::EAS_IdleAndWalk);
+
+}
+
+void AXR_Character::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
+{
+	
 }
 
 float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -554,44 +603,43 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 {
-	if (!TargetCharacter) return;
 	if (!DieTarget) return;
 
-	if (DieTarget == TargetCharacter)
+	if (TargetCharacter && DieTarget == TargetCharacter)
 	{
-		
-		/*
-		FString ActorName = GetName();
-		int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-		FString TargetCharacterName = TargetCharacter ? TargetCharacter->GetName() : TEXT("None");
-		FString DieTargetName = DieTarget ? DieTarget->GetName() : TEXT("None");
-
-		FString DebugMessage = FString::Printf(TEXT("Actor: %s, TargetCharacter: %s, DieTarget: %s"),
-			*ActorName, *TargetCharacterName, *DieTargetName);
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(HashValue, 5.0f, FColor::Blue, DebugMessage);
-		}
-		*/
-
-
-
 		TargetCharacter = nullptr;
+
+		if (TargetCharacter2)
+		{
+			TargetCharacter = TargetCharacter2;
+			TargetCharacter2 = nullptr;
+		}
 	}
 
-
+	if (TargetCharacter2 && DieTarget == TargetCharacter2)
+	{
+		TargetCharacter2 = nullptr;
+	}
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)
 {
 	AnimState = state; 
+
+	if (state > EAnimationState::EAS_IdleAndWalk)
+	{
+		CharacterMovementComponent->MaxWalkSpeed = 0.f;
+	}
+	else
+	{
+		CharacterMovementComponent->MaxWalkSpeed = 5.f;
+	}
+
+
 }
 
 void AXR_Character::CharacterActionStart()
 {
-
 	if (CharacterActionMontage && GetMesh()->GetAnimInstance())
 	{
 		SetAnimState(EAnimationState::EAS_Action);
