@@ -47,6 +47,7 @@ AXR_Character::AXR_Character()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
+	GetCapsuleComponent()->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
 
 	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
 	sphereOverlapCheck->SetupAttachment(GetCapsuleComponent());
