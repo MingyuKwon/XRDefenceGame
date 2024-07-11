@@ -43,13 +43,20 @@ private:
 	UPROPERTY(EditAnywhere)
 	float shotSpeed;
 	float BulletDamage = 0.f;
+	float damageRadius = 3.f;
+
+	FVector explodePosition;
+	bool bExplode = false;
 
 	UFUNCTION(BlueprintCallable)
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	void Explode();
+
 public:
 	virtual void Tick(float DeltaTime) override;
-	void SetTarget(AActor* Target);
+	void SetTarget(FVector TargetPosition);
 	void SetDamage(float Damage);
+	void SetDamageRadius(float radius);
 
 };

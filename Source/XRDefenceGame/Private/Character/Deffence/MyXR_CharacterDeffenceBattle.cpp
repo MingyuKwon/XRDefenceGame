@@ -404,6 +404,8 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
             if (Projectile)
             {
                 Projectile->SetDamage(CharacterProperty.Damage);
+                Projectile->SetTarget(EndLocation);
+                Projectile->SetDamageRadius(3.f);
             }
 
         }
@@ -430,15 +432,14 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                     beamTrailNiagara->SetVariableVec3(FName("TrailStart"), MuzzleTransform.GetLocation());
                     beamTrailNiagara->SetVariableVec3(FName("TrailEnd"), EndPosition);
                 }
-
-                if (shootParticle)
-                {
-                    UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
-                }
             }
         }
 
  
+        if (shootParticle)
+        {
+            UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+        }
     }
 }
 
