@@ -282,6 +282,11 @@ void AXR_Character::SetRingProperty()
 
 }
 
+FVector AXR_Character::GetRingPosition()
+{
+	 return FloorRingMesh->GetComponentLocation(); 
+}
+
 bool AXR_Character::GetCharacterMesh()
 {
 	CharacterMesh = (CharacterMesh == nullptr) ? GetMesh() : CharacterMesh;
@@ -568,6 +573,7 @@ void AXR_Character::CharacterActionImpact2()
 void AXR_Character::CharacterActionEnd()
 {
 	SetAnimState(EAnimationState::EAS_IdleAndWalk);
+
 }
 
 void AXR_Character::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
@@ -618,6 +624,17 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 void AXR_Character::SetAnimState(EAnimationState state)
 {
 	AnimState = state; 
+
+	if (state > EAnimationState::EAS_IdleAndWalk)
+	{
+		CharacterMovementComponent->MaxWalkSpeed = 0.f;
+	}
+	else
+	{
+		CharacterMovementComponent->MaxWalkSpeed = 5.f;
+	}
+
+
 }
 
 void AXR_Character::CharacterActionStart()

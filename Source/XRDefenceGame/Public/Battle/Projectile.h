@@ -25,6 +25,10 @@ protected:
 	UStaticMeshComponent* BulletMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* BulletMesh2;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UCapsuleComponent* Capsule;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

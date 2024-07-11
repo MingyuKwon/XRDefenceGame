@@ -36,7 +36,7 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
             FRotator TargetRot = Direction.Rotation();
             TargetRotation = TargetRot;
 
-            if (TargetCharacter2)
+            if (TargetCharacter2 && bAttackBoth)
             {
                 FVector TargetLocation2 = TargetCharacter2->GetActorLocation();
                 FVector Direction2 = TargetLocation2 - StartLocation;
@@ -389,31 +389,52 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
     if (MuzzleSocket && TempChar)
     {
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
-        FVector EndPosition = TempChar->GetActorLocation();
 
-        FHitResult BulletScan;
-        GetWorld()->LineTraceSingleByChannel(BulletScan, MuzzleTransform.GetLocation(), EndPosition, ECC_Bullet);
-        
-        if (BulletScan.bBlockingHit)
+
+        if (bRangeAttack)
         {
-            EndPosition = BulletScan.ImpactPoint;
-        }
+            FVector StartLocation = MuzzleTransform.GetLocation();
+            FVector EndLocation = TempChar->GetRingPosition();
 
-        UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.Damage, GetController(), this, nullptr);
+            FVector Direction = (EndLocation - StartLocation).GetSafeNormal();
+            FRotator ProjectileRotation = Direction.Rotation();
 
-        if (trailBeam)
-        {
-            UNiagaraComponent* beamTrailNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), trailBeam, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+            AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(BulletClass, StartLocation, ProjectileRotation);
 
-            if (beamTrailNiagara)
+            if (Projectile)
             {
-                beamTrailNiagara->SetVariableVec3(FName("TrailStart"), MuzzleTransform.GetLocation());
-                beamTrailNiagara->SetVariableVec3(FName("TrailEnd"), EndPosition);
+                Projectile->SetDamage(CharacterProperty.Damage);
             }
 
-            if (shootParticle)
+        }
+        else
+        {
+            FVector EndPosition = TempChar->GetActorLocation();
+
+            FHitResult BulletScan;
+            GetWorld()->LineTraceSingleByChannel(BulletScan, MuzzleTransform.GetLocation(), EndPosition, ECC_Bullet);
+
+            if (BulletScan.bBlockingHit)
             {
-                UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+                EndPosition = BulletScan.ImpactPoint;
+            }
+
+            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.Damage, GetController(), this, nullptr);
+
+            if (trailBeam)
+            {
+                UNiagaraComponent* beamTrailNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), trailBeam, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+
+                if (beamTrailNiagara)
+                {
+                    beamTrailNiagara->SetVariableVec3(FName("TrailStart"), MuzzleTransform.GetLocation());
+                    beamTrailNiagara->SetVariableVec3(FName("TrailEnd"), EndPosition);
+                }
+
+                if (shootParticle)
+                {
+                    UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+                }
             }
         }
 

@@ -333,4 +333,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTargetCharacter2(AXR_Character* target) { TargetCharacter2 = target; }
 
+	UFUNCTION(BlueprintCallable)
+	FVector GetRingPosition();
+
 };

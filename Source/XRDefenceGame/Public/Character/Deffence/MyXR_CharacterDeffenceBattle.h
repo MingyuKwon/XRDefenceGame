@@ -100,6 +100,12 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Battle Parameter")
     TSubclassOf<class AProjectile> BulletClass;
 
+    UPROPERTY(EditAnywhere, Category = "Battle Parameter")
+    bool bAttackBoth = false;
+
+    UPROPERTY(EditAnywhere, Category = "Battle Parameter")
+    bool bRangeAttack = false;
+
 
     UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
     bool bBufferHightLighting = false;

@@ -28,14 +28,18 @@ AProjectile::AProjectile()
     Capsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     Capsule->SetCollisionObjectType(ECC_Bullet);
     Capsule->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-    Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+    Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
     Capsule->SetGenerateOverlapEvents(true);
     Capsule->SetupAttachment(RootComponent);
 
     BulletMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Bullet Mesh"));
     BulletMesh->SetupAttachment(Capsule);
     BulletMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    BulletMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
+    BulletMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(FName("Bullet Mesh2"));
+    BulletMesh2->SetupAttachment(Capsule);
+    BulletMesh2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
 
     Projectile_Movement = CreateDefaultSubobject<UNotHitSelf_PMC>(FName("NoProjectile Movement"));
@@ -44,7 +48,10 @@ AProjectile::AProjectile()
 
     Projectile_Movement->bRotationFollowsVelocity = true;
     Projectile_Movement->MaxSpeed = 10000.f;
-    Projectile_Movement->InitialSpeed = 500.f;
+    Projectile_Movement->InitialSpeed = 100.f;
+    Projectile_Movement->ProjectileGravityScale = 0.f;
+
+
 
     BulletDamage = 10;
 
