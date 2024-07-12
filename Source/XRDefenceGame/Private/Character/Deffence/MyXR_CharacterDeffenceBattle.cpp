@@ -27,7 +27,7 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
     {
         if (TargetCharacter)
         {
-            FVector StartLocation = GunMeshComponent->GetComponentLocation();
+            FVector StartLocation = GetActorLocation();
             FVector TargetLocation = TargetCharacter->GetActorLocation();
             FVector Direction = TargetLocation - StartLocation;
             Direction.Z = 0;
@@ -539,7 +539,7 @@ void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* Ov
             // No need to Renew
         }else if (TargetCharacter && !TargetCharacter2)
         {
-            if (tempNearest2 == TargetCharacter)
+            if (tempNearest1 == TargetCharacter)
             {
                 TargetCharacter2 = tempNearest2;
             }
