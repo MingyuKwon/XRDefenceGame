@@ -497,6 +497,11 @@ void AXR_Character::BehaviorAvailableTimerFunction()
 	bBehaviorAvailable = true;
 }
 
+void AXR_Character::DamageTimerFunction()
+{
+	ChangeMaterialState(EMaterialState::EMS_Damage, false);
+}
+
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this) && OtherComp && Cast<AXR_Character>(OtherActor))
@@ -508,6 +513,8 @@ void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AA
 void AXR_Character::DissolveCallBack(float percent)
 {
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	GetMesh()->SetScalarParameterValueOnMaterials("Dark", 1-percent);
+
 	FloorRingMesh->ChangeRingColorRotation(percent, 12.f);
 }
 
@@ -515,6 +522,7 @@ void AXR_Character::DissolveCallBackReverse(float percent)
 {
 	percent = 1 - percent;
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	GetMesh()->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
 	FloorRingMesh->ChangeRingColorRotation(percent, -12.f);
 
 }
@@ -581,6 +589,9 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
 
 	UpdateCharacterPropertyUI();
+
+	ChangeMaterialState(EMaterialState::EMS_Damage, true);
+	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.3f, false);
 
 	if (CharacterProperty.currentHealth <= 0)
 	{
@@ -687,6 +698,13 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 		break;
 
 	case EMaterialState::EMS_Damage:
+
+		if (DamagedMaterial)
+		{
+			CharacterMesh->SetMaterial(0, DamagedMaterial);
+			CharacterMesh->SetMaterial(1, DamagedMaterial);
+
+		}
 		break;
 
 	case EMaterialState::EMS_HandHighLight:

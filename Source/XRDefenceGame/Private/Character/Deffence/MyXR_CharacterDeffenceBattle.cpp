@@ -131,14 +131,43 @@ void AMyXR_CharacterDeffenceBattle::BindDissolveCallBack()
 void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
 {
     GunMeshComponent->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    GunMeshComponent->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
 
-    if (GunMeshComponent2->GetSkeletalMeshAsset() != nullptr) GunMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (GunMeshComponent2->GetSkeletalMeshAsset() != nullptr) {
+        GunMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        GunMeshComponent2->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+    }        
 
-    if (EtcMeshComponent1->GetStaticMesh() != nullptr) EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent2->GetStaticMesh() != nullptr) EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent3->GetStaticMesh() != nullptr) EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent4->GetStaticMesh() != nullptr) EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent5->GetStaticMesh() != nullptr) EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (EtcMeshComponent1->GetStaticMesh() != nullptr) {
+        EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent2->GetStaticMesh() != nullptr) {
+        EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent3->GetStaticMesh() != nullptr) {
+        EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent4->GetStaticMesh() != nullptr) {
+        EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent5->GetStaticMesh() != nullptr)
+    {
+        EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
 
     Super::DissolveCallBack(percent);
 }
@@ -202,6 +231,18 @@ void AMyXR_CharacterDeffenceBattle::ChangeMaterialState(EMaterialState materialS
         break;
 
     case EMaterialState::EMS_Damage:
+        if (DamagedMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, DamagedMaterial);
+            GunMeshComponent2->SetMaterial(0, DamagedMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent2->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent3->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent4->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent5->SetMaterial(0, DamagedMaterial);
+
+        }
         break;
 
     case EMaterialState::EMS_HandHighLight:

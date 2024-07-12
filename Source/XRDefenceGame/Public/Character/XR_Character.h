@@ -224,6 +224,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
 	FVector PalletteBeamEndPosition;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DamagedMaterial;
+
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
 
@@ -283,6 +286,11 @@ protected:
 	UFUNCTION()
 	virtual void BehaviorAvailableTimerFunction();
 
+	UFUNCTION()
+	virtual void DamageTimerFunction();
+
+
+	FTimerHandle DamageTimerHandle;
 
 	FTimerHandle DeathTimerHandle;
 
