@@ -27,7 +27,7 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
     {
         if (TargetCharacter)
         {
-            FVector StartLocation = GunMeshComponent->GetComponentLocation();
+            FVector StartLocation = GetActorLocation();
             FVector TargetLocation = TargetCharacter->GetActorLocation();
             FVector Direction = TargetLocation - StartLocation;
             Direction.Z = 0;
@@ -131,14 +131,43 @@ void AMyXR_CharacterDeffenceBattle::BindDissolveCallBack()
 void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
 {
     GunMeshComponent->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    GunMeshComponent->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
 
-    if (GunMeshComponent2->GetSkeletalMeshAsset() != nullptr) GunMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (GunMeshComponent2->GetSkeletalMeshAsset() != nullptr) {
+        GunMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        GunMeshComponent2->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+    }        
 
-    if (EtcMeshComponent1->GetStaticMesh() != nullptr) EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent2->GetStaticMesh() != nullptr) EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent3->GetStaticMesh() != nullptr) EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent4->GetStaticMesh() != nullptr) EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dissolve", percent);
-    if (EtcMeshComponent5->GetStaticMesh() != nullptr) EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dissolve", percent);
+    if (EtcMeshComponent1->GetStaticMesh() != nullptr) {
+        EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent1->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent2->GetStaticMesh() != nullptr) {
+        EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent2->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent3->GetStaticMesh() != nullptr) {
+        EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent3->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent4->GetStaticMesh() != nullptr) {
+        EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent4->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
+        
+    if (EtcMeshComponent5->GetStaticMesh() != nullptr)
+    {
+        EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dissolve", percent);
+        EtcMeshComponent5->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
+
+    }
 
     Super::DissolveCallBack(percent);
 }
@@ -149,13 +178,44 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBackReverse(float percent)
     DissolveCallBack(1-percent);
 }
 
-void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialState(EMaterialState materialState, bool bLock)
 {
-    Super::HighLightMesh(bHighlight);
+    Super::ChangeMaterialState(materialState, bLock);
 
-
-    if (bHighlight)
+    EMaterialState HightestState = EMaterialState::EMS_Default;
+    if (bLockDeath)
     {
+        HightestState = EMaterialState::EMS_Death;
+    }
+    else if (bLockHandHighLight)
+    {
+        HightestState = EMaterialState::EMS_HandHighLight;
+    }
+    else if (bLockDamage)
+    {
+        HightestState = EMaterialState::EMS_Damage;
+    }
+    else if (bLockOnBoardHighLight)
+    {
+        HightestState = EMaterialState::EMS_OnBoardHighLight;
+    }
+
+    switch (HightestState)
+    {
+    case EMaterialState::EMS_Default:
+        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
+        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+
+        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
+        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
+        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
+        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
+        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+
+        break;
+
+    case EMaterialState::EMS_OnBoardHighLight:
+
         if (HighlightMaterial)
         {
             GunMeshComponent->SetMaterial(0, HighlightMaterial);
@@ -168,26 +228,51 @@ void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
             EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
         }
 
-    }else
-    {
-        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
-        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+        break;
 
-        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
-        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
-        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
-        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
-        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+    case EMaterialState::EMS_Damage:
+        if (DamagedMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, DamagedMaterial);
+            GunMeshComponent2->SetMaterial(0, DamagedMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent2->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent3->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent4->SetMaterial(0, DamagedMaterial);
+            EtcMeshComponent5->SetMaterial(0, DamagedMaterial);
+
+        }
+        break;
+
+    case EMaterialState::EMS_HandHighLight:
+
+        if (HighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, HighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+        }
+
+        break;
+
+    case EMaterialState::EMS_Death:
+        break;
+
+    default:
+        break;
     }
 }
-
 
 
 void AMyXR_CharacterDeffenceBattle::InteractableEffectStart_Implementation()
 {
     Super::InteractableEffectStart_Implementation();
-
-    HighLightMesh(true);
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() * rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
@@ -217,9 +302,6 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 {
     Super::InteractableEffectEnd_Implementation();
 
-    HighLightMesh(false);
-
-
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() / rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
 
@@ -246,21 +328,12 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectStart_Implementation()
 {
-    if (bHightLighting) return;
-
-    bBufferHightLighting = true;
-
-    HighLightMesh(true);
+    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight, true);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
 {
-    bBufferHightLighting = false;
-
-    if (bHightLighting) return;
-
-    HighLightMesh(false);
-
+    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight,false);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType buffType)
@@ -335,7 +408,9 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionImpact()
 void AMyXR_CharacterDeffenceBattle::CharacterActionImpact2()
 {
     Super::CharacterActionImpact2();
+
     FireBullet(true);
+
 }
 
 void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
@@ -354,14 +429,22 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
         {
             AXR_Character* xrChar = Cast<AXR_Character>(Actor);
 
-            if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
+            if (xrChar)
             {
-                float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
-                if (Distance <= CharacterProperty.Util_Range)
-                {
-                    NearbyCharacters.Add(xrChar);
-                }
+                FString ActorName = xrChar->GetName();
+                if(CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Checking actor: %s"), *ActorName);
+                
 
+                if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
+                {
+                    float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
+                    if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Distance to actor %s: %f , CharacterProperty.Util_Range : %f"), *ActorName, Distance , CharacterProperty.Util_Range);
+
+                    if (Distance <= CharacterProperty.Util_Range + 3)
+                    {
+                        NearbyCharacters.Add(xrChar);
+                    }
+                }
             }
         }
     }
@@ -369,11 +452,35 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
     NearbyCharacters.Sort([this](const AXR_Character& A, const AXR_Character& B)
         {
             return FVector::Dist2D(this->GetActorLocation(), A.GetActorLocation()) < FVector::Dist2D(this->GetActorLocation(), B.GetActorLocation());
-        }
-    );
+        });
 
     outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
     outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
+
+    if (outFirstNear)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Nearest character: %s"), *outFirstNear->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No nearby characters found"));
+    }
+
+    if (outSecondNear)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Second nearest character: %s"), *outSecondNear->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Only one nearby character found"));
+    }
+}
+
+void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
+{
+    Super::TargetDieCallBack(DieTarget);
+
+    RenewTargetCharacter12();
 }
 
 void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
@@ -382,14 +489,29 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
 
     FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
 
-    const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(SockeName);
-    AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
+
+    USkeletalMeshComponent* GunMesh;
+
+    if (isDouble && (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1 || CharacterType == ECharacterType::ECT_DefenceT_Arrow_2))
+    {
+        SockeName = FName("MuzzleSocket");
+        GunMesh = GunMeshComponent2;
+
+        UE_LOG(LogTemp, Display, TEXT("DoubleAttack"));
+
+    }
+    else
+    {
+        GunMesh = GunMeshComponent;
+    }
+
+    const USkeletalMeshSocket* MuzzleSocket = GunMesh->GetSocketByName(SockeName);
+    AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
     if (MuzzleSocket && TempChar)
     {
-        FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
-
+        FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMesh);
 
         if (bRangeAttack)
         {
@@ -405,9 +527,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
             {
                 Projectile->SetDamage(CharacterProperty.Damage);
                 Projectile->SetTarget(EndLocation);
-                Projectile->SetDamageRadius(3.f);
             }
-
         }
         else
         {
@@ -468,9 +588,10 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
         SetAnimState(EAnimationState::EAS_Action);
         GunMeshComponent->GetAnimInstance()->Montage_Play(GunFireMontage);
 
-        if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance())
+        if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance() && TargetCharacter2)
         {
-            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage);
+            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage2);
+
         }
     }
 
@@ -484,26 +605,40 @@ void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* Ov
 
     if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
     {
-        /*
-        
-        FString ActorName = GetName();
-        int32 HashValue = FCrc::StrCrc32(*ActorName);
+        RenewTargetCharacter12();
+    }
+}
 
-        FString TargetCharacterName = OtherActor->GetName();
+void AMyXR_CharacterDeffenceBattle::RenewTargetCharacter12()
+{
+    AXR_Character* tempNearest1;
+    AXR_Character* tempNearest2;
+    FindNearbyEnemy(tempNearest1, tempNearest2);
 
-        FString DebugMessage = FString::Printf(TEXT("Actor: %s, Overlap Target: %s"),
-            *ActorName, *TargetCharacterName);
 
-        if (GEngine)
+    if (TargetCharacter && TargetCharacter2)
+    {
+        // No need to Renew
+    }
+    else if (TargetCharacter && !TargetCharacter2)
+    {
+        if (tempNearest1 == TargetCharacter)
         {
-            GEngine->AddOnScreenDebugMessage(HashValue, 1.0f, FColor::Blue, DebugMessage);
+            TargetCharacter2 = tempNearest2;
+        }
+        else
+        {
+            TargetCharacter2 = tempNearest1;
         }
 
-        */
-        AXR_Character* tempNearest1;
-        AXR_Character* tempNearest2;
-        FindNearbyEnemy(tempNearest1, tempNearest2);
 
+    }
+    else if (!TargetCharacter && TargetCharacter2)
+    {
+        // Cannot Be
+    }
+    else
+    {
         TargetCharacter = tempNearest1;
         TargetCharacter2 = tempNearest2;
     }

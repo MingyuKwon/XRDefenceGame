@@ -111,8 +111,16 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable)
-	virtual void CharacterActionStart();
+	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
+	
+	bool bLockOnBoardHighLight = false;
+	bool bLockDamage = false;
+	bool bLockHandHighLight = false;
+	bool bLockDeath = false;
 
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionStart();
 
 	UFUNCTION(BlueprintCallable)
 	void SetAnimState(EAnimationState state);
@@ -216,6 +224,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Palette")
 	FVector PalletteBeamEndPosition;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Material Parameter")
+	UMaterialInstance* DamagedMaterial;
+
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
 
@@ -265,10 +276,6 @@ protected:
 
 	virtual void BindReverseDissolveCallBack();
 
-
-	UFUNCTION()
-	virtual void HighLightMesh(bool bHighlight);
-
 	virtual void StartDissolveTimeline(bool bNotReverse);
 
 	virtual void Death();
@@ -279,6 +286,11 @@ protected:
 	UFUNCTION()
 	virtual void BehaviorAvailableTimerFunction();
 
+	UFUNCTION()
+	virtual void DamageTimerFunction();
+
+
+	FTimerHandle DamageTimerHandle;
 
 	FTimerHandle DeathTimerHandle;
 

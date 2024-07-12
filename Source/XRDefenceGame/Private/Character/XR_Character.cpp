@@ -45,11 +45,12 @@ AXR_Character::AXR_Character()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Bullet, ECollisionResponse::ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
 	GetCapsuleComponent()->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
 
 	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
+	sphereOverlapCheck->SetSphereRadius(0.01f);
 	sphereOverlapCheck->SetupAttachment(GetCapsuleComponent());
 	sphereOverlapCheck->SetCollisionResponseToAllChannels(ECR_Ignore);
 	sphereOverlapCheck->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
@@ -133,11 +134,17 @@ void AXR_Character::InitializeCharacter()
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
 
+	if (ObjectType == EObjectType::EOT_Deffence)
+	{
+		sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
+		sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
 
-	sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
-	sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
+		if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Radius: %f"), sphereOverlapCheck->GetScaledSphereRadius());
 
-	sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
+
+		sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
+	}
+
 
 	
 }
@@ -318,31 +325,13 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	SetPropertyUIVisible(true);
 
-	HighLightMesh(true);
+	ChangeMaterialState(EMaterialState::EMS_HandHighLight, true);
 		
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 }
 
-void AXR_Character::HighLightMesh(bool bHighlight)
-{
-	if (bHighlight)
-	{
-		if (HighlightMaterial)
-		{
-			CharacterMesh->SetMaterial(0, HighlightMaterial);
-			CharacterMesh->SetMaterial(1, HighlightMaterial);
-		}
-	}
-	else
-	{
-		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
-
-	}
-
-}
 
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
@@ -353,7 +342,7 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	SetPropertyUIVisible(false);
 
-	HighLightMesh(false);
+	ChangeMaterialState(EMaterialState::EMS_HandHighLight,false);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -508,6 +497,11 @@ void AXR_Character::BehaviorAvailableTimerFunction()
 	bBehaviorAvailable = true;
 }
 
+void AXR_Character::DamageTimerFunction()
+{
+	ChangeMaterialState(EMaterialState::EMS_Damage, false);
+}
+
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this) && OtherComp && Cast<AXR_Character>(OtherActor))
@@ -519,6 +513,8 @@ void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AA
 void AXR_Character::DissolveCallBack(float percent)
 {
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	GetMesh()->SetScalarParameterValueOnMaterials("Dark", 1-percent);
+
 	FloorRingMesh->ChangeRingColorRotation(percent, 12.f);
 }
 
@@ -526,6 +522,7 @@ void AXR_Character::DissolveCallBackReverse(float percent)
 {
 	percent = 1 - percent;
 	GetMesh()->SetScalarParameterValueOnMaterials("Dissolve", percent);
+	GetMesh()->SetScalarParameterValueOnMaterials("Dark", 1 - percent);
 	FloorRingMesh->ChangeRingColorRotation(percent, -12.f);
 
 }
@@ -593,6 +590,9 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	UpdateCharacterPropertyUI();
 
+	ChangeMaterialState(EMaterialState::EMS_Damage, true);
+	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.3f, false);
+
 	if (CharacterProperty.currentHealth <= 0)
 	{
 		Death();
@@ -620,6 +620,8 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 	{
 		TargetCharacter2 = nullptr;
 	}
+
+
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)
@@ -637,6 +639,89 @@ void AXR_Character::SetAnimState(EAnimationState state)
 
 
 }
+
+void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
+{
+	switch (materialState)
+	{
+	case EMaterialState::EMS_OnBoardHighLight:
+		bLockOnBoardHighLight = bLock;
+		break;
+
+	case EMaterialState::EMS_Damage:
+		bLockDamage = bLock;
+		break;
+
+	case EMaterialState::EMS_HandHighLight:
+		bLockHandHighLight = bLock;
+		break;
+
+	case EMaterialState::EMS_Death:
+		bLockDeath = bLock;
+		break;
+
+	}
+
+	EMaterialState HightestState = EMaterialState::EMS_Default;
+	if (bLockDeath)
+	{
+		HightestState = EMaterialState::EMS_Death;
+	}
+	else if (bLockHandHighLight)
+	{
+		HightestState = EMaterialState::EMS_HandHighLight;
+	}
+	else if (bLockDamage)
+	{
+		HightestState = EMaterialState::EMS_Damage;
+	}
+	else if (bLockOnBoardHighLight)
+	{
+		HightestState = EMaterialState::EMS_OnBoardHighLight;
+	}
+
+
+	switch (HightestState)
+	{
+	case EMaterialState::EMS_Default :
+		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+
+		break;
+
+	case EMaterialState::EMS_OnBoardHighLight:
+		if (HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+		}
+		break;
+
+	case EMaterialState::EMS_Damage:
+
+		if (DamagedMaterial)
+		{
+			CharacterMesh->SetMaterial(0, DamagedMaterial);
+			CharacterMesh->SetMaterial(1, DamagedMaterial);
+
+		}
+		break;
+
+	case EMaterialState::EMS_HandHighLight:
+		if (HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+		}
+
+		break;
+		
+	case EMaterialState::EMS_Death:
+		break;
+
+	} 
+}
+
 
 void AXR_Character::CharacterActionStart()
 {

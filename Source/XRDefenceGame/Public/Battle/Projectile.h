@@ -38,12 +38,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UNiagaraSystem* HitImpactParticle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
+	class UNiagaraSystem* BombRangeNiagara;
+
 
 private:
 	UPROPERTY(EditAnywhere)
 	float shotSpeed;
 	float BulletDamage = 0.f;
-	float damageRadius = 3.f;
+	float damageRadius = 5.f;
 
 	FVector explodePosition;
 	bool bExplode = false;
@@ -57,6 +60,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void SetTarget(FVector TargetPosition);
 	void SetDamage(float Damage);
-	void SetDamageRadius(float radius);
 
 };
