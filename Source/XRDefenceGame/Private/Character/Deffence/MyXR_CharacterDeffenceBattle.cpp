@@ -149,13 +149,44 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBackReverse(float percent)
     DissolveCallBack(1-percent);
 }
 
-void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialState(EMaterialState materialState, bool bLock)
 {
-    Super::HighLightMesh(bHighlight);
+    Super::ChangeMaterialState(materialState, bLock);
 
-
-    if (bHighlight)
+    EMaterialState HightestState = EMaterialState::EMS_Default;
+    if (bLockDeath)
     {
+        HightestState = EMaterialState::EMS_Death;
+    }
+    else if (bLockHandHighLight)
+    {
+        HightestState = EMaterialState::EMS_HandHighLight;
+    }
+    else if (bLockDamage)
+    {
+        HightestState = EMaterialState::EMS_Damage;
+    }
+    else if (bLockOnBoardHighLight)
+    {
+        HightestState = EMaterialState::EMS_OnBoardHighLight;
+    }
+
+    switch (HightestState)
+    {
+    case EMaterialState::EMS_Default:
+        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
+        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+
+        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
+        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
+        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
+        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
+        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+
+        break;
+
+    case EMaterialState::EMS_OnBoardHighLight:
+
         if (HighlightMaterial)
         {
             GunMeshComponent->SetMaterial(0, HighlightMaterial);
@@ -168,26 +199,39 @@ void AMyXR_CharacterDeffenceBattle::HighLightMesh(bool bHighlight)
             EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
         }
 
-    }else
-    {
-        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
-        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+        break;
 
-        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
-        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
-        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
-        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
-        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+    case EMaterialState::EMS_Damage:
+        break;
+
+    case EMaterialState::EMS_HandHighLight:
+
+        if (HighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, HighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+        }
+
+        break;
+
+    case EMaterialState::EMS_Death:
+        break;
+
+    default:
+        break;
     }
 }
-
 
 
 void AMyXR_CharacterDeffenceBattle::InteractableEffectStart_Implementation()
 {
     Super::InteractableEffectStart_Implementation();
-
-    HighLightMesh(true);
 
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() * rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
@@ -217,9 +261,6 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 {
     Super::InteractableEffectEnd_Implementation();
 
-    HighLightMesh(false);
-
-
     FVector NewScale = GunMeshComponent->GetRelativeScale3D() / rescaleAmount;
     GunMeshComponent->SetRelativeScale3D(NewScale);
 
@@ -246,21 +287,12 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectStart_Implementation()
 {
-    if (bHightLighting) return;
-
-    bBufferHightLighting = true;
-
-    HighLightMesh(true);
+    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight, true);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
 {
-    bBufferHightLighting = false;
-
-    if (bHightLighting) return;
-
-    HighLightMesh(false);
-
+    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight,false);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType buffType)

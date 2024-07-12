@@ -111,8 +111,16 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable)
-	virtual void CharacterActionStart();
+	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
+	
+	bool bLockOnBoardHighLight = false;
+	bool bLockDamage = false;
+	bool bLockHandHighLight = false;
+	bool bLockDeath = false;
 
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionStart();
 
 	UFUNCTION(BlueprintCallable)
 	void SetAnimState(EAnimationState state);
@@ -264,10 +272,6 @@ protected:
 	virtual void BindDissolveCallBack();
 
 	virtual void BindReverseDissolveCallBack();
-
-
-	UFUNCTION()
-	virtual void HighLightMesh(bool bHighlight);
 
 	virtual void StartDissolveTimeline(bool bNotReverse);
 

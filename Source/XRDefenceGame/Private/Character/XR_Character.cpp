@@ -325,31 +325,13 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	SetPropertyUIVisible(true);
 
-	HighLightMesh(true);
+	ChangeMaterialState(EMaterialState::EMS_HandHighLight, true);
 		
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
 
 }
 
-void AXR_Character::HighLightMesh(bool bHighlight)
-{
-	if (bHighlight)
-	{
-		if (HighlightMaterial)
-		{
-			CharacterMesh->SetMaterial(0, HighlightMaterial);
-			CharacterMesh->SetMaterial(1, HighlightMaterial);
-		}
-	}
-	else
-	{
-		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
-
-	}
-
-}
 
 void AXR_Character::InteractableEffectEnd_Implementation()
 {
@@ -360,7 +342,7 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	SetPropertyUIVisible(false);
 
-	HighLightMesh(false);
+	ChangeMaterialState(EMaterialState::EMS_HandHighLight,false);
 
 	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
 	CharacterMesh->SetRelativeScale3D(NewScale);
@@ -646,6 +628,82 @@ void AXR_Character::SetAnimState(EAnimationState state)
 
 
 }
+
+void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
+{
+	switch (materialState)
+	{
+	case EMaterialState::EMS_OnBoardHighLight:
+		bLockOnBoardHighLight = bLock;
+		break;
+
+	case EMaterialState::EMS_Damage:
+		bLockDamage = bLock;
+		break;
+
+	case EMaterialState::EMS_HandHighLight:
+		bLockHandHighLight = bLock;
+		break;
+
+	case EMaterialState::EMS_Death:
+		bLockDeath = bLock;
+		break;
+
+	}
+
+	EMaterialState HightestState = EMaterialState::EMS_Default;
+	if (bLockDeath)
+	{
+		HightestState = EMaterialState::EMS_Death;
+	}
+	else if (bLockHandHighLight)
+	{
+		HightestState = EMaterialState::EMS_HandHighLight;
+	}
+	else if (bLockDamage)
+	{
+		HightestState = EMaterialState::EMS_Damage;
+	}
+	else if (bLockOnBoardHighLight)
+	{
+		HightestState = EMaterialState::EMS_OnBoardHighLight;
+	}
+
+
+	switch (HightestState)
+	{
+	case EMaterialState::EMS_Default :
+		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+
+		break;
+
+	case EMaterialState::EMS_OnBoardHighLight:
+		if (HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+		}
+		break;
+
+	case EMaterialState::EMS_Damage:
+		break;
+
+	case EMaterialState::EMS_HandHighLight:
+		if (HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+		}
+
+		break;
+		
+	case EMaterialState::EMS_Death:
+		break;
+
+	} 
+}
+
 
 void AXR_Character::CharacterActionStart()
 {

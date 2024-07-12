@@ -118,7 +118,7 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
     bool bBufferHightLighting = false;
 
-    virtual void HighLightMesh(bool bHighlight) override;
+    virtual void ChangeMaterialState(EMaterialState materialState, bool bLock) override;
 
     UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
     int32 DamageUpgradeCount = 0;
