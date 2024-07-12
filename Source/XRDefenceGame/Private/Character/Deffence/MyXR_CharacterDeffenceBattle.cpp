@@ -335,6 +335,7 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionImpact()
 void AMyXR_CharacterDeffenceBattle::CharacterActionImpact2()
 {
     Super::CharacterActionImpact2();
+
     FireBullet(true);
 }
 
@@ -383,13 +384,18 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
     FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
 
     const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(SockeName);
-    AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
+    AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
     if (MuzzleSocket && TempChar)
     {
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
 
+        if (isDouble && (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1 || CharacterType == ECharacterType::ECT_DefenceT_Arrow_2))
+        {
+            MuzzleSocket = GunMeshComponent2->GetSocketByName(FName("MuzzleSocket"));
+            MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent2);
+        }
 
         if (bRangeAttack)
         {
@@ -405,7 +411,6 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
             {
                 Projectile->SetDamage(CharacterProperty.Damage);
                 Projectile->SetTarget(EndLocation);
-                Projectile->SetDamageRadius(3.f);
             }
 
         }
@@ -470,7 +475,8 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
 
         if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance())
         {
-            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage);
+            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage2);
+
         }
     }
 

@@ -56,6 +56,10 @@ protected:
     UAnimMontage* GunFireMontage = nullptr;
 
     UPROPERTY(EditAnywhere, Category = "Anim Parameter")
+    UAnimMontage* GunFireMontage2 = nullptr;
+
+
+    UPROPERTY(EditAnywhere, Category = "Anim Parameter")
     UAnimMontage* GunSetStartFireMontage = nullptr;
 
     UPROPERTY(EditAnywhere, Category = "Anim Parameter")
