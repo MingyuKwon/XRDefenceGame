@@ -36,6 +36,17 @@ enum class EAnimationState : uint8
     EAS_None
 };
 
+UENUM(BlueprintType)
+enum class EMaterialState : uint8
+{
+    EMS_Default,
+    EMS_OnBoardHighLight,
+    EMS_Damage,
+    EMS_HandHighLight,
+    EMS_Death,
+    EMS_None
+};
+
 
 UENUM(BlueprintType)
 enum class ECharacterType : uint8

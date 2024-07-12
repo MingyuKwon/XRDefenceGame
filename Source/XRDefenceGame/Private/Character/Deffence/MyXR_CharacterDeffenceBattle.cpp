@@ -403,6 +403,13 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
     }
 }
 
+void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
+{
+    Super::TargetDieCallBack(DieTarget);
+
+    RenewTargetCharacter12();
+}
+
 void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
 {
     if (isDouble && !TargetCharacter2) return;
@@ -448,10 +455,6 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 Projectile->SetDamage(CharacterProperty.Damage);
                 Projectile->SetTarget(EndLocation);
             }
-
-            DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Green, false, 2.0f, 0, 1.0f);
-
-
         }
         else
         {
@@ -529,36 +532,42 @@ void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* Ov
 
     if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
     {
-        AXR_Character* tempNearest1;
-        AXR_Character* tempNearest2;
-        FindNearbyEnemy(tempNearest1, tempNearest2);
+        RenewTargetCharacter12();
+    }
+}
+
+void AMyXR_CharacterDeffenceBattle::RenewTargetCharacter12()
+{
+    AXR_Character* tempNearest1;
+    AXR_Character* tempNearest2;
+    FindNearbyEnemy(tempNearest1, tempNearest2);
 
 
-        if (TargetCharacter && TargetCharacter2)
+    if (TargetCharacter && TargetCharacter2)
+    {
+        // No need to Renew
+    }
+    else if (TargetCharacter && !TargetCharacter2)
+    {
+        if (tempNearest1 == TargetCharacter)
         {
-            // No need to Renew
-        }else if (TargetCharacter && !TargetCharacter2)
-        {
-            if (tempNearest1 == TargetCharacter)
-            {
-                TargetCharacter2 = tempNearest2;
-            }
-            else
-            {
-                TargetCharacter2 = tempNearest1;
-            }
-
-
-        }else if (!TargetCharacter && TargetCharacter2)
-        {
-            // Cannot Be
+            TargetCharacter2 = tempNearest2;
         }
         else
         {
-            TargetCharacter = tempNearest1;
-            TargetCharacter2 = tempNearest2;
+            TargetCharacter2 = tempNearest1;
         }
 
+
+    }
+    else if (!TargetCharacter && TargetCharacter2)
+    {
+        // Cannot Be
+    }
+    else
+    {
+        TargetCharacter = tempNearest1;
+        TargetCharacter2 = tempNearest2;
     }
 }
 

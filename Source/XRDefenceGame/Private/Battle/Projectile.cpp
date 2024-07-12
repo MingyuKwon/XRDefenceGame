@@ -13,7 +13,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "DrawDebugHelpers.h"  
-
+#include "NiagaraComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -106,7 +106,15 @@ void AProjectile::Explode()
         true
     );
 
-    DrawDebugSphere(GetWorld(), GetActorLocation(), damageRadius, 24, FColor::Red, false, 2.0f, 0, 0.1f);
+    if (BombRangeNiagara)
+    {
+        UNiagaraComponent* NG = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BombRangeNiagara, GetActorLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+
+        if (NG)
+        {
+            NG->SetVariableFloat(FName("Radius"), damageRadius);
+        }
+    }
 
     Destroy();
 }

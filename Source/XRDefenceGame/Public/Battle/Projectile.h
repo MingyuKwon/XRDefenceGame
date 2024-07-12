@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UNiagaraSystem* HitImpactParticle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
+	class UNiagaraSystem* BombRangeNiagara;
+
 
 private:
 	UPROPERTY(EditAnywhere)

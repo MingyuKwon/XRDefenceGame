@@ -627,6 +627,8 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 	{
 		TargetCharacter2 = nullptr;
 	}
+
+
 }
 
 void AXR_Character::SetAnimState(EAnimationState state)
