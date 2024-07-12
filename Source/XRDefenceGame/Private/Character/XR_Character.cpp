@@ -45,11 +45,12 @@ AXR_Character::AXR_Character()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Bullet, ECollisionResponse::ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
 	GetCapsuleComponent()->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
 
 	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
+	sphereOverlapCheck->SetSphereRadius(0.01f);
 	sphereOverlapCheck->SetupAttachment(GetCapsuleComponent());
 	sphereOverlapCheck->SetCollisionResponseToAllChannels(ECR_Ignore);
 	sphereOverlapCheck->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
@@ -133,11 +134,17 @@ void AXR_Character::InitializeCharacter()
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
 
+	if (ObjectType == EObjectType::EOT_Deffence)
+	{
+		sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
+		sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
 
-	sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
-	sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
+		if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Radius: %f"), sphereOverlapCheck->GetScaledSphereRadius());
 
-	sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
+
+		sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
+	}
+
 
 	
 }

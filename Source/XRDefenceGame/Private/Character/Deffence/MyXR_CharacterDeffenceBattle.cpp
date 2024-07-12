@@ -337,6 +337,7 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionImpact2()
     Super::CharacterActionImpact2();
 
     FireBullet(true);
+
 }
 
 void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
@@ -355,14 +356,22 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
         {
             AXR_Character* xrChar = Cast<AXR_Character>(Actor);
 
-            if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
+            if (xrChar)
             {
-                float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
-                if (Distance <= CharacterProperty.Util_Range)
-                {
-                    NearbyCharacters.Add(xrChar);
-                }
+                FString ActorName = xrChar->GetName();
+                if(CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Checking actor: %s"), *ActorName);
+                
 
+                if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
+                {
+                    float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
+                    if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Distance to actor %s: %f , CharacterProperty.Util_Range : %f"), *ActorName, Distance , CharacterProperty.Util_Range);
+
+                    if (Distance <= CharacterProperty.Util_Range + 3)
+                    {
+                        NearbyCharacters.Add(xrChar);
+                    }
+                }
             }
         }
     }
@@ -370,11 +379,28 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
     NearbyCharacters.Sort([this](const AXR_Character& A, const AXR_Character& B)
         {
             return FVector::Dist2D(this->GetActorLocation(), A.GetActorLocation()) < FVector::Dist2D(this->GetActorLocation(), B.GetActorLocation());
-        }
-    );
+        });
 
     outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
     outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
+
+    if (outFirstNear)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Nearest character: %s"), *outFirstNear->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No nearby characters found"));
+    }
+
+    if (outSecondNear)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Second nearest character: %s"), *outSecondNear->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Only one nearby character found"));
+    }
 }
 
 void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
@@ -383,19 +409,29 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
 
     FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
 
-    const USkeletalMeshSocket* MuzzleSocket = GunMeshComponent->GetSocketByName(SockeName);
 
+
+    USkeletalMeshComponent* GunMesh;
+
+    if (isDouble && (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1 || CharacterType == ECharacterType::ECT_DefenceT_Arrow_2))
+    {
+        SockeName = FName("MuzzleSocket");
+        GunMesh = GunMeshComponent2;
+
+        UE_LOG(LogTemp, Display, TEXT("DoubleAttack"));
+
+    }
+    else
+    {
+        GunMesh = GunMeshComponent;
+    }
+
+    const USkeletalMeshSocket* MuzzleSocket = GunMesh->GetSocketByName(SockeName);
     AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
     if (MuzzleSocket && TempChar)
     {
-        FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent);
-
-        if (isDouble && (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1 || CharacterType == ECharacterType::ECT_DefenceT_Arrow_2))
-        {
-            MuzzleSocket = GunMeshComponent2->GetSocketByName(FName("MuzzleSocket"));
-            MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMeshComponent2);
-        }
+        FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMesh);
 
         if (bRangeAttack)
         {
@@ -412,6 +448,9 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 Projectile->SetDamage(CharacterProperty.Damage);
                 Projectile->SetTarget(EndLocation);
             }
+
+            DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Green, false, 2.0f, 0, 1.0f);
+
 
         }
         else
@@ -473,7 +512,7 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
         SetAnimState(EAnimationState::EAS_Action);
         GunMeshComponent->GetAnimInstance()->Montage_Play(GunFireMontage);
 
-        if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance())
+        if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance() && TargetCharacter2)
         {
             GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage2);
 
@@ -490,28 +529,36 @@ void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* Ov
 
     if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
     {
-        /*
-        
-        FString ActorName = GetName();
-        int32 HashValue = FCrc::StrCrc32(*ActorName);
-
-        FString TargetCharacterName = OtherActor->GetName();
-
-        FString DebugMessage = FString::Printf(TEXT("Actor: %s, Overlap Target: %s"),
-            *ActorName, *TargetCharacterName);
-
-        if (GEngine)
-        {
-            GEngine->AddOnScreenDebugMessage(HashValue, 1.0f, FColor::Blue, DebugMessage);
-        }
-
-        */
         AXR_Character* tempNearest1;
         AXR_Character* tempNearest2;
         FindNearbyEnemy(tempNearest1, tempNearest2);
 
-        TargetCharacter = tempNearest1;
-        TargetCharacter2 = tempNearest2;
+
+        if (TargetCharacter && TargetCharacter2)
+        {
+            // No need to Renew
+        }else if (TargetCharacter && !TargetCharacter2)
+        {
+            if (tempNearest2 == TargetCharacter)
+            {
+                TargetCharacter2 = tempNearest2;
+            }
+            else
+            {
+                TargetCharacter2 = tempNearest1;
+            }
+
+
+        }else if (!TargetCharacter && TargetCharacter2)
+        {
+            // Cannot Be
+        }
+        else
+        {
+            TargetCharacter = tempNearest1;
+            TargetCharacter2 = tempNearest2;
+        }
+
     }
 }
 

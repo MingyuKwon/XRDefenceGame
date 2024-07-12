@@ -77,11 +77,6 @@ void AProjectile::SetDamage(float Damage)
     BulletDamage = Damage;
 }
 
-void AProjectile::SetDamageRadius(float radius)
-{
-    damageRadius = radius;
-}
-
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 
