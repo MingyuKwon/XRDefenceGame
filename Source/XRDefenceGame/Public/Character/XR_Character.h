@@ -22,6 +22,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Property Parameter")
 	float currentHealth = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Property Parameter")
+	float beforeMaxHealth = 0;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
 	int32 DamageUpgradeCount = 0;

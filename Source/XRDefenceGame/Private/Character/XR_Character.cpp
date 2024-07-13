@@ -151,7 +151,7 @@ void AXR_Character::InitializeCharacter()
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
-	CharacterProperty.currentHealth = inheritform.currentHealth;
+	CharacterProperty.currentHealth = inheritform.currentHealth + (CharacterProperty.MaxHealth -inheritform.beforeMaxHealth);
 	SetOnBoardAuto();
 }
 
@@ -423,6 +423,7 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
 {
 	outForm.currentHealth = CharacterProperty.currentHealth;
+	outForm.beforeMaxHealth = CharacterProperty.MaxHealth;
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)
