@@ -203,7 +203,7 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 	if (!CharacterPropertyUI) return;
 
 
-	if (ObjectType == EObjectType::EOT_Deffence)
+	if (ObjectType == EObjectType::EOT_Deffence && CharacterType != ECharacterType::ECT_DefenceP)
 	{
 		CharacterPropertyUI->SetDamgeUtilVisible(true);
 		return;
@@ -591,7 +591,7 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	UpdateCharacterPropertyUI();
 
 	ChangeMaterialState(EMaterialState::EMS_Damage, true);
-	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.3f, false);
+	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
 	if (CharacterProperty.currentHealth <= 0)
 	{
