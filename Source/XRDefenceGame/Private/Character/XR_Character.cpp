@@ -47,7 +47,7 @@ AXR_Character::AXR_Character()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
-	GetCapsuleComponent()->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
+	GetCapsuleComponent()->SetWorldScale3D(FVector(0.045f, 0.045f, 0.045f));
 
 	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
 	sphereOverlapCheck->SetSphereRadius(0.01f);
@@ -152,7 +152,6 @@ void AXR_Character::InitializeCharacter()
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
 	CharacterProperty.currentHealth = inheritform.currentHealth;
-
 	SetOnBoardAuto();
 }
 
@@ -207,6 +206,11 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 	{
 		CharacterPropertyUI->SetDamgeUtilVisible(true);
 		return;
+	}
+
+	if (CharacterType == ECharacterType::ECT_DefenceP || CharacterType == ECharacterType::ECT_OffenceS)
+	{
+		flag = false;
 	}
 
 	CharacterPropertyUI->SetDamgeUtilVisible(flag);

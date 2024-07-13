@@ -83,6 +83,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
 
+	virtual void SetOnBoardAuto();
+
 	// Event that invoke when character set on Board
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnSetBoardEvent OnSetBoardEvent;
@@ -159,9 +161,6 @@ protected:
 	bool DefaultPlaceInBoard = false;
 
 	virtual void DestroyMyself();
-
-	virtual void SetOnBoardAuto();
-
 
 	virtual void SetPropertyUIVisible(bool flag);
 
