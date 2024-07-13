@@ -214,6 +214,13 @@ protected:
 	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> BuffRing;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> HealRing;
+
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr <class UFloorRingSMC> FloorRingMesh;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)

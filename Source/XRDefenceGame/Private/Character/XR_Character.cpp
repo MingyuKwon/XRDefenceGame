@@ -30,6 +30,13 @@ AXR_Character::AXR_Character()
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
 
+	BuffRing = CreateDefaultSubobject<UNiagaraComponent>(FName("BuffRing"));
+	BuffRing->SetupAttachment(GetMesh());
+
+	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
+	HealRing->SetupAttachment(GetMesh());
+
+
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
 
