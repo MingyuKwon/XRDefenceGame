@@ -431,14 +431,11 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
 
             if (xrChar)
             {
-                FString ActorName = xrChar->GetName();
-                if(CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Checking actor: %s"), *ActorName);
-                
+                FString ActorName = xrChar->GetName();                
 
                 if (IHandInteractInterface::Execute_IsOnBoard(xrChar))
                 {
                     float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
-                    if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Distance to actor %s: %f , CharacterProperty.Util_Range : %f"), *ActorName, Distance , CharacterProperty.Util_Range);
 
                     if (Distance <= CharacterProperty.Util_Range + 3)
                     {
@@ -456,24 +453,6 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
 
     outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
     outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
-
-    if (outFirstNear)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Nearest character: %s"), *outFirstNear->GetName());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No nearby characters found"));
-    }
-
-    if (outSecondNear)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Second nearest character: %s"), *outSecondNear->GetName());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Only one nearby character found"));
-    }
 }
 
 void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
@@ -497,9 +476,6 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
     {
         SockeName = FName("MuzzleSocket");
         GunMesh = GunMeshComponent2;
-
-        UE_LOG(LogTemp, Display, TEXT("DoubleAttack"));
-
     }
     else
     {

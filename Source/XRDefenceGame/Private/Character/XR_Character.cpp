@@ -30,6 +30,13 @@ AXR_Character::AXR_Character()
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
 
+	BuffRing = CreateDefaultSubobject<UNiagaraComponent>(FName("BuffRing"));
+	BuffRing->SetupAttachment(GetMesh());
+
+	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
+	HealRing->SetupAttachment(GetMesh());
+
+
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
 
@@ -47,7 +54,7 @@ AXR_Character::AXR_Character()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 
-	GetCapsuleComponent()->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
+	GetCapsuleComponent()->SetWorldScale3D(FVector(0.045f, 0.045f, 0.045f));
 
 	sphereOverlapCheck = CreateDefaultSubobject<USphereComponent>(FName("Sphere Overlap"));
 	sphereOverlapCheck->SetSphereRadius(0.01f);
@@ -151,8 +158,7 @@ void AXR_Character::InitializeCharacter()
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
-	CharacterProperty.currentHealth = inheritform.currentHealth;
-
+	CharacterProperty.currentHealth = inheritform.currentHealth + (CharacterProperty.MaxHealth -inheritform.beforeMaxHealth);
 	SetOnBoardAuto();
 }
 
@@ -203,10 +209,15 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 	if (!CharacterPropertyUI) return;
 
 
-	if (ObjectType == EObjectType::EOT_Deffence)
+	if (ObjectType == EObjectType::EOT_Deffence && CharacterType != ECharacterType::ECT_DefenceP)
 	{
 		CharacterPropertyUI->SetDamgeUtilVisible(true);
 		return;
+	}
+
+	if (CharacterType == ECharacterType::ECT_DefenceP || CharacterType == ECharacterType::ECT_OffenceS)
+	{
+		flag = false;
 	}
 
 	CharacterPropertyUI->SetDamgeUtilVisible(flag);
@@ -419,6 +430,7 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm)
 {
 	outForm.currentHealth = CharacterProperty.currentHealth;
+	outForm.beforeMaxHealth = CharacterProperty.MaxHealth;
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)
@@ -591,7 +603,7 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	UpdateCharacterPropertyUI();
 
 	ChangeMaterialState(EMaterialState::EMS_Damage, true);
-	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.3f, false);
+	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
 	if (CharacterProperty.currentHealth <= 0)
 	{

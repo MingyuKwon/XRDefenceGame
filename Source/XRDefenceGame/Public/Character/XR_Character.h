@@ -22,6 +22,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Property Parameter")
 	float currentHealth = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Property Parameter")
+	float beforeMaxHealth = 0;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff Parameter")
 	int32 DamageUpgradeCount = 0;
@@ -82,6 +85,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
+
+	virtual void SetOnBoardAuto();
 
 	// Event that invoke when character set on Board
 	UPROPERTY(BlueprintAssignable, Category = "Events")
@@ -160,9 +165,6 @@ protected:
 
 	virtual void DestroyMyself();
 
-	virtual void SetOnBoardAuto();
-
-
 	virtual void SetPropertyUIVisible(bool flag);
 
 
@@ -210,6 +212,13 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromCharacterToRing;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> BuffRing;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> HealRing;
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr <class UFloorRingSMC> FloorRingMesh;
