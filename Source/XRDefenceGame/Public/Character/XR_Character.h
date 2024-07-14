@@ -46,7 +46,11 @@ public:
 	float MaxHealth = 20;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
-	float Damage = 3;
+	float currentDamage = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float defaultDamage = 3;
+
 
 	//Only Uses Attacker
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
@@ -96,6 +100,9 @@ public:
 	void CheckNeutralToConvert(EObjectType objectType);
 
 	virtual void Heal(float healAmount);
+
+	virtual void AttackBuff(float BuffAmount);
+
 
 	UFUNCTION(BlueprintCallable)
 	void CharacterActionCall();
@@ -304,6 +311,13 @@ protected:
 	UFUNCTION()
 	virtual void DamageTimerFunction();
 
+	UFUNCTION()
+	virtual void BuffEndTimerFunction();
+
+	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
+	float BuffTime = 5.f;
+
+	FTimerHandle BuffTimerHandle;
 
 	FTimerHandle DamageTimerHandle;
 

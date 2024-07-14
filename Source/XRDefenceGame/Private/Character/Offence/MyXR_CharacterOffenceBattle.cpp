@@ -13,7 +13,7 @@ void AMyXR_CharacterOffenceBattle::CharacterActionImpact()
 
 	if (TargetCharacter)
 	{
-		UGameplayStatics::ApplyDamage(TargetCharacter, CharacterProperty.Damage, GetController(), this, nullptr);
+		UGameplayStatics::ApplyDamage(TargetCharacter, CharacterProperty.currentDamage, GetController(), this, nullptr);
 	}
 
 }

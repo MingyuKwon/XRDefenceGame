@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/Offence/XR_CharacterOffence.h"
+#include "Character/Offence/MyXR_CharacterOffenceBattle.h"
 #include "MyXR_CharacterOffenceBuff.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class XRDEFENCEGAME_API AMyXR_CharacterOffenceBuff : public AXR_CharacterOffence
+class XRDEFENCEGAME_API AMyXR_CharacterOffenceBuff : public AMyXR_CharacterOffenceBattle
 {
 	GENERATED_BODY()
 	
@@ -38,5 +38,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
 	float BuffRadius = 10.f;
 
+	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
+	float HealAmount = 50.f;
+
+	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
+	float BuffAmount = 10.f;
+
+
+	UFUNCTION()
+	virtual TArray<AXR_Character*> FindBuffableCharacter();
 
 };

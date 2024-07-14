@@ -501,7 +501,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
 
             if (Projectile)
             {
-                Projectile->SetDamage(CharacterProperty.Damage);
+                Projectile->SetDamage(CharacterProperty.currentDamage);
                 Projectile->SetTarget(EndLocation);
             }
         }
@@ -517,7 +517,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 EndPosition = BulletScan.ImpactPoint;
             }
 
-            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.Damage, GetController(), this, nullptr);
+            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.currentDamage, GetController(), this, nullptr);
 
             if (trailBeam)
             {

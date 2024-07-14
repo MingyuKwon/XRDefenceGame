@@ -198,7 +198,7 @@ void AXR_Character::UpdateCharacterPropertyUI()
 	if (CharacterPropertyUI)
 	{
 		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
-		CharacterPropertyUI->SetDamageCount(CharacterProperty.Damage);
+		CharacterPropertyUI->SetDamageCount(CharacterProperty.currentDamage);
 		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
 	}
 }
@@ -530,6 +530,8 @@ void AXR_Character::DamageTimerFunction()
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
 }
 
+
+
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this) && OtherComp && Cast<AXR_Character>(OtherActor))
@@ -575,7 +577,20 @@ void AXR_Character::Heal(float healAmount)
 {
 	CharacterProperty.currentHealth += healAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+	TriggerHealEffect();
 	UpdateCharacterPropertyUI();
+}
+
+void AXR_Character::AttackBuff(float BuffAmount)
+{
+	CharacterProperty.currentDamage = CharacterProperty.defaultDamage + BuffAmount;
+	GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &AXR_Character::BuffEndTimerFunction, BuffTime, false);
+	TriggerBuffEffect();
+}
+
+void AXR_Character::BuffEndTimerFunction()
+{
+	CharacterProperty.currentDamage = CharacterProperty.defaultDamage;
 }
 
 void AXR_Character::CharacterActionCall()
