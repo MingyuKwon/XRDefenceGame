@@ -459,7 +459,12 @@ void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLoc
 {
     Super::OtherCharacterSpawnCallBack(spawnLocation);
 
-    RenewTargetCharacter12();
+    float Dist = FVector::Dist2D(GetActorLocation(), spawnLocation);
+
+    if (CharacterProperty.Util_Range + CharacterProperty.RangeAcceptError >= Dist)
+    {
+        RenewTargetCharacter12();
+    }
 }
 
 void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)

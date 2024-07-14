@@ -71,7 +71,10 @@ void AMyXR_CharacterOffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLoca
 {
 	Super::OtherCharacterSpawnCallBack(spawnLocation);
 
+	float Dist = FVector::Dist2D(GetActorLocation(), spawnLocation);
+
 	SetOffenceTarget();
+
 }
 
 void AMyXR_CharacterOffenceBattle::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)

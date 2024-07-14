@@ -687,12 +687,6 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 
 void AXR_Character::OtherCharacterSpawnCallBack(FVector spawnLocation)
 {
-	float Dist = FVector::Dist2D(GetActorLocation(), spawnLocation);
-
-	if (CharacterProperty.Util_Range + CharacterProperty.RangeAcceptError >= Dist)
-	{
-		
-	}
 
 }
 
