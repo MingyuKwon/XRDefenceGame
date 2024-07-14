@@ -6,6 +6,8 @@
 #include "Character/XR_Character.h"
 #include "WallNexus.generated.h"
 
+class UMaterialInstance;
+
 UCLASS()
 class XRDEFENCEGAME_API AWallNexus : public AXR_Character
 {
@@ -16,6 +18,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void InitializeCharacter() override;
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> NexusMesh1;
@@ -35,6 +40,31 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<class UBoxComponent> RootCollision;
 
+
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultNexusMesh1;
+
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultNexusMesh2;
+
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultNexusMesh3;
+
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultNexusMesh4;
+
+	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
+	UMaterialInstance* DefaultNexusMesh5;
+
+	virtual void DissolveCallBackReverse(float percent) override;
+	virtual void DissolveCallBack(float percent) override;
+
+	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock) override;
+
+
+
+	float TimeAccumulator;
+	bool bMovingUp;
 
 
 public:	
