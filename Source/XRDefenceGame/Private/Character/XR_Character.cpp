@@ -18,6 +18,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
+#include "MotionWarpingComponent.h"
 
 
 AXR_Character::AXR_Character()
@@ -36,6 +37,7 @@ AXR_Character::AXR_Character()
 	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
 	HealRing->SetupAttachment(GetMesh());
 
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(FName("MotionWarping"));
 
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
@@ -88,6 +90,12 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->OnCharacterSpawnEvent.Broadcast(GetActorLocation());
+
+		}
+
 		if (isSpawnedByHand)
 		{
 			OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
@@ -136,7 +144,12 @@ void AXR_Character::InitializeCharacter()
 	if (XRGamePlayMode)
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
+		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
+
 	}
+
+	HealRing->Deactivate();
+	BuffRing->Deactivate();
 
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
@@ -145,9 +158,6 @@ void AXR_Character::InitializeCharacter()
 	{
 		sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
 		sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
-
-		if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Radius: %f"), sphereOverlapCheck->GetScaledSphereRadius());
-
 
 		sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
 	}
@@ -198,7 +208,7 @@ void AXR_Character::UpdateCharacterPropertyUI()
 	if (CharacterPropertyUI)
 	{
 		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
-		CharacterPropertyUI->SetDamageCount(CharacterProperty.Damage);
+		CharacterPropertyUI->SetDamageCount(CharacterProperty.currentDamage);
 		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
 	}
 }
@@ -207,6 +217,12 @@ void AXR_Character::UpdateCharacterPropertyUI()
 void AXR_Character::SetPropertyUIVisible(bool flag)
 {
 	if (!CharacterPropertyUI) return;
+
+	if (CharacterType == ECharacterType::ECT_DefenceNexus)
+	{
+		CharacterPropertyUI->SetDamgeUtilVisible(false);
+		return;
+	}
 
 
 	if (ObjectType == EObjectType::EOT_Deffence && CharacterType != ECharacterType::ECT_DefenceP)
@@ -324,7 +340,11 @@ void AXR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
+	if (!bOnBoard)
+	{
+		FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
+
+	}
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -433,6 +453,27 @@ void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& 
 	outForm.beforeMaxHealth = CharacterProperty.MaxHealth;
 }
 
+void AXR_Character::UpdateMotoionWarpingTransform()
+{
+	if (MotionWarpingComponent && TargetCharacter)
+	{
+		MotionWarpingComponent->Activate(true);
+		MotionWarpingComponent->AddOrUpdateWarpTargetFromTransform(FName("CombatTarget"), TargetCharacter->GetActorTransform());
+	}
+}
+
+void AXR_Character::TriggerHealEffect()
+{
+	HealRing->Deactivate();
+	HealRing->Activate(true);
+}
+
+void AXR_Character::TriggerBuffEffect()
+{
+	BuffRing->Deactivate();
+	BuffRing->Activate(true);
+}
+
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 {
 	if (DissolveCurve && TimelineComponent)
@@ -514,6 +555,8 @@ void AXR_Character::DamageTimerFunction()
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
 }
 
+
+
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this) && OtherComp && Cast<AXR_Character>(OtherActor))
@@ -559,7 +602,20 @@ void AXR_Character::Heal(float healAmount)
 {
 	CharacterProperty.currentHealth += healAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+	TriggerHealEffect();
 	UpdateCharacterPropertyUI();
+}
+
+void AXR_Character::AttackBuff(float BuffAmount)
+{
+	CharacterProperty.currentDamage = CharacterProperty.defaultDamage + BuffAmount;
+	GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &AXR_Character::BuffEndTimerFunction, BuffTime, false);
+	TriggerBuffEffect();
+}
+
+void AXR_Character::BuffEndTimerFunction()
+{
+	CharacterProperty.currentDamage = CharacterProperty.defaultDamage;
 }
 
 void AXR_Character::CharacterActionCall()
@@ -588,7 +644,8 @@ void AXR_Character::CharacterActionEnd()
 
 void AXR_Character::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
 {
-	
+	outFirstNear = nullptr;
+	outSecondNear = nullptr;
 }
 
 float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -635,6 +692,12 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 
 
 }
+
+void AXR_Character::OtherCharacterSpawnCallBack(FVector spawnLocation)
+{
+
+}
+
 
 void AXR_Character::SetAnimState(EAnimationState state)
 {

@@ -4,7 +4,6 @@
 #include "Character/Deffence/MyXR_CharacterDeffenceBattle.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "NiagaraComponent.h"
 #include "Component/FloorRingSMC.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,6 +16,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Battle/Projectile.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 
 void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
@@ -437,7 +437,7 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
                 {
                     float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
 
-                    if (Distance <= CharacterProperty.Util_Range + 3)
+                    if (Distance <= CharacterProperty.Util_Range + CharacterProperty.RangeAcceptError)
                     {
                         NearbyCharacters.Add(xrChar);
                     }
@@ -453,6 +453,18 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
 
     outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
     outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
+}
+
+void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLocation)
+{
+    Super::OtherCharacterSpawnCallBack(spawnLocation);
+
+    float Dist = FVector::Dist2D(GetActorLocation(), spawnLocation);
+
+    if (CharacterProperty.Util_Range + CharacterProperty.RangeAcceptError >= Dist)
+    {
+        RenewTargetCharacter12();
+    }
 }
 
 void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
@@ -501,7 +513,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
 
             if (Projectile)
             {
-                Projectile->SetDamage(CharacterProperty.Damage);
+                Projectile->SetDamage(CharacterProperty.currentDamage);
                 Projectile->SetTarget(EndLocation);
             }
         }
@@ -517,7 +529,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 EndPosition = BulletScan.ImpactPoint;
             }
 
-            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.Damage, GetController(), this, nullptr);
+            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.currentDamage, GetController(), this, nullptr);
 
             if (trailBeam)
             {

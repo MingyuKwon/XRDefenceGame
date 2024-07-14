@@ -46,7 +46,11 @@ public:
 	float MaxHealth = 20;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
-	float Damage = 3;
+	float currentDamage = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float defaultDamage = 3;
+
 
 	//Only Uses Attacker
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
@@ -55,6 +59,10 @@ public:
 	// Use Both
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float Util_Range = 4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float RangeAcceptError = 3;
+
 
 	//Only Uses Defender
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
@@ -97,6 +105,9 @@ public:
 
 	virtual void Heal(float healAmount);
 
+	virtual void AttackBuff(float BuffAmount);
+
+
 	UFUNCTION(BlueprintCallable)
 	void CharacterActionCall();
 
@@ -112,6 +123,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateMotoionWarpingTransform();
 
 
 protected:
@@ -135,6 +149,10 @@ protected:
 
 	UFUNCTION()
 	virtual void TargetDieCallBack(AXR_Character* DieTarget);
+
+	UFUNCTION()
+	virtual void OtherCharacterSpawnCallBack(FVector spawnLocation);
+
 
 	UPROPERTY()
 	AXR_Character* TargetCharacter = nullptr;
@@ -219,6 +237,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> HealRing;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UMotionWarpingComponent* MotionWarpingComponent;
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void TriggerHealEffect();
+
+	UFUNCTION()
+	void TriggerBuffEffect();
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr <class UFloorRingSMC> FloorRingMesh;
@@ -298,6 +327,13 @@ protected:
 	UFUNCTION()
 	virtual void DamageTimerFunction();
 
+	UFUNCTION()
+	virtual void BuffEndTimerFunction();
+
+	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
+	float BuffTime = 5.f;
+
+	FTimerHandle BuffTimerHandle;
 
 	FTimerHandle DamageTimerHandle;
 

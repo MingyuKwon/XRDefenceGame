@@ -72,6 +72,7 @@ enum class ECharacterType : uint8
     ECT_DefenceH,
     ECT_DefenceF1,
     ECT_DefenceF2,
+    ECT_DefenceNexus,
 
     ECT_None
 };
