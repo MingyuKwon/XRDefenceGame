@@ -4,7 +4,6 @@
 #include "Character/Deffence/MyXR_CharacterDeffenceBattle.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "NiagaraComponent.h"
 #include "Component/FloorRingSMC.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,6 +16,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Battle/Projectile.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 
 void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
