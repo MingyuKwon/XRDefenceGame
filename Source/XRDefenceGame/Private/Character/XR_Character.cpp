@@ -88,6 +88,12 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->OnCharacterSpawnEvent.Broadcast(GetActorLocation());
+
+		}
+
 		if (isSpawnedByHand)
 		{
 			OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
@@ -136,6 +142,8 @@ void AXR_Character::InitializeCharacter()
 	if (XRGamePlayMode)
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
+		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
+
 	}
 
 	HealRing->Deactivate();
@@ -666,6 +674,18 @@ void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 
 
 }
+
+void AXR_Character::OtherCharacterSpawnCallBack(FVector spawnLocation)
+{
+	float Dist = FVector::Dist2D(GetActorLocation(), spawnLocation);
+
+	if (CharacterProperty.Util_Range + CharacterProperty.RangeAcceptError >= Dist)
+	{
+		
+	}
+
+}
+
 
 void AXR_Character::SetAnimState(EAnimationState state)
 {

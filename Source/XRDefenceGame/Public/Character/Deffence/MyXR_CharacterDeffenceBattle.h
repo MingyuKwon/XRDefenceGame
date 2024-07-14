@@ -38,6 +38,7 @@ public:
     virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear) override;
 
 protected:
+    virtual void OtherCharacterSpawnCallBack(FVector spawnLocation) override;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
     class UNiagaraSystem* trailBeam;

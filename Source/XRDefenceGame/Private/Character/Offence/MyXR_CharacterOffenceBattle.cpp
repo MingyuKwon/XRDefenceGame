@@ -52,8 +52,43 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 
 }
 
+void AMyXR_CharacterOffenceBattle::SetOffenceTarget()
+{
+	AXR_Character* FirstNear;
+	AXR_Character* SecondNear;
+
+	FindNearbyEnemy(FirstNear, SecondNear);
+
+	TargetCharacter = FirstNear;
+}
+
 void AMyXR_CharacterOffenceBattle::CharacterActionStart()
 {
 	Super::CharacterActionStart();
+}
+
+void AMyXR_CharacterOffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLocation)
+{
+	Super::OtherCharacterSpawnCallBack(spawnLocation);
+
+	SetOffenceTarget();
+}
+
+void AMyXR_CharacterOffenceBattle::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+{
+	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+}
+
+void AMyXR_CharacterOffenceBattle::BehaviorAvailableTimerFunction()
+{
+	Super::BehaviorAvailableTimerFunction();
+
+	SetOffenceTarget();
+}
+
+void AMyXR_CharacterOffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
+{
+	Super::TargetDieCallBack(DieTarget);
+	SetOffenceTarget();
 }
 

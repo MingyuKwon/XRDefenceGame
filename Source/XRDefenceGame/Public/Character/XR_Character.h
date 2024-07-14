@@ -60,6 +60,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float Util_Range = 4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float RangeAcceptError = 3;
+
+
 	//Only Uses Defender
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float ObjectAccessRadius = 1;
@@ -142,6 +146,10 @@ protected:
 
 	UFUNCTION()
 	virtual void TargetDieCallBack(AXR_Character* DieTarget);
+
+	UFUNCTION()
+	virtual void OtherCharacterSpawnCallBack(FVector spawnLocation);
+
 
 	UPROPERTY()
 	AXR_Character* TargetCharacter = nullptr;

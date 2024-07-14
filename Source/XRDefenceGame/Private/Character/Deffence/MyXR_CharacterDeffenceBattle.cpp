@@ -437,7 +437,7 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
                 {
                     float Distance = FVector::Dist2D(GetActorLocation(), Actor->GetActorLocation());
 
-                    if (Distance <= CharacterProperty.Util_Range + 3)
+                    if (Distance <= CharacterProperty.Util_Range + CharacterProperty.RangeAcceptError)
                     {
                         NearbyCharacters.Add(xrChar);
                     }
@@ -453,6 +453,13 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
 
     outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
     outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
+}
+
+void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLocation)
+{
+    Super::OtherCharacterSpawnCallBack(spawnLocation);
+
+    RenewTargetCharacter12();
 }
 
 void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
