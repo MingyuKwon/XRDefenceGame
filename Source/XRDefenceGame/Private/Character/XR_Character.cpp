@@ -218,6 +218,12 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 {
 	if (!CharacterPropertyUI) return;
 
+	if (CharacterType == ECharacterType::ECT_DefenceNexus)
+	{
+		CharacterPropertyUI->SetDamgeUtilVisible(false);
+		return;
+	}
+
 
 	if (ObjectType == EObjectType::EOT_Deffence && CharacterType != ECharacterType::ECT_DefenceP)
 	{
@@ -451,6 +457,7 @@ void AXR_Character::UpdateMotoionWarpingTransform()
 {
 	if (MotionWarpingComponent && TargetCharacter)
 	{
+		MotionWarpingComponent->Activate(true);
 		MotionWarpingComponent->AddOrUpdateWarpTargetFromTransform(FName("CombatTarget"), TargetCharacter->GetActorTransform());
 	}
 }
@@ -637,7 +644,8 @@ void AXR_Character::CharacterActionEnd()
 
 void AXR_Character::FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear)
 {
-	
+	outFirstNear = nullptr;
+	outSecondNear = nullptr;
 }
 
 float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
