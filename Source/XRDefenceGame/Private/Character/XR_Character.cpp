@@ -18,6 +18,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
+#include "MotionWarpingComponent.h"
 
 
 AXR_Character::AXR_Character()
@@ -36,6 +37,7 @@ AXR_Character::AXR_Character()
 	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
 	HealRing->SetupAttachment(GetMesh());
 
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(FName("MotionWarping"));
 
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
@@ -443,6 +445,14 @@ void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& 
 {
 	outForm.currentHealth = CharacterProperty.currentHealth;
 	outForm.beforeMaxHealth = CharacterProperty.MaxHealth;
+}
+
+void AXR_Character::UpdateMotoionWarpingTransform()
+{
+	if (MotionWarpingComponent && TargetCharacter)
+	{
+		MotionWarpingComponent->AddOrUpdateWarpTargetFromTransform(FName("CombatTarget"), TargetCharacter->GetActorTransform());
+	}
 }
 
 void AXR_Character::TriggerHealEffect()

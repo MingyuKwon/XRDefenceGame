@@ -124,6 +124,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateMotoionWarpingTransform();
+
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -233,6 +236,11 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> HealRing;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UMotionWarpingComponent* MotionWarpingComponent;
+
+
 
 	UFUNCTION(BlueprintCallable)
 	void TriggerHealEffect();
