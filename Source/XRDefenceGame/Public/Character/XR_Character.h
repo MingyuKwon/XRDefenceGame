@@ -219,6 +219,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> HealRing;
 
+	UFUNCTION(BlueprintCallable)
+	void TriggerHealEffect();
+
+	UFUNCTION()
+	void TriggerBuffEffect();
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr <class UFloorRingSMC> FloorRingMesh;

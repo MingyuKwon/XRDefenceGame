@@ -44,9 +44,14 @@ void AMyXR_CharacterOffenceSpawn::SpawnCharacter()
 void AMyXR_CharacterOffenceSpawn::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 {
 	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+}
+
+void AMyXR_CharacterOffenceSpawn::BehaviorAvailableTimerFunction()
+{
+	Super::BehaviorAvailableTimerFunction();
 
 	if (bOnBoard)
 	{
-		GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, this, &AMyXR_CharacterOffenceSpawn::SpawnTimerFunction, SpawnDelay , false);
+		GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, this, &AMyXR_CharacterOffenceSpawn::SpawnTimerFunction, SpawnDelay, false);
 	}
 }

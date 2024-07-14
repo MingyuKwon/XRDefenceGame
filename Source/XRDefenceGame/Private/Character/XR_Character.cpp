@@ -138,6 +138,9 @@ void AXR_Character::InitializeCharacter()
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
 	}
 
+	HealRing->Deactivate();
+	BuffRing->Deactivate();
+
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
 
@@ -145,9 +148,6 @@ void AXR_Character::InitializeCharacter()
 	{
 		sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
 		sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
-
-		if (CharacterType == ECharacterType::ECT_DefenceT_Arrow_1) UE_LOG(LogTemp, Warning, TEXT("Radius: %f"), sphereOverlapCheck->GetScaledSphereRadius());
-
 
 		sphereOverlapCheck->OnComponentBeginOverlap.AddDynamic(this, &AXR_Character::OnSphereOverlapBegin);
 	}
@@ -324,7 +324,11 @@ void AXR_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
+	if (!bOnBoard)
+	{
+		FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
+
+	}
 }
 
 void AXR_Character::InteractableEffectStart_Implementation()
@@ -431,6 +435,18 @@ void AXR_Character::PackCharacterValueTransmitForm(FCharacterValueTransmitForm& 
 {
 	outForm.currentHealth = CharacterProperty.currentHealth;
 	outForm.beforeMaxHealth = CharacterProperty.MaxHealth;
+}
+
+void AXR_Character::TriggerHealEffect()
+{
+	HealRing->Deactivate();
+	HealRing->Activate(true);
+}
+
+void AXR_Character::TriggerBuffEffect()
+{
+	BuffRing->Deactivate();
+	BuffRing->Activate(true);
 }
 
 void AXR_Character::StartDissolveTimeline(bool bNotReverse)

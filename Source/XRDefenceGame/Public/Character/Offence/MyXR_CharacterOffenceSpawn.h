@@ -30,6 +30,9 @@ protected:
 
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
 
+	virtual void BehaviorAvailableTimerFunction() override;
+
+
 	UPROPERTY(EditAnywhere, Category = "Spawn Parameter")
 	float SpawnDelay = 7.f;
 
