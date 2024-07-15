@@ -22,7 +22,7 @@ class XRDEFENCEGAME_API UAudioSubsystem : public UGameInstanceSubsystem
 public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
-	void PlaySound(EGameSoundType soundType, EDetailSoundType sfxType, FVector Location, float VolumeScale);
+	void PlaySound(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Parameter")
@@ -33,13 +33,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Parameter")
 	float UIVolume = 1.f;
-
-
-	TMap<EDetailSoundType, USoundBase*> SFXTypeMap;
-
-	TMap<EDetailSoundType, USoundBase*> BGMTypeMap;
-
-	TMap<EDetailSoundType, USoundBase*> UITypeMap;
 
 private:
 	void PlaySoundEffect(USoundBase* Sound, FVector Location, float Volume);

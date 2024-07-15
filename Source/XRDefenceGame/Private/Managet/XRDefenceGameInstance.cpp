@@ -12,16 +12,6 @@ void UXRDefenceGameInstance::Init()
 
 UAudioSubsystem* UXRDefenceGameInstance::GetAudioManagerSubsystem()
 {
-	UAudioSubsystem* SSS = GetSubsystem<UAudioSubsystem>();
-
-	if (!bAudioManagerInitailize)
-	{
-		SSS->SFXTypeMap = SFXTypeMap;
-		SSS->BGMTypeMap = BGMTypeMap;
-		SSS->UITypeMap = UITypeMap;
-	}
-
-	bAudioManagerInitailize = true;
-
-	return SSS;
+	return GetSubsystem<UAudioSubsystem>();
 }
+

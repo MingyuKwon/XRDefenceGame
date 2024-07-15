@@ -136,7 +136,32 @@ protected:
 	UAudioSubsystem* AudioManager;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void PlaySoundViaManager(EGameSoundType soundType, EDetailSoundType sfxType, FVector Location, float VolumeScale);
+	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundSpawnBoard;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundDeath;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundDamaged;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundSpawnPallette;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundHeal;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundBuff;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundHighLight;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundAction;
+
 
 
 	UFUNCTION(BlueprintCallable)

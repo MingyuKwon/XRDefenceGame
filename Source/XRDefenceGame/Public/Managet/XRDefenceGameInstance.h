@@ -21,16 +21,4 @@ public:
 
 	class UAudioSubsystem* GetAudioManagerSubsystem();
 
-	bool bAudioManagerInitailize = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sonud Manager Parameter")
-	TMap<EDetailSoundType, USoundBase*> SFXTypeMap;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sonud Manager Parameter")
-	TMap<EDetailSoundType, USoundBase*> BGMTypeMap;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sonud Manager Parameter")
-	TMap<EDetailSoundType, USoundBase*> UITypeMap;
-
-
 };
