@@ -117,6 +117,10 @@ public:
 	virtual void CharacterActionImpact();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionSound();
+
+
+	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionImpact2();
 
 
@@ -137,6 +141,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	float OwnVolumeScale = 1.f;
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	USoundBase* SoundSpawnBoard;

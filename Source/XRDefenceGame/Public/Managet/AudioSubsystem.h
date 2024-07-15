@@ -26,7 +26,7 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Parameter")
-	float SFXVolume = 1.f;
+	float SFXVolume = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound Parameter")
 	float BGMVolume = 1.f;
