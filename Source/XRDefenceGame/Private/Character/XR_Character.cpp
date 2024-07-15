@@ -91,7 +91,7 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.8f);
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.3f);
 
 		if (XRGamePlayMode)
 		{
@@ -618,7 +618,6 @@ void AXR_Character::Heal(float healAmount)
 	CharacterProperty.currentHealth += healAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
 	TriggerHealEffect();
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHeal, GetActorLocation(), 0.3f);
 
 	UpdateCharacterPropertyUI();
 }
@@ -627,7 +626,6 @@ void AXR_Character::AttackBuff(float BuffAmount)
 {
 	CharacterProperty.currentDamage = CharacterProperty.defaultDamage + BuffAmount;
 	GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &AXR_Character::BuffEndTimerFunction, BuffTime, false);
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundBuff, GetActorLocation(), 0.3f);
 	TriggerBuffEffect();
 }
 
@@ -652,7 +650,7 @@ void AXR_Character::CharacterActionImpact()
 
 void AXR_Character::CharacterActionSound()
 {
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundAction, GetActorLocation(), 1.f);
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundAction, GetActorLocation(), 0.6f);
 
 }
 
@@ -683,7 +681,7 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	UpdateCharacterPropertyUI();
 
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.2f);
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
 
 
 	ChangeMaterialState(EMaterialState::EMS_Damage, true);

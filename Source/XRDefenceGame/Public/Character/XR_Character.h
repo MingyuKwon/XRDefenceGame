@@ -158,12 +158,6 @@ protected:
 	USoundBase* SoundSpawnPallette;
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
-	USoundBase* SoundHeal;
-
-	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
-	USoundBase* SoundBuff;
-
-	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	USoundBase* SoundHighLight;
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")

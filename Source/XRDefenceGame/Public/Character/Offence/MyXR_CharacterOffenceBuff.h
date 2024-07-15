@@ -44,6 +44,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
 	float BuffAmount = 10.f;
 
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundBuffRange;
+
 
 	UFUNCTION()
 	virtual TArray<AXR_Character*> FindBuffableCharacter();

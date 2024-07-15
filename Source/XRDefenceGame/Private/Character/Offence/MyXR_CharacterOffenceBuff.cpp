@@ -34,6 +34,8 @@ void AMyXR_CharacterOffenceBuff::ApplyBuffInRange()
 	{
 		UNiagaraComponent* NG = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BuffRangeNiagara, GetRingPosition(), FRotator::ZeroRotator, FVector(1.0f), true);
 
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundBuffRange, GetActorLocation(), 0.4f);
+
 		if (NG)
 		{
 			NG->SetVariableFloat(FName("Radius"), BuffRadius);
