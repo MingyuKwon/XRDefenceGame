@@ -10,6 +10,8 @@
 #include "XR_Character.generated.h"
 
 class UNiagaraComponent;
+class UXRDefenceGameInstance;
+class UAudioSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -129,6 +131,14 @@ public:
 
 
 protected:
+
+	UXRDefenceGameInstance* GameInstance;
+	UAudioSubsystem* AudioManager;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void PlaySoundViaManager(EGameSoundType soundType, EDetailSoundType sfxType, FVector Location, float VolumeScale);
+
+
 	UFUNCTION(BlueprintCallable)
 	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
 	

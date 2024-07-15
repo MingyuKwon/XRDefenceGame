@@ -19,7 +19,8 @@
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
 #include "MotionWarpingComponent.h"
-
+#include "Managet/AudioSubsystem.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 AXR_Character::AXR_Character()
 {
@@ -90,6 +91,8 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, EDetailSoundType::EDST_OnBoardSpawn, GetActorLocation(), 1.f);
+
 		if (XRGamePlayMode)
 		{
 			XRGamePlayMode->OnCharacterSpawnEvent.Broadcast(GetActorLocation());
@@ -135,6 +138,8 @@ void AXR_Character::PossessedBy(AController* NewController)
 
 void AXR_Character::InitializeCharacter()
 {
+	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
+
 	if (!GetCharacterMesh()) return;
 
 	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
@@ -145,7 +150,6 @@ void AXR_Character::InitializeCharacter()
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
 		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
-
 	}
 
 	HealRing->Deactivate();
@@ -713,6 +717,18 @@ void AXR_Character::SetAnimState(EAnimationState state)
 	}
 
 
+}
+
+void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, EDetailSoundType sfxType, FVector Location, float VolumeScale)
+{
+	if (GameInstance)
+	{
+		AudioManager = (AudioManager == nullptr) ? GameInstance->GetAudioManagerSubsystem() : AudioManager;
+		if (AudioManager)
+		{
+			AudioManager->PlaySound(soundType, sfxType, Location, VolumeScale);
+		}
+	}
 }
 
 void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
