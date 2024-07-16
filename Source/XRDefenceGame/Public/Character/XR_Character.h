@@ -133,6 +133,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotoionWarpingTransform();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void SetbDisableInteractable(bool flag);
 
 protected:
 
@@ -150,6 +152,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	USoundBase* SoundDeath;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundDeathInTrash;
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	USoundBase* SoundDamaged;
@@ -305,6 +310,13 @@ protected:
 	UMaterialInstance* HighlightMaterial;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	UMaterialInstance* DisableHighlightMaterial;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	bool bDisableInteractable = false;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	float rescaleAmount = 1.1f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
@@ -352,7 +364,7 @@ protected:
 
 	virtual void StartDissolveTimeline(bool bNotReverse);
 
-	virtual void Death();
+	virtual void Death(bool bDieInTrash);
 
 	UFUNCTION()
 	virtual void DeathTimerFunction();

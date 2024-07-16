@@ -37,6 +37,9 @@ public:
 
     virtual void FindNearbyEnemy(AXR_Character*& outFirstNear, AXR_Character*& outSecondNear) override;
 
+    virtual void SetbDisableInteractable(bool flag) override;
+
+
 protected:
     virtual void OtherCharacterSpawnCallBack(FVector spawnLocation) override;
 

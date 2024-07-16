@@ -12,4 +12,5 @@
 #define ECC_DefenceGoldBoard ECollisionChannel::ECC_GameTraceChannel7
 #define ECC_Buffable ECollisionChannel::ECC_GameTraceChannel8
 #define ECC_Bullet ECollisionChannel::ECC_GameTraceChannel9
+#define ECC_Trash ECollisionChannel::ECC_GameTraceChannel11
 

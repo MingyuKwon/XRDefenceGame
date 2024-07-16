@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"AIModule"
+				"AIModule",
+				"UMG"
 			]
 		}
 	],
@@ -41,9 +42,9 @@
 			"Enabled": true
 		},
 		{
-            		"Name": "MotionWarping",
-            		"Enabled": true
-        	}
+			"Name": "MotionWarping",
+			"Enabled": true
+		}
 	],
 	"TargetPlatforms": [
 		"Android",
