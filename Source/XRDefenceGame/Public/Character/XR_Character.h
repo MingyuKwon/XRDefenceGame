@@ -10,6 +10,8 @@
 #include "XR_Character.generated.h"
 
 class UNiagaraComponent;
+class UXRDefenceGameInstance;
+class UAudioSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -115,6 +117,10 @@ public:
 	virtual void CharacterActionImpact();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void CharacterActionSound();
+
+
+	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionImpact2();
 
 
@@ -127,8 +133,43 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotoionWarpingTransform();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void SetbDisableInteractable(bool flag);
 
 protected:
+
+	UXRDefenceGameInstance* GameInstance;
+	UAudioSubsystem* AudioManager;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	float OwnVolumeScale = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundSpawnBoard;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundDeath;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundDeathInTrash;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundDamaged;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundSpawnPallette;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundHighLight;
+
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundAction;
+
+
+
 	UFUNCTION(BlueprintCallable)
 	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
 	
@@ -269,6 +310,13 @@ protected:
 	UMaterialInstance* HighlightMaterial;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	UMaterialInstance* DisableHighlightMaterial;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	bool bDisableInteractable = false;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	float rescaleAmount = 1.1f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
@@ -316,7 +364,7 @@ protected:
 
 	virtual void StartDissolveTimeline(bool bNotReverse);
 
-	virtual void Death();
+	virtual void Death(bool bDieInTrash);
 
 	UFUNCTION()
 	virtual void DeathTimerFunction();

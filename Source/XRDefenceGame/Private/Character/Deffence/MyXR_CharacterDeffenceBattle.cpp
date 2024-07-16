@@ -247,16 +247,33 @@ void AMyXR_CharacterDeffenceBattle::ChangeMaterialState(EMaterialState materialS
 
     case EMaterialState::EMS_HandHighLight:
 
-        if (HighlightMaterial)
+        if (bDisableInteractable)
         {
-            GunMeshComponent->SetMaterial(0, HighlightMaterial);
-            GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+            if (DisableHighlightMaterial)
+            {
+                GunMeshComponent->SetMaterial(0, DisableHighlightMaterial);
+                GunMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
 
-            EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
-            EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
-            EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
-            EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
-            EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+                EtcMeshComponent1->SetMaterial(0, DisableHighlightMaterial);
+                EtcMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
+                EtcMeshComponent3->SetMaterial(0, DisableHighlightMaterial);
+                EtcMeshComponent4->SetMaterial(0, DisableHighlightMaterial);
+                EtcMeshComponent5->SetMaterial(0, DisableHighlightMaterial);
+            }
+        }
+        else
+        {
+            if (HighlightMaterial)
+            {
+                GunMeshComponent->SetMaterial(0, HighlightMaterial);
+                GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+                EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+                EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+                EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+                EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+                EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+            }
         }
 
         break;
@@ -453,6 +470,40 @@ void AMyXR_CharacterDeffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear
 
     outFirstNear = (NearbyCharacters.Num() > 0) ? NearbyCharacters[0] : nullptr;
     outSecondNear = (NearbyCharacters.Num() > 1) ? NearbyCharacters[1] : nullptr;
+}
+
+void AMyXR_CharacterDeffenceBattle::SetbDisableInteractable(bool flag)
+{
+    Super::SetbDisableInteractable(flag);
+
+    if (bDisableInteractable)
+    {
+        if (DisableHighlightMaterial && CharacterMesh->GetMaterial(0) == HighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, DisableHighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, DisableHighlightMaterial);
+        }
+    }
+    else
+    {
+        if (HighlightMaterial && CharacterMesh->GetMaterial(0) == DisableHighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, HighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
+        }
+    }
 }
 
 void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLocation)

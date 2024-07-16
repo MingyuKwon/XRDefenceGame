@@ -51,6 +51,26 @@ void UFloorRingSMC::SetMaterialScalarParameterValue(FName ParameterName, float P
 	}
 }
 
+void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResult)
+{
+	if (bBeneath)
+	{
+		FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.f);
+		SetWorldLocation(WillSpawnPosition);
+	}
+	else
+	{
+		SetWorldLocation(XRCharacter->GetActorLocation());
+	}
+
+	XRCharacter->SetbDisableInteractable(bBeneath);
+
+	if (bBeneath == bBeneathTrash) return;
+	bBeneathTrash = bBeneath;
+	bBeneathTrash ? SetVisibility(true) : SetVisibility(false);
+
+}
+
 void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 {
 	if (bBeneath)
@@ -138,5 +158,9 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	CheckBeneath(FloortraceResult.bBlockingHit && !PallettetraceResult.bBlockingHit, FloortraceResult);
 	CheckBuffable(Cast<IBuffableInterface>(FloortraceResult.GetActor()) != nullptr, FloortraceResult);
 
+	if (bBeneathBoard) return;
+
+	GetWorld()->LineTraceSingleByChannel(FloortraceResult, ActorLocation, TraceEndLocation, ECC_Trash);
+	CheckTrashBeneath(FloortraceResult.bBlockingHit, FloortraceResult);
 
 }

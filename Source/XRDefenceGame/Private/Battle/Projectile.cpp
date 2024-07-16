@@ -14,6 +14,9 @@
 #include "NiagaraFunctionLibrary.h"
 #include "DrawDebugHelpers.h"  
 #include "NiagaraComponent.h"
+#include "Managet/XRDefenceGameInstance.h"
+#include "Managet/AudioSubsystem.h"
+
 
 // Sets default values
 AProjectile::AProjectile()
@@ -93,6 +96,17 @@ void AProjectile::Explode()
 
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
 
+
+    UXRDefenceGameInstance* GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
+
+    if (GameInstance)
+    {
+        UAudioSubsystem* AudioManager = GameInstance->GetAudioManagerSubsystem();
+        if (AudioManager && SoundBomb)
+        {
+            AudioManager->PlaySound(EGameSoundType::EGST_SFX, SoundBomb, GetActorLocation(), 1.f);
+        }
+    }
 
     UGameplayStatics::ApplyRadialDamage(
         GetWorld(),

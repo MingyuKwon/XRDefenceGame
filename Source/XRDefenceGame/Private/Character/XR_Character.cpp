@@ -19,7 +19,8 @@
 #include "Components/SphereComponent.h"
 #include "DrawDebugHelpers.h"
 #include "MotionWarpingComponent.h"
-
+#include "Managet/AudioSubsystem.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 AXR_Character::AXR_Character()
 {
@@ -90,6 +91,8 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
 
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.7f);
+
 		if (XRGamePlayMode)
 		{
 			XRGamePlayMode->OnCharacterSpawnEvent.Broadcast(GetActorLocation());
@@ -135,6 +138,8 @@ void AXR_Character::PossessedBy(AController* NewController)
 
 void AXR_Character::InitializeCharacter()
 {
+	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
+
 	if (!GetCharacterMesh()) return;
 
 	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
@@ -145,11 +150,17 @@ void AXR_Character::InitializeCharacter()
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
 		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
-
 	}
 
 	HealRing->Deactivate();
 	BuffRing->Deactivate();
+
+	if (!DefaultPlaceInBoard)
+	{
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
+
+	}
+
 
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
@@ -352,6 +363,8 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	if (!GetCharacterMesh()) return;
 	if (bHightLighting) return;
 
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
+
 	bHightLighting = true;
 
 	SetPropertyUIVisible(true);
@@ -419,7 +432,18 @@ void AXR_Character::GrabEnd_Implementation()
 
 	if (bOnBoard) return;
 
-	SetPalletteCharacterOnBoard(FloorRingMesh->bBeneathBoard, FloorRingMesh->GetBuffableCharacter());
+	if (FloorRingMesh->bBeneathTrash)
+	{
+		Death(true);
+		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeathInTrash, GetActorLocation(), 0.5f);
+
+		return;
+	}
+	else
+	{
+		SetPalletteCharacterOnBoard(FloorRingMesh->bBeneathBoard, FloorRingMesh->GetBuffableCharacter());
+	}
 
 	if (!bOnBoard)
 	{
@@ -500,7 +524,7 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 	}
 }
 
-void AXR_Character::Death()
+void AXR_Character::Death(bool bDieInTrash)
 {
 	FloorRingMesh->bTickReject = true;
 	bOnBoard = false;
@@ -509,12 +533,20 @@ void AXR_Character::Death()
 	StartDissolveTimeline(false);
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
 	
-	XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
-
-	if (CharacterPropertyUI)
+	if (bDieInTrash)
 	{
-		CharacterPropertyUI->Destroy();
-		CharacterPropertyUI = nullptr;
+
+	}
+	else
+	{
+		XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeath, GetActorLocation(), 0.5f);
+
+		if (CharacterPropertyUI)
+		{
+			CharacterPropertyUI->Destroy();
+			CharacterPropertyUI = nullptr;
+		}
 	}
 
 	SetAnimState(EAnimationState::EAS_Death);
@@ -555,7 +587,35 @@ void AXR_Character::DamageTimerFunction()
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
 }
 
+void AXR_Character::SetbDisableInteractable(bool flag)
+{
+	if (bDisableInteractable == flag) return;
 
+	bDisableInteractable = flag;
+
+	if (bDisableInteractable)
+	{
+		if (DisableHighlightMaterial && CharacterMesh->GetMaterial(0) == HighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
+			CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
+
+			FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
+
+		}
+	}
+	else
+	{
+		if (HighlightMaterial && CharacterMesh->GetMaterial(0) == DisableHighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, HighlightMaterial);
+			CharacterMesh->SetMaterial(1, HighlightMaterial);
+
+			FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Blue);
+
+		}
+	}
+}
 
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -603,6 +663,7 @@ void AXR_Character::Heal(float healAmount)
 	CharacterProperty.currentHealth += healAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
 	TriggerHealEffect();
+
 	UpdateCharacterPropertyUI();
 }
 
@@ -629,6 +690,12 @@ void AXR_Character::CharacterActionCall()
 
 void AXR_Character::CharacterActionImpact()
 {
+
+}
+
+void AXR_Character::CharacterActionSound()
+{
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundAction, GetActorLocation(), 0.6f);
 
 }
 
@@ -659,12 +726,15 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	UpdateCharacterPropertyUI();
 
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
+
+
 	ChangeMaterialState(EMaterialState::EMS_Damage, true);
 	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
 	if (CharacterProperty.currentHealth <= 0)
 	{
-		Death();
+		Death(false);
 	}
 
 	return DamageAmount;
@@ -713,6 +783,18 @@ void AXR_Character::SetAnimState(EAnimationState state)
 	}
 
 
+}
+
+void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
+{
+	if (GameInstance)
+	{
+		AudioManager = (AudioManager == nullptr) ? GameInstance->GetAudioManagerSubsystem() : AudioManager;
+		if (AudioManager)
+		{
+			AudioManager->PlaySound(soundType, Sound, Location, (SoundHighLight == Sound) ? VolumeScale :(VolumeScale * OwnVolumeScale));
+		}
+	}
 }
 
 void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
@@ -783,11 +865,24 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 		break;
 
 	case EMaterialState::EMS_HandHighLight:
-		if (HighlightMaterial)
+
+		if (bDisableInteractable)
 		{
-			CharacterMesh->SetMaterial(0, HighlightMaterial);
-			CharacterMesh->SetMaterial(1, HighlightMaterial);
+			if (DisableHighlightMaterial)
+			{
+				CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
+				CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
+			}
 		}
+		else
+		{
+			if (HighlightMaterial)
+			{
+				CharacterMesh->SetMaterial(0, HighlightMaterial);
+				CharacterMesh->SetMaterial(1, HighlightMaterial);
+			}
+		}
+
 
 		break;
 		

@@ -41,6 +41,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
 	class UNiagaraSystem* BombRangeNiagara;
 
+	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
+	USoundBase* SoundBomb;
 
 private:
 	UPROPERTY(EditAnywhere)

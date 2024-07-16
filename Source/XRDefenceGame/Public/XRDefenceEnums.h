@@ -47,6 +47,48 @@ enum class EMaterialState : uint8
     EMS_None
 };
 
+UENUM(BlueprintType)
+enum class EGameSoundType : uint8
+{
+    EST_None,
+
+    EGST_SFX,
+    EGST_BGM,
+    EGST_UI,
+};
+
+UENUM(BlueprintType)
+enum class EDetailSoundType : uint8
+{
+    EDST_None,
+
+    EDST_Death,
+    EDST_Damaged,
+    EDST_OnBoardSpawn,
+    EDST_OnPalletteSpawn,
+    EDST_Heal,
+    EDST_Buff,
+    EDST_NoneHighLight,
+
+    EDST_AttackOffenceL,
+    EDST_AttackOffenceT,
+    EDST_AttackOffenceD,
+    EDST_AttackOffenceDT,
+    EDST_AttackOffenceB,
+    EDST_AttackHealRange,
+    EDST_AttackBuffRange,
+
+    EDST_AttackDefenceT,
+    EDST_AttackDefenceL,
+    EDST_AttackDefenceC,
+    EDST_AttackDefenceF,
+    EDST_AttackDefenceA,
+    EDST_AttackDefenceBombRange,
+    EDST_DefenceUpgrade
+
+
+};
+
 
 UENUM(BlueprintType)
 enum class ECharacterType : uint8

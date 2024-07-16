@@ -24,6 +24,10 @@ public:
 	bool bBeneathBoard;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bBeneathTrash = false;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<ECollisionChannel> beneathTraceChannel;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -58,6 +62,7 @@ private:
 
 	void SetMaterialScalarParameterValue(FName ParameterName, float ParameterValue);
 
+	void CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResult);
 	void CheckBeneath(bool bBeneath, FHitResult& FloortraceResult);
 	void CheckBuffable(bool bBuffable, FHitResult& FloortraceResult);
 
