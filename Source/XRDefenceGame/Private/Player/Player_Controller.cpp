@@ -41,6 +41,11 @@ void APlayer_Controller::StartDefaultGoldEarn()
 	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
 }
 
+bool APlayer_Controller::CanAffordCost(float Cost)
+{
+	return Cost <= playerState->GetGold();
+}
+
 void APlayer_Controller::UpdateUserHandUI()
 {
 	if (!GetPlayerPawn()) return;
@@ -169,8 +174,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
     if (handInteractInterface)
     {
-		float TargetCost = IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject());
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), (TargetCost > playerState->GetGold()));
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
 
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
@@ -180,7 +184,15 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
+	if (bRightGrabbing &&
+		(!IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()) &&
+			CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject()))
+			)
+		)
+	{
+		return;
+	}
+
 	ReleaseRightInteract(handInteractInterface);
 }
 
@@ -212,8 +224,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     if (handInteractInterface)
     {
-		float TargetCost = IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject());
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), (TargetCost > playerState->GetGold()));
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
 
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
@@ -223,7 +234,15 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
+	if (bLeftGrabbing && 
+		( !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()) && 
+			CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject()))
+			)
+		)
+	{
+		return;
+	}
+
 	ReleaseLeftInteract(handInteractInterface);
 }
 

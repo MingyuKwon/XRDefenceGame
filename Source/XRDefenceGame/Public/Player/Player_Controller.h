@@ -98,6 +98,7 @@ private:
 	void StartDefaultGoldEarn();
 
 
+	bool CanAffordCost(float Cost);
 
 
 };
