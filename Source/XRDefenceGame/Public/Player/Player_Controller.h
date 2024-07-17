@@ -93,6 +93,9 @@ private:
 	UFUNCTION()
 	virtual void DefaultGoldEarn();
 
+	UFUNCTION()
+	virtual void GoldCostEventCallBack(EObjectType objectType, float cost);
+
 	FTimerHandle DefaultGoldTimerHandle;
 
 	void StartDefaultGoldEarn();

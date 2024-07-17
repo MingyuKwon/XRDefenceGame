@@ -11,6 +11,7 @@ class AXR_Character;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCustomEvent, bool, isGrab, EObjectType, objectType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCostEvent, EObjectType, objectType, float, cost);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChrarcterDieEvent, AXR_Character*, DieCharacter);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnGoldMineBroadCastEvent, EObjectType, objectType, bool, bRemove, float, perSecGold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChrarcterSpawnEvent, FVector , SpawnLocation);
@@ -27,6 +28,9 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnChrarcterSpawnEvent OnCharacterSpawnEvent;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnCostEvent OnCostEvent;
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnChrarcterDieEvent OnChrarcterDieEvent;

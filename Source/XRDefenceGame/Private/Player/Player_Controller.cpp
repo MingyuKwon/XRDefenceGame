@@ -36,6 +36,15 @@ void APlayer_Controller::DefaultGoldEarn()
 	UpdateUserHandUI();
 }
 
+void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cost)
+{
+	if (objectType != controllerObjectType) return;
+
+	playerState->SetGold(playerState->GetGold() - cost);
+
+	UpdateUserHandUI();
+}
+
 void APlayer_Controller::StartDefaultGoldEarn()
 {
 	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
@@ -91,6 +100,8 @@ void APlayer_Controller::BeginPlay()
 	if (XRGamePlayMode)
 	{
 		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
+		XRGamePlayMode->OnCostEvent.AddDynamic(this, &APlayer_Controller::GoldCostEventCallBack);
+
 	}
 
 }

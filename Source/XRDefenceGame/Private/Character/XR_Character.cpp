@@ -97,7 +97,7 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		if (XRGamePlayMode)
 		{
 			XRGamePlayMode->OnCharacterSpawnEvent.Broadcast(GetActorLocation());
-
+			if (isSpawnedByHand) XRGamePlayMode->OnCostEvent.Broadcast(ObjectType ,CharacterProperty.Cost);
 		}
 
 		if (isSpawnedByHand)
@@ -562,7 +562,7 @@ void AXR_Character::Death(bool bDieInTrash)
 	
 	if (bDieInTrash)
 	{
-
+		XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
 	}
 	else
 	{
