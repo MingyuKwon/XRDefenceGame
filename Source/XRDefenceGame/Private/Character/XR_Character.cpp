@@ -696,6 +696,21 @@ bool AXR_Character::IsOnBoard_Implementation()
 	return bOnBoard;
 }
 
+float AXR_Character::GetCost_Implementation()
+{
+	return CharacterProperty.Cost;
+}
+
+void AXR_Character::SetDisableHighLight_Implementation(bool bDisable)
+{
+	SetbDisableInteractable(bDisable);
+}
+
+bool AXR_Character::GetDisableHighLight_Implementation()
+{
+	return bDisableInteractable;
+}
+
 void AXR_Character::Heal(float healAmount)
 {
 	CharacterProperty.currentHealth += healAmount;

@@ -169,6 +169,9 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
     if (handInteractInterface)
     {
+		float TargetCost = IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject());
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), (TargetCost > playerState->GetGold()));
+
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
 
@@ -208,6 +211,9 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     if (handInteractInterface)
     {
+		float TargetCost = IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject());
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), (TargetCost > playerState->GetGold()));
+
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
 
@@ -240,7 +246,10 @@ void APlayer_Controller::LeftGrabStart()
 
 	if (IsLeftGrabable())
 	{
-		IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
+		if (!IHandInteractInterface::Execute_GetDisableHighLight(currentLeftInteractInterface.GetObject()))
+		{
+			IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
+		}
 	}
 
 	bLeftGrabbing = true;
@@ -267,7 +276,10 @@ void APlayer_Controller::RightGrabStart()
 
 	if (IsRightGrabable())
 	{
-		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
+		if (!IHandInteractInterface::Execute_GetDisableHighLight(currentRightInteractInterface.GetObject()))
+		{
+			IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
+		}
 	}
 
 

@@ -98,6 +98,12 @@ public:
 	virtual void GrabEnd_Implementation() override;
 	virtual bool IsOnBoard_Implementation() override;
 
+	virtual float GetCost_Implementation() override;
+	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
+	virtual bool GetDisableHighLight_Implementation() override;
+
+	
+
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
 
