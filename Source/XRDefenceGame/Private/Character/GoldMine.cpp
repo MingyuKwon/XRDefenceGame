@@ -70,7 +70,11 @@ void AGoldMine::BroadCastGoldMineOnBoard(bool flag)
 {
 	if (XRGamePlayMode)
 	{
-		XRGamePlayMode->OnGoldMineBroadCastEvent.Broadcast(ObjectType, flag, 0.f);
+		EObjectType tempObjectType = ObjectType;
+		if (ObjectType == EObjectType::EOT_OffenceGold) tempObjectType = EObjectType::EOT_Offence;
+		if (ObjectType == EObjectType::EOT_DeffenceGold) tempObjectType = EObjectType::EOT_Deffence;
+
+		XRGamePlayMode->OnGoldMineBroadCastEvent.Broadcast(tempObjectType, flag, 0.f);
 	}
 }
 
@@ -78,7 +82,11 @@ void AGoldMine::BroadCastGoldMineTick()
 {
 	if (XRGamePlayMode)
 	{
-		XRGamePlayMode->OnGoldMineBroadCastEvent.Broadcast(ObjectType, false, PerSecGold);
+		EObjectType tempObjectType = ObjectType;
+		if (ObjectType == EObjectType::EOT_OffenceGold) tempObjectType = EObjectType::EOT_Offence;
+		if (ObjectType == EObjectType::EOT_DeffenceGold) tempObjectType = EObjectType::EOT_Deffence;
+
+		XRGamePlayMode->OnGoldMineBroadCastEvent.Broadcast(tempObjectType, false, PerSecGold);
 	}
 }
 

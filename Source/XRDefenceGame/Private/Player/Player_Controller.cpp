@@ -56,7 +56,7 @@ void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
 
 void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
 {
-	if (controllerObjectType != objectType) return;
+	if (objectType != objectType) return;
 
 	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
 	{

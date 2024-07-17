@@ -173,7 +173,7 @@ protected:
 	USoundBase* SoundHighLight;
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
-	USoundBase* SoundAction;
+	USoundBase* SoundAction; 
 
 
 
@@ -278,10 +278,10 @@ protected:
 	virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm);
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
 	ECharacterType CharacterType;
 
 
