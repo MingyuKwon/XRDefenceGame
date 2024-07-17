@@ -147,6 +147,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void SetbDisableInteractable(bool flag);
 
+	UFUNCTION(BlueprintCallable)
+	virtual void SetTrashEffect(bool flag);
+
+
 protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void CallBackForPallette();

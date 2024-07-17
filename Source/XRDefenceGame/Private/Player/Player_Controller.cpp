@@ -259,7 +259,7 @@ void APlayer_Controller::LeftGrabEnd()
 {
 	if (!bLeftGrabbing) return;
 
-	if (IsLeftGrabable())
+	if (IsLeftGrabable_CostInclude())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentLeftInteractInterface.GetObject());
 		ReleaseLeftInteract(currentLeftInteractInterface);
@@ -287,7 +287,7 @@ void APlayer_Controller::RightGrabEnd()
 {
 	if (!bRightGrabbing) return;
 
-	if (IsRightGrabable())
+	if (IsRightGrabable_CostInclude())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
 		ReleaseRightInteract(currentRightInteractInterface);

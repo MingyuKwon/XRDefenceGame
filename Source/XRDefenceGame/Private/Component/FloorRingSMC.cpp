@@ -65,7 +65,7 @@ void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResul
 
 	if (XRCharacter->GebPalletteBeamAvailable())
 	{
-		XRCharacter->SetbDisableInteractable(bBeneath);
+		XRCharacter->SetTrashEffect(bBeneath);
 	}
 
 	if (bBeneath == bBeneathTrash) return;

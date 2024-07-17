@@ -616,12 +616,16 @@ void AXR_Character::DamageTimerFunction()
 
 void AXR_Character::SetbDisableInteractable(bool flag)
 {
-
 	if (bDisableInteractable == flag) return;
 
 	bDisableInteractable = flag;
 
-	if (bDisableInteractable)
+	SetTrashEffect(bDisableInteractable);
+}
+
+void AXR_Character::SetTrashEffect(bool flag)
+{
+	if (flag)
 	{
 		if (DisableHighlightMaterial && CharacterMesh->GetMaterial(0) == HighlightMaterial)
 		{
