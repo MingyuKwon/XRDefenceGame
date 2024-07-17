@@ -13,7 +13,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (bRightGrabbing)
 	{
-		if (IsRightGrabable_CostInclude())
+		if (IsRightGrabable())
 		{
 			IHandInteractInterface::Execute_SetInteractPosition(currentRightInteractInterface.GetObject(), playerPawn->GetRightHandPosition());
 		}
@@ -21,7 +21,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (bLeftGrabbing)
 	{
-		if (IsLeftGrabable_CostInclude())
+		if (IsLeftGrabable())
 		{
 			IHandInteractInterface::Execute_SetInteractPosition(currentLeftInteractInterface.GetObject(), playerPawn->GetLeftHandPosition());
 		}
@@ -184,11 +184,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bRightGrabbing &&
-		(!IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()) &&
-			CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject()))
-			)
-		)
+	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
 	}
@@ -234,11 +230,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bLeftGrabbing && 
-		( !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()) && 
-			CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject()))
-			)
-		)
+	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
 	}
@@ -265,7 +257,7 @@ void APlayer_Controller::LeftGrabStart()
 {
 	if (bLeftGrabbing) return;
 
-	if (IsLeftGrabable_CostInclude())
+	if (IsLeftGrabable())
 	{
 		IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
 	}
@@ -278,7 +270,7 @@ void APlayer_Controller::LeftGrabEnd()
 {
 	if (!bLeftGrabbing) return;
 
-	if (IsLeftGrabable_CostInclude())
+	if (IsLeftGrabable())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentLeftInteractInterface.GetObject());
 		ReleaseLeftInteract(currentLeftInteractInterface);
@@ -292,7 +284,7 @@ void APlayer_Controller::RightGrabStart()
 {
 	if (bRightGrabbing) return;
 
-	if (IsRightGrabable_CostInclude())
+	if (IsRightGrabable())
 	{
 		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
 	}
@@ -306,7 +298,7 @@ void APlayer_Controller::RightGrabEnd()
 {
 	if (!bRightGrabbing) return;
 
-	if (IsRightGrabable_CostInclude())
+	if (IsRightGrabable())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
 		ReleaseRightInteract(currentRightInteractInterface);

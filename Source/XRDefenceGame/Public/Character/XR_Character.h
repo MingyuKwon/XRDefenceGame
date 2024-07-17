@@ -148,7 +148,7 @@ public:
 	virtual void SetbDisableInteractable(bool flag);
 
 	UFUNCTION(BlueprintCallable)
-	virtual void SetTrashEffect(bool flag);
+	virtual void SetTrashEffect(bool flag, bool onlyNiagara = false);
 
 
 protected:

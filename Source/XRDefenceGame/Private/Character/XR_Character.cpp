@@ -623,27 +623,34 @@ void AXR_Character::SetbDisableInteractable(bool flag)
 	SetTrashEffect(bDisableInteractable);
 }
 
-void AXR_Character::SetTrashEffect(bool flag)
+void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 {
 	if (flag)
 	{
+		FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
+
 		if (DisableHighlightMaterial && CharacterMesh->GetMaterial(0) == HighlightMaterial)
 		{
-			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
-			CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
-
-			FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
+			if (!onlyNiagara)
+			{
+				CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
+				CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
+			}
 
 		}
 	}
 	else
 	{
+		FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Blue);
+
 		if (HighlightMaterial && CharacterMesh->GetMaterial(0) == DisableHighlightMaterial)
 		{
-			CharacterMesh->SetMaterial(0, HighlightMaterial);
-			CharacterMesh->SetMaterial(1, HighlightMaterial);
+			if (!onlyNiagara)
+			{
+				CharacterMesh->SetMaterial(0, HighlightMaterial);
+				CharacterMesh->SetMaterial(1, HighlightMaterial);
 
-			FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Blue);
+			}
 
 		}
 	}

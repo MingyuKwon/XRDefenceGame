@@ -63,10 +63,7 @@ void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResul
 		SetWorldLocation(XRCharacter->GetActorLocation());
 	}
 
-	if (XRCharacter->GebPalletteBeamAvailable())
-	{
-		XRCharacter->SetTrashEffect(bBeneath);
-	}
+	if (XRCharacter->GebPalletteBeamAvailable()) XRCharacter->SetTrashEffect(bBeneath, true);
 
 	if (bBeneath == bBeneathTrash) return;
 	bBeneathTrash = bBeneath;
