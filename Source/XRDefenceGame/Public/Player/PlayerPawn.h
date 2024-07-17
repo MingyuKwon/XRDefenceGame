@@ -15,7 +15,6 @@ class XRDEFENCEGAME_API APlayerPawn : public APawn
 public:
 	APlayerPawn();
 
-	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PoseRightAction(Pose currentPose);
 
@@ -32,6 +31,27 @@ public:
 	void SetLeftHandPosition();
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetRightHandPosition();
+
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIGoldAmount(float GoldAmount);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUITime(float TimeSecond);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIHealth(float HealthAmount);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIOrnageHealth(float HealthAmount);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUBlueHealth(float HealthAmount);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIPurpleHealth(float HealthAmount);
+
+
 
 	UFUNCTION()
 	inline FVector GetLeftHandPosition() { SetLeftHandPosition(); return LeftHandPosition; }

@@ -20,6 +20,7 @@ class XRDEFENCEGAME_API APlayer_Controller : public APlayerController
 public:
 
 	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 
 
 	UFUNCTION(BlueprintCallable)
@@ -41,12 +42,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateUserHandUI();
+
 private:
 
 	void ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
 	void ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
 	bool GetPlayerPawn();
+	bool GetPlayer_State();
 
 
 	Pose currentRightPose;
@@ -67,5 +72,16 @@ private:
 	void RightGrabEnd();
 
 	class APlayerPawn* playerPawn = nullptr;
+	class APlayer_State* playerState = nullptr;
+
+	UFUNCTION()
+	virtual void DefaultGoldEarn();
+
+	FTimerHandle DefaultGoldTimerHandle;
+
+	void StartDefaultGoldEarn();
+
+
+
 
 };

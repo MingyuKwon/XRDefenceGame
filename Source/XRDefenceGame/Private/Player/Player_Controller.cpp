@@ -3,7 +3,7 @@
 
 #include "Player/Player_Controller.h"
 #include "Player/PlayerPawn.h"
-
+#include "Player/Player_State.h"
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
@@ -26,6 +26,33 @@ void APlayer_Controller::Tick(float DeltaTime)
 	}
 }
 
+void APlayer_Controller::DefaultGoldEarn()
+{
+	if (!GetPlayer_State()) return;
+
+	playerState->SetGold(playerState->GetGold() + 1.f);
+	UpdateUserHandUI();
+}
+
+void APlayer_Controller::StartDefaultGoldEarn()
+{
+	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
+}
+
+void APlayer_Controller::UpdateUserHandUI()
+{
+	if (!GetPlayerPawn()) return;
+	if (!GetPlayer_State()) return;
+
+	playerPawn->SetUIGoldAmount(playerState->GetGold());
+}
+
+void APlayer_Controller::BeginPlay()
+{
+	Super::BeginPlay();
+	StartDefaultGoldEarn();
+}
+
 bool APlayer_Controller::GetPlayerPawn()
 {
 	playerPawn = (playerPawn == nullptr) ? Cast<APlayerPawn>(GetPawn()) : playerPawn;
@@ -33,6 +60,19 @@ bool APlayer_Controller::GetPlayerPawn()
 	if (playerPawn == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::GetPlayerPawn : playerPawn == nullptr"));
+		return false;
+	}
+
+	return true;
+}
+
+bool APlayer_Controller::GetPlayer_State()
+{
+	playerState = (playerState == nullptr) ? GetPlayerState<APlayer_State>() : playerState;
+
+	if (playerState == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::GetPlayerState : playerPawn == nullptr"));
 		return false;
 	}
 
