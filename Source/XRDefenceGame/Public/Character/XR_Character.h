@@ -466,4 +466,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FVector GetRingPosition();
 
+	UFUNCTION(BlueprintCallable)
+	bool GebPalletteBeamAvailable() { return bPalletteBeamAvailable; }
+
+	
+
 };

@@ -13,7 +13,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (bRightGrabbing)
 	{
-		if (IsRightGrabable())
+		if (IsRightGrabable_CostInclude())
 		{
 			IHandInteractInterface::Execute_SetInteractPosition(currentRightInteractInterface.GetObject(), playerPawn->GetRightHandPosition());
 		}
@@ -21,7 +21,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (bLeftGrabbing)
 	{
-		if (IsLeftGrabable())
+		if (IsLeftGrabable_CostInclude())
 		{
 			IHandInteractInterface::Execute_SetInteractPosition(currentLeftInteractInterface.GetObject(), playerPawn->GetLeftHandPosition());
 		}
@@ -190,6 +190,7 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 
 	if (currentRightInteractInterface)
 	{
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
 		IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
 	}
 
@@ -233,6 +234,7 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 
 	if (currentLeftInteractInterface)
 	{
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
 		IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
 	}
 
@@ -244,12 +246,9 @@ void APlayer_Controller::LeftGrabStart()
 {
 	if (bLeftGrabbing) return;
 
-	if (IsLeftGrabable())
+	if (IsLeftGrabable_CostInclude())
 	{
-		if (!IHandInteractInterface::Execute_GetDisableHighLight(currentLeftInteractInterface.GetObject()))
-		{
-			IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
-		}
+		IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
 	}
 
 	bLeftGrabbing = true;
@@ -274,12 +273,9 @@ void APlayer_Controller::RightGrabStart()
 {
 	if (bRightGrabbing) return;
 
-	if (IsRightGrabable())
+	if (IsRightGrabable_CostInclude())
 	{
-		if (!IHandInteractInterface::Execute_GetDisableHighLight(currentRightInteractInterface.GetObject()))
-		{
-			IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
-		}
+		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
 	}
 
 

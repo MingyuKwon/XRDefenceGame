@@ -616,6 +616,7 @@ void AXR_Character::DamageTimerFunction()
 
 void AXR_Character::SetbDisableInteractable(bool flag)
 {
+
 	if (bDisableInteractable == flag) return;
 
 	bDisableInteractable = flag;
@@ -918,6 +919,7 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 		break;
 
 	case EMaterialState::EMS_HandHighLight:
+
 
 		if (bDisableInteractable)
 		{
