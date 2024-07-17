@@ -20,5 +20,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* GoldPile;
 
+	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
+
+	virtual void DissolveCallBack(float percent) override;
+
+	virtual void DissolveCallBackReverse(float percent) override;
 
 };
