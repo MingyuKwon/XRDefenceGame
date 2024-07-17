@@ -52,7 +52,6 @@ public:
 	void SetUIPurpleHealth(float HealthAmount);
 
 
-
 	UFUNCTION()
 	inline FVector GetLeftHandPosition() { SetLeftHandPosition(); return LeftHandPosition; }
 	UFUNCTION()

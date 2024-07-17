@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "XRDefenceEnums.h"
 #include "Interface/HandInteractInterface.h"
+#include "XRDefenceEnums.h"
 #include "Player_Controller.generated.h"
 
 /**
@@ -45,7 +46,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateUserHandUI();
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
+
+	UFUNCTION(BlueprintCallable)
+	void SetControllerObjectType(EObjectType objectType);
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Pawn Parameter")
+	EObjectType controllerObjectType;
+
 private:
+
+	UFUNCTION(BlueprintCallable)
+	void GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold);
+
 
 	void ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
 	void ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);

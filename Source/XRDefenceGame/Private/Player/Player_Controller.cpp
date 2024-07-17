@@ -4,6 +4,8 @@
 #include "Player/Player_Controller.h"
 #include "Player/PlayerPawn.h"
 #include "Player/Player_State.h"
+#include "Kismet/GameplayStatics.h"
+#include "Mode/XRGamePlayMode.h"
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
@@ -47,10 +49,45 @@ void APlayer_Controller::UpdateUserHandUI()
 	playerPawn->SetUIGoldAmount(playerState->GetGold());
 }
 
+void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
+{
+	controllerObjectType = objectType;
+}
+
+void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
+{
+	if (controllerObjectType != objectType) return;
+
+	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
+	{
+		if (bRemove)
+		{
+
+		}
+		else
+		{
+
+		}
+
+		return;
+	}
+
+	playerState->SetGold(playerState->GetGold() + perSecGold);
+	UpdateUserHandUI();
+
+}
+
 void APlayer_Controller::BeginPlay()
 {
 	Super::BeginPlay();
 	StartDefaultGoldEarn();
+
+	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
+	}
+
 }
 
 bool APlayer_Controller::GetPlayerPawn()

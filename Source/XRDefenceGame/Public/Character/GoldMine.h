@@ -16,6 +16,8 @@ class XRDEFENCEGAME_API AGoldMine : public AXR_Character
 public:
 	AGoldMine();
 
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* GoldPile;
@@ -25,5 +27,23 @@ protected:
 	virtual void DissolveCallBack(float percent) override;
 
 	virtual void DissolveCallBackReverse(float percent) override;
+
+	virtual void Death(bool bDieInTrash) override;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "GoldMine Parameter")
+	float PerSecGold = 1.f;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "GoldMine Parameter")
+	float LifTime = 10.f;
+
+	float TimeCount = -1.f;
+
+	virtual void BroadCastGoldMineOnBoard(bool flag);
+
+	UFUNCTION()
+	virtual void BroadCastGoldMineTick();
+
+	FTimerHandle GoldMineTimerHandler;
+
 
 };
