@@ -73,6 +73,8 @@ void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResul
 
 void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 {
+	bBeneath = bBeneath && !XRCharacter->GetbDisableInteractable();
+
 	if (bBeneath)
 	{
 		FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.f);
@@ -82,6 +84,8 @@ void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 	{
 		SetWorldLocation(XRCharacter->GetActorLocation());
 	}
+
+	
 
 	if (bBeneath == bBeneathBoard) return;
 	bBeneathBoard = bBeneath;

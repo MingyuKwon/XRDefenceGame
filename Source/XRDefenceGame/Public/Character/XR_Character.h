@@ -473,6 +473,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GebPalletteBeamAvailable() { return bPalletteBeamAvailable; }
 
+	UFUNCTION(BlueprintCallable)
+	bool GetbDisableInteractable() { return bDisableInteractable; }
+
+
 	
 
 };
