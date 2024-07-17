@@ -21,6 +21,7 @@
 #include "MotionWarpingComponent.h"
 #include "Managet/AudioSubsystem.h"
 #include "Managet/XRDefenceGameInstance.h"
+#include "Battle/CostShowChip.h"
 
 AXR_Character::AXR_Character()
 {
@@ -101,7 +102,7 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 
 		if (isSpawnedByHand)
 		{
-			OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+			CallBackForPallette();
 		}
 	}
 
@@ -157,6 +158,7 @@ void AXR_Character::InitializeCharacter()
 
 	if (!DefaultPlaceInBoard)
 	{
+		SpawnCostShowUI();
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
 
 	}
@@ -188,6 +190,31 @@ void AXR_Character::SetOnBoardAuto()
 	bOnBoard = true;
 	OnBoardCalledFunction(true, false);
 
+}
+
+void AXR_Character::SpawnCostShowUI()
+{
+	if (costShowUIClass)
+	{
+		FVector SpawnLocation = GetActorLocation() - GetActorForwardVector() * 4;
+		FRotator SpawnRotation = GetActorRotation();
+
+
+		if (GetMesh())
+		{
+			SpawnLocation.Z = GetMesh()->GetComponentLocation().Z + 0.25f;
+		}
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		CostShowUI = GetWorld()->SpawnActor<ACostShowChip>(costShowUIClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (CostShowUI)
+		{
+			CostShowUI->SetGoldCostCount(CharacterProperty.Cost);
+		}
+	}
 }
 
 void AXR_Character::SpawnCharacterPropertyUI()
@@ -435,7 +462,7 @@ void AXR_Character::GrabEnd_Implementation()
 	if (FloorRingMesh->bBeneathTrash)
 	{
 		Death(true);
-		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+		CallBackForPallette();
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeathInTrash, GetActorLocation(), 0.5f);
 
 		return;
@@ -615,6 +642,17 @@ void AXR_Character::SetbDisableInteractable(bool flag)
 
 		}
 	}
+}
+
+void AXR_Character::CallBackForPallette()
+{
+	if (CostShowUI)
+	{
+		CostShowUI->Destroy();
+	}
+
+	OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+
 }
 
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

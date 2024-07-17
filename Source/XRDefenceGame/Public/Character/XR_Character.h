@@ -12,6 +12,7 @@
 class UNiagaraComponent;
 class UXRDefenceGameInstance;
 class UAudioSubsystem;
+class ACostShowChip;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -69,6 +70,10 @@ public:
 	//Only Uses Defender
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float ObjectAccessRadius = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Cost = 5;
+
 
 };
 
@@ -137,6 +142,8 @@ public:
 	virtual void SetbDisableInteractable(bool flag);
 
 protected:
+	UFUNCTION(BlueprintCallable)
+	virtual void CallBackForPallette();
 
 	UXRDefenceGameInstance* GameInstance;
 	UAudioSubsystem* AudioManager;
@@ -224,16 +231,28 @@ protected:
 
 	virtual void DestroyMyself();
 
-	virtual void SetPropertyUIVisible(bool flag);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	TMap<int32, ECharacterType> TurretTypeMap;
 
+
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprint parameter")
 	TSubclassOf<class ACharacterUI> characterProperyUIClass;
 
 	ACharacterUI* CharacterPropertyUI = nullptr;
+
+	virtual void SetPropertyUIVisible(bool flag);
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprint parameter")
+	TSubclassOf<class ACostShowChip> costShowUIClass;
+
+	ACostShowChip* CostShowUI = nullptr;
+
+
+	void SpawnCostShowUI();
 
 	void SpawnCharacterPropertyUI();
 
