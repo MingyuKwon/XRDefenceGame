@@ -129,10 +129,10 @@ protected:
     virtual void ChangeMaterialEMS_Death() override;
 
 
-    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    UPROPERTY(EditDefaultsOnly, Category = "Buff Parameter")
     int32 DamageUpgradeCount = 0;
 
-    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    UPROPERTY(EditDefaultsOnly, Category = "Buff Parameter")
     int32 RangeUpgradeCount = 0;
 
     void UpgradeTurret(ECharacterType characterType);
