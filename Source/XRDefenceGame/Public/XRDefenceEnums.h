@@ -119,6 +119,15 @@ enum class ECharacterType : uint8
     ECT_None
 };
 
+UENUM(BlueprintType)
+enum class ENexusType : uint8
+{
+    ENT_NexusPurple,
+    ENT_NexusBlue,
+    ENT_NexusOrange,
+    ENT_None
+};
+
 
 class XRDEFENCEGAME_API XRDefenceEnums
 {

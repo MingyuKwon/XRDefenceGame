@@ -98,14 +98,16 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 
 	bool isMaxLevel = false;
 	bool isHeal = ownerCharacterType == ECharacterType::ECT_DefenceH;
+	bool isOnBoard = true;
 
 	if (NewBuffableCharacter)
 	{
 		isMaxLevel = IBuffableInterface::Execute_GetTotalLevel(NewBuffableCharacter) >= 6;
+		isOnBoard = IHandInteractInterface::Execute_IsOnBoard(NewBuffableCharacter);
 	}
 
 
-	if (bBuffable && (!isMaxLevel || isHeal))
+	if (bBuffable && isOnBoard && (!isMaxLevel || isHeal))
 	{
 		if (NewBuffableCharacter != BuffableCharacter)
 		{

@@ -34,7 +34,7 @@ public:
 
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIGoldAmount(float GoldAmount);
+	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUITime(float TimeSecond);

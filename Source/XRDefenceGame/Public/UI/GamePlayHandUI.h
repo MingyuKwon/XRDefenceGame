@@ -41,7 +41,7 @@ public:
 	void SetTimeText(float LeftSecond);
 
 	UFUNCTION(BlueprintCallable)
-	void SetGoldText(float GoldAmount);
+	void SetGoldText(float GoldAmount, float MaxGoldAmount);
 
 	UFUNCTION(BlueprintCallable)
 	void SetBlueHeartText(float HealthAmount);

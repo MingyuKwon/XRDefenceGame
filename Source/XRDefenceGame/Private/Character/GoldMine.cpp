@@ -138,7 +138,7 @@ void AGoldMine::BroadCastGoldMineOnBoard(bool flag)
 		if (ObjectType == EObjectType::EOT_OffenceGold) tempObjectType = EObjectType::EOT_Offence;
 		if (ObjectType == EObjectType::EOT_DeffenceGold) tempObjectType = EObjectType::EOT_Deffence;
 
-		XRGamePlayMode->OnGoldMineBroadCastEvent.Broadcast(tempObjectType, flag, 0.f);
+		XRGamePlayMode->OnGoldMineBroadCastEvent.Broadcast(tempObjectType, !flag, 0.f);
 	}
 }
 

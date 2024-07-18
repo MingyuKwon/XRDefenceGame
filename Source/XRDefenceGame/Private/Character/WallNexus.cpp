@@ -3,6 +3,7 @@
 
 #include "Character/WallNexus.h"
 #include "Components/BoxComponent.h"
+#include "Mode/XRGamePlayMode.h"
 
 // Sets default values
 AWallNexus::AWallNexus()
@@ -50,6 +51,18 @@ void AWallNexus::InitializeCharacter()
 
     Super::InitializeCharacter();
 
+}
+
+float AWallNexus::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    float returnValue = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    
+    if (XRGamePlayMode)
+    {
+        XRGamePlayMode->OnNexusDamageEvent.Broadcast(nexusType, CharacterProperty.currentHealth);
+    }
+
+    return returnValue;
 }
 
 void AWallNexus::Tick(float DeltaTime)

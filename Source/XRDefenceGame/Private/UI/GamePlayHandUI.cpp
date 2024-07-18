@@ -13,9 +13,14 @@ void UGamePlayHandUI::SetTimeText(float LeftSecond)
     }
 }
 
-void UGamePlayHandUI::SetGoldText(float GoldAmount)
+void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount)
 {
-    FText GoldTextValue = FText::AsNumber(GoldAmount);
+    int32 GoldInt = GoldAmount;
+    int32 MaxGoldInt = MaxGoldAmount;
+
+    FString GoldString = FString::Printf(TEXT("%d \n/ %d"), GoldInt, MaxGoldInt);
+    FText GoldTextValue = FText::FromString(GoldString);
+
     if (GoldText)
     {
         GoldText->SetText(GoldTextValue);

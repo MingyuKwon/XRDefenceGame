@@ -56,6 +56,34 @@ void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cos
 	UpdateUserHandUI();
 }
 
+void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHealth)
+{
+	if (!GetPlayerPawn()) return;
+	if (!GetPlayer_State()) return;
+
+	if (nexusType == ENexusType::ENT_NexusPurple)
+	{
+		playerPawn->SetUIPurpleHealth(currentHealth);
+		purpleNexusHealth = currentHealth;
+
+	}
+	else if (nexusType == ENexusType::ENT_NexusOrange)
+	{
+		playerPawn->SetUIOrnageHealth(currentHealth);
+		orangeNexusHealth = currentHealth;
+	}
+	else if (nexusType == ENexusType::ENT_NexusBlue)
+	{
+		playerPawn->SetUBlueHealth(currentHealth);
+		blueNexusHealth = currentHealth;
+
+	}
+
+	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
+
+
+}
+
 void APlayer_Controller::StartDefaultGoldEarn()
 {
 	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
@@ -71,7 +99,7 @@ void APlayer_Controller::UpdateUserHandUI()
 	if (!GetPlayerPawn()) return;
 	if (!GetPlayer_State()) return;
 
-	playerPawn->SetUIGoldAmount(playerState->GetGold());
+	playerPawn->SetUIGoldAmount(playerState->GetGold(), playerState->GetMaxGold());
 }
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
@@ -85,22 +113,18 @@ void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool 
 
 	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
 	{
-		if (bRemove)
-		{
-
-		}
-		else
-		{
-
-		}
-
-		return;
+		playerState->UpgradeMaxGold(!bRemove);
+	}
+	else
+	{
+		playerState->SetGold(playerState->GetGold() + perSecGold);
 	}
 
-	playerState->SetGold(playerState->GetGold() + perSecGold);
 	UpdateUserHandUI();
 
 }
+
+
 
 void APlayer_Controller::BeginPlay()
 {
@@ -112,7 +136,7 @@ void APlayer_Controller::BeginPlay()
 	{
 		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
 		XRGamePlayMode->OnCostEvent.AddDynamic(this, &APlayer_Controller::GoldCostEventCallBack);
-
+		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
 	}
 
 }

@@ -6,17 +6,38 @@
 
 void APlayer_State::SetGold(float NewGold)
 {
-	Gold = NewGold;
+	CurrentGold = FMath::Clamp(NewGold, 0.f, MaxGold);
+
 }
 
 float APlayer_State::GetGold() const
 {
-	return Gold;
+	return CurrentGold;
 }
+
+void APlayer_State::UpgradeMaxGold(bool bIncrease)
+{
+	if (bIncrease)
+	{
+		MaxGold += MaxGoldUpgradeUnit;
+	}
+	else
+	{
+		MaxGold -= MaxGoldUpgradeUnit;
+	}
+
+	CurrentGold = FMath::Clamp(CurrentGold, -100.f, MaxGold);
+}
+
+float APlayer_State::GetMaxGold() const
+{
+	return MaxGold;
+}
+
 
 void APlayer_State::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APlayer_State, Gold);
+	DOREPLIFETIME(APlayer_State, CurrentGold);
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/XR_Character.h"
+#include "XRDefenceEnums.h"
 #include "WallNexus.generated.h"
 
 class UMaterialInstance;
@@ -41,6 +42,9 @@ protected:
 	TObjectPtr<class UBoxComponent> RootCollision;
 
 
+	UPROPERTY(EditDefaultsOnly, Category = "Nexus Parameter")
+	ENexusType nexusType;
+
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
 	UMaterialInstance* DefaultNexusMesh1;
 
@@ -69,6 +73,7 @@ protected:
 	float TimeAccumulator;
 	bool bMovingUp;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
