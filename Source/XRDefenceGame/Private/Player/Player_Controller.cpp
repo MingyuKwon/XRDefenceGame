@@ -38,7 +38,18 @@ void APlayer_Controller::DefaultGoldEarn()
 
 void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cost)
 {
-	if (objectType != controllerObjectType) return;
+	if (objectType == EObjectType::EOT_OffenceGold && controllerObjectType == EObjectType::EOT_Offence)
+	{
+		objectType = EObjectType::EOT_Offence;
+	}
+	else if (objectType == EObjectType::EOT_DeffenceGold && controllerObjectType == EObjectType::EOT_Deffence)
+	{
+		objectType = EObjectType::EOT_Deffence;
+	}
+	else if (objectType != controllerObjectType)
+	{
+		return;
+	}
 
 	playerState->SetGold(playerState->GetGold() - cost);
 
