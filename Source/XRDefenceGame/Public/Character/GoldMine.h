@@ -19,8 +19,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	UMaterialInstance* DefaultGoldPile;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* GoldPile;
+
+	virtual void InitializeCharacter() override;
+
+	virtual void ChangeMaterialEMS_Default() override;
+	virtual void ChangeMaterialEMS_OnBoardHighLight() override;
+	virtual void ChangeMaterialEMS_Damage() override;
+	virtual void ChangeMaterialEMS_HandHighLight() override;
+	virtual void ChangeMaterialEMS_Death() override;
+
 
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
 

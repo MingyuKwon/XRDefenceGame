@@ -189,6 +189,22 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Default();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_OnBoardHighLight();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Damage();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_HandHighLight();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Death();
+
 	
 	bool bLockOnBoardHighLight = false;
 	bool bLockDamage = false;

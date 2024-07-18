@@ -28,6 +28,70 @@ void AGoldMine::Tick(float DeltaTime)
 
 }
 
+void AGoldMine::InitializeCharacter()
+{
+    if (!GoldPile) return;
+
+    DefaultGoldPile = Cast<UMaterialInstance>(GoldPile->GetMaterial(0));
+
+    Super::InitializeCharacter();
+}
+
+void AGoldMine::ChangeMaterialEMS_Default()
+{
+    Super::ChangeMaterialEMS_Default();
+
+    if (GoldPile) GoldPile->SetMaterial(0, DefaultGoldPile);
+
+}
+
+void AGoldMine::ChangeMaterialEMS_OnBoardHighLight()
+{
+    Super::ChangeMaterialEMS_OnBoardHighLight();
+
+    if (HighlightMaterial)
+    {
+        GoldPile->SetMaterial(0, HighlightMaterial);
+    }
+
+
+}
+
+void AGoldMine::ChangeMaterialEMS_Damage()
+{
+    Super::ChangeMaterialEMS_Damage();
+    if (DamagedMaterial)
+    {
+        GoldPile->SetMaterial(0, DamagedMaterial);
+    }
+}
+
+void AGoldMine::ChangeMaterialEMS_HandHighLight()
+{
+    Super::ChangeMaterialEMS_HandHighLight();
+
+    if (bDisableInteractable)
+    {
+        if (DisableHighlightMaterial)
+        {
+            GoldPile->SetMaterial(0, DisableHighlightMaterial);
+        }
+    }
+    else
+    {
+        if (HighlightMaterial)
+        {
+            GoldPile->SetMaterial(0, HighlightMaterial);
+        }
+    }
+}
+
+void AGoldMine::ChangeMaterialEMS_Death()
+{
+    Super::ChangeMaterialEMS_Death();
+
+}
+
 void AGoldMine::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 {
 	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);

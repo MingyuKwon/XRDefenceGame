@@ -59,8 +59,11 @@ protected:
 	virtual void DissolveCallBackReverse(float percent) override;
 	virtual void DissolveCallBack(float percent) override;
 
-	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock) override;
-
+	virtual void ChangeMaterialEMS_Default() override;
+	virtual void ChangeMaterialEMS_OnBoardHighLight() override;
+	virtual void ChangeMaterialEMS_Damage() override;
+	virtual void ChangeMaterialEMS_HandHighLight() override;
+	virtual void ChangeMaterialEMS_Death() override;
 
 
 	float TimeAccumulator;

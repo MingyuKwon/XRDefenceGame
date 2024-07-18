@@ -178,44 +178,77 @@ void AMyXR_CharacterDeffenceBattle::DissolveCallBackReverse(float percent)
     DissolveCallBack(1-percent);
 }
 
-void AMyXR_CharacterDeffenceBattle::ChangeMaterialState(EMaterialState materialState, bool bLock)
+
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_Default()
 {
-    Super::ChangeMaterialState(materialState, bLock);
+    Super::ChangeMaterialEMS_Default();
 
-    EMaterialState HightestState = EMaterialState::EMS_Default;
-    if (bLockDeath)
+    if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
+    if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
+
+    if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
+    if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
+    if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
+    if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
+    if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
+
+}
+
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_OnBoardHighLight()
+{
+    Super::ChangeMaterialEMS_OnBoardHighLight();
+
+    if (HighlightMaterial)
     {
-        HightestState = EMaterialState::EMS_Death;
+        GunMeshComponent->SetMaterial(0, HighlightMaterial);
+        GunMeshComponent2->SetMaterial(0, HighlightMaterial);
+
+        EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
+        EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
+        EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
+        EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
+        EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
     }
-    else if (bLockHandHighLight)
+
+
+}
+
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_Damage()
+{
+    Super::ChangeMaterialEMS_Damage();
+    if (DamagedMaterial)
     {
-        HightestState = EMaterialState::EMS_HandHighLight;
+        GunMeshComponent->SetMaterial(0, DamagedMaterial);
+        GunMeshComponent2->SetMaterial(0, DamagedMaterial);
+
+        EtcMeshComponent1->SetMaterial(0, DamagedMaterial);
+        EtcMeshComponent2->SetMaterial(0, DamagedMaterial);
+        EtcMeshComponent3->SetMaterial(0, DamagedMaterial);
+        EtcMeshComponent4->SetMaterial(0, DamagedMaterial);
+        EtcMeshComponent5->SetMaterial(0, DamagedMaterial);
     }
-    else if (bLockDamage)
+}
+
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_HandHighLight()
+{
+    Super::ChangeMaterialEMS_HandHighLight();
+
+    if (bDisableInteractable)
     {
-        HightestState = EMaterialState::EMS_Damage;
+        if (DisableHighlightMaterial)
+        {
+            GunMeshComponent->SetMaterial(0, DisableHighlightMaterial);
+            GunMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
+
+            EtcMeshComponent1->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent3->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent4->SetMaterial(0, DisableHighlightMaterial);
+            EtcMeshComponent5->SetMaterial(0, DisableHighlightMaterial);
+        }
     }
-    else if (bLockOnBoardHighLight)
+    else
     {
-        HightestState = EMaterialState::EMS_OnBoardHighLight;
-    }
-
-    switch (HightestState)
-    {
-    case EMaterialState::EMS_Default:
-        if (DefaultGunMaterial) GunMeshComponent->SetMaterial(0, DefaultGunMaterial);
-        if (DefaultGun2Material) GunMeshComponent2->SetMaterial(0, DefaultGun2Material);
-
-        if (DefaultEtcMaterialFirst) EtcMeshComponent1->SetMaterial(0, DefaultEtcMaterialFirst);
-        if (DefaultEtcMaterialSecond) EtcMeshComponent2->SetMaterial(0, DefaultEtcMaterialSecond);
-        if (DefaultEtcMaterialThird) EtcMeshComponent3->SetMaterial(0, DefaultEtcMaterialThird);
-        if (DefaultEtcMaterialForth) EtcMeshComponent4->SetMaterial(0, DefaultEtcMaterialForth);
-        if (DefaultEtcMaterialFifth) EtcMeshComponent5->SetMaterial(0, DefaultEtcMaterialFifth);
-
-        break;
-
-    case EMaterialState::EMS_OnBoardHighLight:
-
         if (HighlightMaterial)
         {
             GunMeshComponent->SetMaterial(0, HighlightMaterial);
@@ -227,63 +260,13 @@ void AMyXR_CharacterDeffenceBattle::ChangeMaterialState(EMaterialState materialS
             EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
             EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
         }
-
-        break;
-
-    case EMaterialState::EMS_Damage:
-        if (DamagedMaterial)
-        {
-            GunMeshComponent->SetMaterial(0, DamagedMaterial);
-            GunMeshComponent2->SetMaterial(0, DamagedMaterial);
-
-            EtcMeshComponent1->SetMaterial(0, DamagedMaterial);
-            EtcMeshComponent2->SetMaterial(0, DamagedMaterial);
-            EtcMeshComponent3->SetMaterial(0, DamagedMaterial);
-            EtcMeshComponent4->SetMaterial(0, DamagedMaterial);
-            EtcMeshComponent5->SetMaterial(0, DamagedMaterial);
-
-        }
-        break;
-
-    case EMaterialState::EMS_HandHighLight:
-
-        if (bDisableInteractable)
-        {
-            if (DisableHighlightMaterial)
-            {
-                GunMeshComponent->SetMaterial(0, DisableHighlightMaterial);
-                GunMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
-
-                EtcMeshComponent1->SetMaterial(0, DisableHighlightMaterial);
-                EtcMeshComponent2->SetMaterial(0, DisableHighlightMaterial);
-                EtcMeshComponent3->SetMaterial(0, DisableHighlightMaterial);
-                EtcMeshComponent4->SetMaterial(0, DisableHighlightMaterial);
-                EtcMeshComponent5->SetMaterial(0, DisableHighlightMaterial);
-            }
-        }
-        else
-        {
-            if (HighlightMaterial)
-            {
-                GunMeshComponent->SetMaterial(0, HighlightMaterial);
-                GunMeshComponent2->SetMaterial(0, HighlightMaterial);
-
-                EtcMeshComponent1->SetMaterial(0, HighlightMaterial);
-                EtcMeshComponent2->SetMaterial(0, HighlightMaterial);
-                EtcMeshComponent3->SetMaterial(0, HighlightMaterial);
-                EtcMeshComponent4->SetMaterial(0, HighlightMaterial);
-                EtcMeshComponent5->SetMaterial(0, HighlightMaterial);
-            }
-        }
-
-        break;
-
-    case EMaterialState::EMS_Death:
-        break;
-
-    default:
-        break;
     }
+}
+
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_Death()
+{
+    Super::ChangeMaterialEMS_Death();
+
 }
 
 

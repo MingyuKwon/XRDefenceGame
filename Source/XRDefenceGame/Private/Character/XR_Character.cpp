@@ -587,6 +587,7 @@ void AXR_Character::Death(bool bDieInTrash)
 
 }
 
+
 void AXR_Character::DestroyMyself()
 {
 	Destroy();
@@ -616,6 +617,7 @@ void AXR_Character::DamageTimerFunction()
 
 void AXR_Character::SetbDisableInteractable(bool flag)
 {
+	if (bOnBoard) return;
 	if (bDisableInteractable == flag) return;
 
 	bDisableInteractable = flag;
@@ -906,57 +908,82 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 	switch (HightestState)
 	{
 	case EMaterialState::EMS_Default :
-		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
-
+		ChangeMaterialEMS_Default();
 		break;
 
 	case EMaterialState::EMS_OnBoardHighLight:
+		ChangeMaterialEMS_OnBoardHighLight();
+		break;
+
+	case EMaterialState::EMS_Damage:
+		ChangeMaterialEMS_Damage();
+		break;
+
+	case EMaterialState::EMS_HandHighLight:
+
+		ChangeMaterialEMS_HandHighLight();
+		break;
+		
+	case EMaterialState::EMS_Death:
+		ChangeMaterialEMS_Death();
+		break;
+
+	} 
+}
+
+void AXR_Character::ChangeMaterialEMS_Default()
+{
+	if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+	if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+
+}
+
+void AXR_Character::ChangeMaterialEMS_OnBoardHighLight()
+{
+	if (HighlightMaterial)
+	{
+		CharacterMesh->SetMaterial(0, HighlightMaterial);
+		CharacterMesh->SetMaterial(1, HighlightMaterial);
+	}
+
+}
+
+void AXR_Character::ChangeMaterialEMS_Damage()
+{
+	if (DamagedMaterial)
+	{
+		CharacterMesh->SetMaterial(0, DamagedMaterial);
+		CharacterMesh->SetMaterial(1, DamagedMaterial);
+
+	}
+
+}
+
+void AXR_Character::ChangeMaterialEMS_HandHighLight()
+{
+	if (bDisableInteractable)
+	{
+		if (DisableHighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
+			CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
+		}
+	}
+	else
+	{
 		if (HighlightMaterial)
 		{
 			CharacterMesh->SetMaterial(0, HighlightMaterial);
 			CharacterMesh->SetMaterial(1, HighlightMaterial);
 		}
-		break;
-
-	case EMaterialState::EMS_Damage:
-
-		if (DamagedMaterial)
-		{
-			CharacterMesh->SetMaterial(0, DamagedMaterial);
-			CharacterMesh->SetMaterial(1, DamagedMaterial);
-
-		}
-		break;
-
-	case EMaterialState::EMS_HandHighLight:
-
-
-		if (bDisableInteractable)
-		{
-			if (DisableHighlightMaterial)
-			{
-				CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
-				CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
-			}
-		}
-		else
-		{
-			if (HighlightMaterial)
-			{
-				CharacterMesh->SetMaterial(0, HighlightMaterial);
-				CharacterMesh->SetMaterial(1, HighlightMaterial);
-			}
-		}
-
-
-		break;
-		
-	case EMaterialState::EMS_Death:
-		break;
-
-	} 
+	}
 }
+
+void AXR_Character::ChangeMaterialEMS_Death()
+{
+
+}
+
 
 
 void AXR_Character::CharacterActionStart()

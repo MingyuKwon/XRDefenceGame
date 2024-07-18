@@ -123,83 +123,65 @@ void AWallNexus::DissolveCallBackReverse(float percent)
     DissolveCallBack(1 - percent);
 }
 
-void AWallNexus::ChangeMaterialState(EMaterialState materialState, bool bLock)
+void AWallNexus::ChangeMaterialEMS_Default()
 {
-    Super::ChangeMaterialState(materialState, bLock);
+    Super::ChangeMaterialEMS_Default();
 
-    EMaterialState HightestState = EMaterialState::EMS_Default;
-    if (bLockDeath)
+    if (DefaultNexusMesh1) NexusMesh1->SetMaterial(0, DefaultNexusMesh1);
+    if (DefaultNexusMesh2) NexusMesh2->SetMaterial(0, DefaultNexusMesh2);
+    if (DefaultNexusMesh3) NexusMesh3->SetMaterial(0, DefaultNexusMesh3);
+    if (DefaultNexusMesh4) NexusMesh4->SetMaterial(0, DefaultNexusMesh4);
+    if (DefaultNexusMesh5) NexusMesh5->SetMaterial(0, DefaultNexusMesh5);
+
+}
+
+void AWallNexus::ChangeMaterialEMS_OnBoardHighLight()
+{
+    Super::ChangeMaterialEMS_OnBoardHighLight();
+
+    if (HighlightMaterial)
     {
-        HightestState = EMaterialState::EMS_Death;
+        NexusMesh1->SetMaterial(0, HighlightMaterial);
+        NexusMesh2->SetMaterial(0, HighlightMaterial);
+        NexusMesh3->SetMaterial(0, HighlightMaterial);
+        NexusMesh4->SetMaterial(0, HighlightMaterial);
+        NexusMesh5->SetMaterial(0, HighlightMaterial);
     }
-    else if (bLockHandHighLight)
+
+
+}
+
+void AWallNexus::ChangeMaterialEMS_Damage()
+{
+    Super::ChangeMaterialEMS_Damage();
+    if (DamagedMaterial)
     {
-        HightestState = EMaterialState::EMS_HandHighLight;
+        NexusMesh1->SetMaterial(0, DamagedMaterial);
+        NexusMesh2->SetMaterial(0, DamagedMaterial);
+        NexusMesh3->SetMaterial(0, DamagedMaterial);
+        NexusMesh4->SetMaterial(0, DamagedMaterial);
+        NexusMesh5->SetMaterial(0, DamagedMaterial);
+
     }
-    else if (bLockDamage)
+}
+
+void AWallNexus::ChangeMaterialEMS_HandHighLight()
+{
+    Super::ChangeMaterialEMS_HandHighLight();
+
+    if (HighlightMaterial)
     {
-        HightestState = EMaterialState::EMS_Damage;
+        NexusMesh1->SetMaterial(0, HighlightMaterial);
+        NexusMesh2->SetMaterial(0, HighlightMaterial);
+        NexusMesh3->SetMaterial(0, HighlightMaterial);
+        NexusMesh4->SetMaterial(0, HighlightMaterial);
+        NexusMesh5->SetMaterial(0, HighlightMaterial);
     }
-    else if (bLockOnBoardHighLight)
-    {
-        HightestState = EMaterialState::EMS_OnBoardHighLight;
-    }
+}
 
-    switch (HightestState)
-    {
-    case EMaterialState::EMS_Default:
+void AWallNexus::ChangeMaterialEMS_Death()
+{
+    Super::ChangeMaterialEMS_Death();
 
-        if (DefaultNexusMesh1) NexusMesh1->SetMaterial(0, DefaultNexusMesh1);
-        if (DefaultNexusMesh2) NexusMesh2->SetMaterial(0, DefaultNexusMesh2);
-        if (DefaultNexusMesh3) NexusMesh3->SetMaterial(0, DefaultNexusMesh3);
-        if (DefaultNexusMesh4) NexusMesh4->SetMaterial(0, DefaultNexusMesh4);
-        if (DefaultNexusMesh5) NexusMesh5->SetMaterial(0, DefaultNexusMesh5);
-
-        break;
-
-    case EMaterialState::EMS_OnBoardHighLight:
-
-        if (HighlightMaterial)
-        {
-            NexusMesh1->SetMaterial(0, HighlightMaterial);
-            NexusMesh2->SetMaterial(0, HighlightMaterial);
-            NexusMesh3->SetMaterial(0, HighlightMaterial);
-            NexusMesh4->SetMaterial(0, HighlightMaterial);
-            NexusMesh5->SetMaterial(0, HighlightMaterial);
-        }
-
-        break;
-
-    case EMaterialState::EMS_Damage:
-        if (DamagedMaterial)
-        {
-            NexusMesh1->SetMaterial(0, DamagedMaterial);
-            NexusMesh2->SetMaterial(0, DamagedMaterial);
-            NexusMesh3->SetMaterial(0, DamagedMaterial);
-            NexusMesh4->SetMaterial(0, DamagedMaterial);
-            NexusMesh5->SetMaterial(0, DamagedMaterial);
-
-        }
-        break;
-
-    case EMaterialState::EMS_HandHighLight:
-
-        if (HighlightMaterial)
-        {
-            NexusMesh1->SetMaterial(0, HighlightMaterial);
-            NexusMesh2->SetMaterial(0, HighlightMaterial);
-            NexusMesh3->SetMaterial(0, HighlightMaterial);
-            NexusMesh4->SetMaterial(0, HighlightMaterial);
-            NexusMesh5->SetMaterial(0, HighlightMaterial);
-        }
-
-        break;
-
-    case EMaterialState::EMS_Death:
-        break;
-
-    default:
-        break;
-    }
 }
 
