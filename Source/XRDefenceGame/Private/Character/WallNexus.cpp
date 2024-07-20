@@ -59,7 +59,7 @@ float AWallNexus::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     
     if (XRGamePlayMode)
     {
-        XRGamePlayMode->OnNexusDamageEvent.Broadcast(nexusType, CharacterProperty.currentHealth);
+        XRGamePlayMode->TriggerOnNexusDamageEventEvent(nexusType, CharacterProperty.currentHealth);
     }
 
     return returnValue;

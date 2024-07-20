@@ -62,6 +62,8 @@ private:
 	float purpleNexusHealth = 1000.f;
 	float blueNexusHealth = 1000.f;
 
+	float curerntLeftTime = 300.f;
+
 	UFUNCTION(BlueprintCallable)
 	void GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold);
 
@@ -103,6 +105,17 @@ private:
 
 	UFUNCTION()
 	virtual void GoldCostEventCallBack(EObjectType objectType, float cost);
+
+
+	UFUNCTION()
+	virtual void OnGameStart();
+
+	UFUNCTION()
+	virtual void OnGameEnd();
+
+	UFUNCTION()
+	virtual void OnGameTimerShow(float leftSecond);
+
 
 	FTimerHandle DefaultGoldTimerHandle;
 

@@ -15,7 +15,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCostEvent, EObjectType, objectTy
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChrarcterDieEvent, AXR_Character*, DieCharacter);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnGoldMineBroadCastEvent, EObjectType, objectType, bool, bRemove, float, perSecGold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChrarcterSpawnEvent, FVector , SpawnLocation);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStart);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameEnd);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameTimerTickEvent, float, leftTime);
 
 
 UCLASS()
@@ -43,6 +45,26 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnGoldMineBroadCastEvent OnGoldMineBroadCastEvent;
 
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnGameStart OnGameStart;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnGameEnd OnGameEnd;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FGameTimerTickEvent OnGameTimerTickEvent;
+
+    
+    
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnGameStartEvent();
+
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnGameEndEvent();
+
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnNexusDamageEventEvent(ENexusType nexusType, float currentHealth);
+
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);
@@ -52,5 +74,22 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
     void SpawnActorForUpgrade(ECharacterType characterType, FVector position, FRotator rotation, FCharacterValueTransmitForm form);
+
+
+
+    UPROPERTY(EditDefaultsOnly, Category = "Time")
+    float GameTimerSecond = 300.f;
+
+    float orangeNexusHealth = 1000.f;
+    float purpleNexusHealth = 1000.f;
+    float blueNexusHealth = 1000.f;
+
+    
+
+    FTimerHandle GameTimerHandle;
+
+    UFUNCTION()
+    void GameTimerCallBack();
+
 
 };

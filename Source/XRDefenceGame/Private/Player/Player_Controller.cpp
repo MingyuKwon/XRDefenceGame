@@ -63,24 +63,20 @@ void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHe
 
 	if (nexusType == ENexusType::ENT_NexusPurple)
 	{
-		playerPawn->SetUIPurpleHealth(currentHealth);
 		purpleNexusHealth = currentHealth;
 
 	}
 	else if (nexusType == ENexusType::ENT_NexusOrange)
 	{
-		playerPawn->SetUIOrnageHealth(currentHealth);
 		orangeNexusHealth = currentHealth;
 	}
 	else if (nexusType == ENexusType::ENT_NexusBlue)
 	{
-		playerPawn->SetUBlueHealth(currentHealth);
 		blueNexusHealth = currentHealth;
 
 	}
 
-	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
-
+	UpdateUserHandUI();
 
 }
 
@@ -100,6 +96,13 @@ void APlayer_Controller::UpdateUserHandUI()
 	if (!GetPlayer_State()) return;
 
 	playerPawn->SetUIGoldAmount(playerState->GetGold(), playerState->GetMaxGold());
+
+	playerPawn->SetUIPurpleHealth(purpleNexusHealth);
+	playerPawn->SetUIOrnageHealth(orangeNexusHealth);
+	playerPawn->SetUBlueHealth(blueNexusHealth);
+	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
+
+	playerPawn->SetUITime(curerntLeftTime);
 }
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
@@ -129,7 +132,6 @@ void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool 
 void APlayer_Controller::BeginPlay()
 {
 	Super::BeginPlay();
-	StartDefaultGoldEarn();
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 	if (XRGamePlayMode)
@@ -137,8 +139,29 @@ void APlayer_Controller::BeginPlay()
 		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
 		XRGamePlayMode->OnCostEvent.AddDynamic(this, &APlayer_Controller::GoldCostEventCallBack);
 		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
+
+		XRGamePlayMode->OnGameStart.AddDynamic(this, &APlayer_Controller::OnGameStart);
+		XRGamePlayMode->OnGameEnd.AddDynamic(this, &APlayer_Controller::OnGameEnd);
+		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
+
 	}
 
+}
+
+void APlayer_Controller::OnGameStart()
+{
+	StartDefaultGoldEarn();
+}
+
+void APlayer_Controller::OnGameEnd()
+{
+
+}
+
+void APlayer_Controller::OnGameTimerShow(float leftSecond)
+{
+	curerntLeftTime = leftSecond;
+	UpdateUserHandUI();
 }
 
 bool APlayer_Controller::GetPlayerPawn()
