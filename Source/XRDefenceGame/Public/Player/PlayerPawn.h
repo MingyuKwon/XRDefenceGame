@@ -21,6 +21,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PoseLeftAction(Pose currentPose);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void GestureRightAction(EGesture currentGesture);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ReleaseGestureRight(EGesture currentGesture);
+
+
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector LeftHandPosition;

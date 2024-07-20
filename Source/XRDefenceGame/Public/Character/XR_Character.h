@@ -227,6 +227,10 @@ protected:
 	UFUNCTION()
 	virtual void OtherCharacterSpawnCallBack(FVector spawnLocation);
 
+	UFUNCTION()
+	virtual void GameEndCallBack();
+
+
 
 	UPROPERTY()
 	AXR_Character* TargetCharacter = nullptr;

@@ -151,6 +151,7 @@ void AXR_Character::InitializeCharacter()
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
 		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
+		XRGamePlayMode->OnGameEnd.AddDynamic(this, &AXR_Character::GameEndCallBack);
 	}
 
 	HealRing->Deactivate();
@@ -178,6 +179,12 @@ void AXR_Character::InitializeCharacter()
 
 	
 }
+
+void AXR_Character::GameEndCallBack()
+{
+	bBehaviorAvailable = false;
+}
+
 
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {

@@ -32,7 +32,10 @@ void APlayer_Controller::DefaultGoldEarn()
 {
 	if (!GetPlayer_State()) return;
 
-	playerState->SetGold(playerState->GetGold() + 1.f);
+	if (playerState)
+	{
+		playerState->SetGold(playerState->GetGold() + 1.f);
+	}
 	UpdateUserHandUI();
 }
 
@@ -190,26 +193,6 @@ bool APlayer_Controller::GetPlayer_State()
 	return true;
 }
 
-void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
-{
-	if (!GetPlayerPawn()) return;
-
-	currentRightPose = inputPose;
-	playerPawn->PoseRightAction(currentRightPose);
-
-	switch (inputPose)
-	{
-		case Pose::Grab :
-			RightGrabStart();
-			break;
-
-		default:
-			RightGrabEnd();
-			break;
-	}
-
-}
-
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
 	if (!GetPlayerPawn()) return;
@@ -228,6 +211,76 @@ void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 			break;
 	}
 }
+
+void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
+{
+	if (!GetPlayerPawn()) return;
+
+	currentRightPose = inputPose;
+	playerPawn->PoseRightAction(currentRightPose);
+
+	// This Control Grab
+	switch (inputPose)
+	{
+	case Pose::Grab:
+		RightGrabStart();
+		break;
+	default:
+		RightGrabEnd();
+		break;
+	}
+
+	ShouldRightGestureRelease(inputPose);
+
+}
+
+void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
+{
+	if (currentRightGesture == EGesture::None) return;
+
+	if (currentRightGesture == EGesture::Rock_Scissors)
+	{
+		if (inputPose != Pose::scissors) {
+			playerPawn->ReleaseGestureRight(EGesture::Rock_Scissors);
+			currentRightGesture = EGesture::None;
+		}
+			
+	}
+	else if (currentRightGesture == EGesture::Rock_Paper)
+	{
+		if (inputPose != Pose::Paper)
+		{
+			playerPawn->ReleaseGestureRight(EGesture::Rock_Paper);
+			currentRightGesture = EGesture::None;
+
+		}
+	}
+	else if (currentRightGesture == EGesture::Rock_Thumb)
+	{
+		if (inputPose != Pose::Thumb)
+		{
+			playerPawn->ReleaseGestureRight(EGesture::Rock_Thumb);
+			currentRightGesture = EGesture::None;
+
+		}
+	}
+
+
+	
+
+}
+
+void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
+{
+	if (!GetPlayerPawn()) return;
+	if(inputGesture == EGesture::None) return;
+
+	currentRightGesture = inputGesture;
+
+	// This differs with pose , because it doesnot trigger every tick except None
+	playerPawn->GestureRightAction(inputGesture);
+}
+
 
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {

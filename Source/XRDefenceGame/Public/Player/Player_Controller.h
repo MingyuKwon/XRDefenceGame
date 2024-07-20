@@ -30,6 +30,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentLeftPose(Pose inputPose);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateCurrentRightGesture(EGesture inputGesture);
+
+	UFUNCTION(BlueprintCallable)
+	void ShouldRightGestureRelease(Pose inputPose);
+
 
 	UFUNCTION(BlueprintCallable)
 	void HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface);
@@ -80,6 +86,9 @@ private:
 
 	Pose currentRightPose;
 	Pose currentLeftPose;
+
+	EGesture currentRightGesture = EGesture::None;
+
 
 	TScriptInterface<IHandInteractInterface> currentRightInteractInterface = nullptr;
 	TScriptInterface<IHandInteractInterface> currentLeftInteractInterface = nullptr;
