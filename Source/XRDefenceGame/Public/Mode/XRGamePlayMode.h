@@ -19,6 +19,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStart);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameTimerTickEvent, float, leftTime);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapRotateEvent, float, RotateAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapLocationEvent, FVector, SpawnLocation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapSpawnEvent);
+
 
 UCLASS()
 class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
@@ -54,8 +58,27 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FGameTimerTickEvent OnGameTimerTickEvent;
 
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnMapRotateEvent OnMapRotateEvent;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnMapLocationEvent OnMapLocationEvent;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnMapSpawnEvent OnMapSpawnEvent;
+
     
-    
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnMapRotateEvent(float RotateAmount);
+
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnMapLocationEvent(FVector SpawnLocation);
+
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnMapSpawnEvent();
+
+
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnGameStartEvent();
 

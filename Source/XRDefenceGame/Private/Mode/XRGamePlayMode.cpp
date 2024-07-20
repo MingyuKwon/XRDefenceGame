@@ -4,6 +4,21 @@
 #include "Mode/XRGamePlayMode.h"
 #include "Character/XR_Character.h"
 
+void AXRGamePlayMode::TriggerOnMapRotateEvent(float RotateAmount)
+{
+	OnMapRotateEvent.Broadcast(RotateAmount);
+}
+
+void AXRGamePlayMode::TriggerOnMapLocationEvent(FVector SpawnLocation)
+{
+	OnMapLocationEvent.Broadcast(SpawnLocation);
+}
+
+void AXRGamePlayMode::TriggerOnMapSpawnEvent()
+{
+	OnMapSpawnEvent.Broadcast();
+}
+
 void AXRGamePlayMode::TriggerOnGameStartEvent()
 {
 	OnGameStart.Broadcast();
