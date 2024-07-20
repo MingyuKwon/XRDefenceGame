@@ -63,7 +63,7 @@ void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResul
 		SetWorldLocation(XRCharacter->GetActorLocation());
 	}
 
-	XRCharacter->SetbDisableInteractable(bBeneath);
+	if (XRCharacter->GebPalletteBeamAvailable()) XRCharacter->SetTrashEffect(bBeneath, true);
 
 	if (bBeneath == bBeneathTrash) return;
 	bBeneathTrash = bBeneath;
@@ -73,6 +73,8 @@ void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResul
 
 void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 {
+	bBeneath = bBeneath && !XRCharacter->GetbDisableInteractable();
+
 	if (bBeneath)
 	{
 		FVector WillSpawnPosition = FloortraceResult.ImpactPoint - FVector(0.f, 0.f, 0.f);
@@ -82,6 +84,8 @@ void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 	{
 		SetWorldLocation(XRCharacter->GetActorLocation());
 	}
+
+	
 
 	if (bBeneath == bBeneathBoard) return;
 	bBeneathBoard = bBeneath;
@@ -94,14 +98,16 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 
 	bool isMaxLevel = false;
 	bool isHeal = ownerCharacterType == ECharacterType::ECT_DefenceH;
+	bool isOnBoard = true;
 
 	if (NewBuffableCharacter)
 	{
 		isMaxLevel = IBuffableInterface::Execute_GetTotalLevel(NewBuffableCharacter) >= 6;
+		isOnBoard = IHandInteractInterface::Execute_IsOnBoard(NewBuffableCharacter);
 	}
 
 
-	if (bBuffable && (!isMaxLevel || isHeal))
+	if (bBuffable && isOnBoard && (!isMaxLevel || isHeal))
 	{
 		if (NewBuffableCharacter != BuffableCharacter)
 		{

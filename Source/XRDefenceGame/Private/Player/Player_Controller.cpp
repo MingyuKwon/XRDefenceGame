@@ -3,7 +3,9 @@
 
 #include "Player/Player_Controller.h"
 #include "Player/PlayerPawn.h"
-
+#include "Player/Player_State.h"
+#include "Kismet/GameplayStatics.h"
+#include "Mode/XRGamePlayMode.h"
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
@@ -26,6 +28,145 @@ void APlayer_Controller::Tick(float DeltaTime)
 	}
 }
 
+void APlayer_Controller::DefaultGoldEarn()
+{
+	if (!GetPlayer_State()) return;
+
+	if (playerState)
+	{
+		playerState->SetGold(playerState->GetGold() + 1.f);
+	}
+	UpdateUserHandUI();
+}
+
+void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cost)
+{
+	if (objectType == EObjectType::EOT_OffenceGold && controllerObjectType == EObjectType::EOT_Offence)
+	{
+		objectType = EObjectType::EOT_Offence;
+	}
+	else if (objectType == EObjectType::EOT_DeffenceGold && controllerObjectType == EObjectType::EOT_Deffence)
+	{
+		objectType = EObjectType::EOT_Deffence;
+	}
+	else if (objectType != controllerObjectType)
+	{
+		return;
+	}
+
+	playerState->SetGold(playerState->GetGold() - cost);
+
+	UpdateUserHandUI();
+}
+
+void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHealth)
+{
+	if (!GetPlayerPawn()) return;
+	if (!GetPlayer_State()) return;
+
+	if (nexusType == ENexusType::ENT_NexusPurple)
+	{
+		purpleNexusHealth = currentHealth;
+
+	}
+	else if (nexusType == ENexusType::ENT_NexusOrange)
+	{
+		orangeNexusHealth = currentHealth;
+	}
+	else if (nexusType == ENexusType::ENT_NexusBlue)
+	{
+		blueNexusHealth = currentHealth;
+
+	}
+
+	UpdateUserHandUI();
+
+}
+
+void APlayer_Controller::StartDefaultGoldEarn()
+{
+	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
+}
+
+bool APlayer_Controller::CanAffordCost(float Cost)
+{
+	return Cost <= playerState->GetGold();
+}
+
+void APlayer_Controller::UpdateUserHandUI()
+{
+	if (!GetPlayerPawn()) return;
+	if (!GetPlayer_State()) return;
+
+	playerPawn->SetUIGoldAmount(playerState->GetGold(), playerState->GetMaxGold());
+
+	playerPawn->SetUIPurpleHealth(purpleNexusHealth);
+	playerPawn->SetUIOrnageHealth(orangeNexusHealth);
+	playerPawn->SetUBlueHealth(blueNexusHealth);
+	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
+
+	playerPawn->SetUITime(curerntLeftTime);
+}
+
+void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
+{
+	controllerObjectType = objectType;
+}
+
+void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
+{
+	if (objectType != objectType) return;
+
+	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
+	{
+		playerState->UpgradeMaxGold(!bRemove);
+	}
+	else
+	{
+		playerState->SetGold(playerState->GetGold() + perSecGold);
+	}
+
+	UpdateUserHandUI();
+
+}
+
+
+
+void APlayer_Controller::BeginPlay()
+{
+	Super::BeginPlay();
+
+	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
+		XRGamePlayMode->OnCostEvent.AddDynamic(this, &APlayer_Controller::GoldCostEventCallBack);
+		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
+
+		XRGamePlayMode->OnGameStart.AddDynamic(this, &APlayer_Controller::OnGameStart);
+		XRGamePlayMode->OnGameEnd.AddDynamic(this, &APlayer_Controller::OnGameEnd);
+		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
+
+	}
+
+}
+
+void APlayer_Controller::OnGameStart()
+{
+	StartDefaultGoldEarn();
+}
+
+void APlayer_Controller::OnGameEnd()
+{
+
+}
+
+void APlayer_Controller::OnGameTimerShow(float leftSecond)
+{
+	curerntLeftTime = leftSecond;
+	UpdateUserHandUI();
+}
+
 bool APlayer_Controller::GetPlayerPawn()
 {
 	playerPawn = (playerPawn == nullptr) ? Cast<APlayerPawn>(GetPawn()) : playerPawn;
@@ -39,24 +180,17 @@ bool APlayer_Controller::GetPlayerPawn()
 	return true;
 }
 
-void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
+bool APlayer_Controller::GetPlayer_State()
 {
-	if (!GetPlayerPawn()) return;
+	playerState = (playerState == nullptr) ? GetPlayerState<APlayer_State>() : playerState;
 
-	currentRightPose = inputPose;
-	playerPawn->PoseRightAction(currentRightPose);
-
-	switch (inputPose)
+	if (playerState == nullptr)
 	{
-		case Pose::Grab :
-			RightGrabStart();
-			break;
-
-		default:
-			RightGrabEnd();
-			break;
+		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::GetPlayerState : playerPawn == nullptr"));
+		return false;
 	}
 
+	return true;
 }
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
@@ -78,6 +212,76 @@ void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 	}
 }
 
+void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
+{
+	if (!GetPlayerPawn()) return;
+
+	currentRightPose = inputPose;
+	playerPawn->PoseRightAction(currentRightPose);
+
+	// This Control Grab
+	switch (inputPose)
+	{
+	case Pose::Grab:
+		RightGrabStart();
+		break;
+	default:
+		RightGrabEnd();
+		break;
+	}
+
+	ShouldRightGestureRelease(inputPose);
+
+}
+
+void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
+{
+	if (currentRightGesture == EGesture::None) return;
+
+	if (currentRightGesture == EGesture::Rock_Scissors)
+	{
+		if (inputPose != Pose::scissors) {
+			playerPawn->ReleaseGestureRight(EGesture::Rock_Scissors);
+			currentRightGesture = EGesture::None;
+		}
+			
+	}
+	else if (currentRightGesture == EGesture::Rock_Paper)
+	{
+		if (inputPose != Pose::Paper)
+		{
+			playerPawn->ReleaseGestureRight(EGesture::Rock_Paper);
+			currentRightGesture = EGesture::None;
+
+		}
+	}
+	else if (currentRightGesture == EGesture::Rock_Thumb)
+	{
+		if (inputPose != Pose::Thumb)
+		{
+			playerPawn->ReleaseGestureRight(EGesture::Rock_Thumb);
+			currentRightGesture = EGesture::None;
+
+		}
+	}
+
+
+	
+
+}
+
+void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
+{
+	if (!GetPlayerPawn()) return;
+	if(inputGesture == EGesture::None) return;
+
+	currentRightGesture = inputGesture;
+
+	// This differs with pose , because it doesnot trigger every tick except None
+	playerPawn->GestureRightAction(inputGesture);
+}
+
+
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (bRightGrabbing) return;
@@ -92,6 +296,8 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
     if (handInteractInterface)
     {
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
 
@@ -100,7 +306,11 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
+	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
+	{
+		return;
+	}
+
 	ReleaseRightInteract(handInteractInterface);
 }
 
@@ -110,6 +320,7 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 
 	if (currentRightInteractInterface)
 	{
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
 		IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
 	}
 
@@ -131,6 +342,8 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     if (handInteractInterface)
     {
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
 
@@ -139,7 +352,11 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
-	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject())) return;
+	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
+	{
+		return;
+	}
+
 	ReleaseLeftInteract(handInteractInterface);
 }
 
@@ -150,6 +367,7 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 
 	if (currentLeftInteractInterface)
 	{
+		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
 		IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
 	}
 

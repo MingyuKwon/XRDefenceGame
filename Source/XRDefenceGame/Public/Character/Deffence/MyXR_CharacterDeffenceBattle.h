@@ -122,12 +122,17 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
     bool bBufferHightLighting = false;
 
-    virtual void ChangeMaterialState(EMaterialState materialState, bool bLock) override;
+    virtual void ChangeMaterialEMS_Default() override;
+    virtual void ChangeMaterialEMS_OnBoardHighLight() override;
+    virtual void ChangeMaterialEMS_Damage() override;
+    virtual void ChangeMaterialEMS_HandHighLight() override;
+    virtual void ChangeMaterialEMS_Death() override;
 
-    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+
+    UPROPERTY(EditDefaultsOnly, Category = "Buff Parameter")
     int32 DamageUpgradeCount = 0;
 
-    UPROPERTY(VisibleAnywhere, Category = "Buff Parameter")
+    UPROPERTY(EditDefaultsOnly, Category = "Buff Parameter")
     int32 RangeUpgradeCount = 0;
 
     void UpgradeTurret(ECharacterType characterType);

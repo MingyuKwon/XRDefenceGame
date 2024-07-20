@@ -17,6 +17,15 @@ enum class Pose : uint8
 };
 
 UENUM(BlueprintType)
+enum class EGesture : uint8
+{
+    Rock_Scissors,
+    Rock_Paper,
+    Rock_Thumb,
+    None
+};
+
+UENUM(BlueprintType)
 enum class EObjectType : uint8
 {
     EOT_Offence,
@@ -117,6 +126,15 @@ enum class ECharacterType : uint8
     ECT_DefenceNexus,
 
     ECT_None
+};
+
+UENUM(BlueprintType)
+enum class ENexusType : uint8
+{
+    ENT_NexusPurple,
+    ENT_NexusBlue,
+    ENT_NexusOrange,
+    ENT_None
 };
 
 

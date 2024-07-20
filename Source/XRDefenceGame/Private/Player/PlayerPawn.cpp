@@ -9,5 +9,20 @@ APlayerPawn::APlayerPawn()
 
 }
 
+void APlayerPawn::SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation)
+{
 
+    // Location Relative Set
+	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;
+	FVector ShouldMovetoLocation = GetActorLocation() + ReverseLocation;
+	SetActorLocation(ShouldMovetoLocation);
+
+    // Rotation Relative Set
+    FRotator ReverseRotation = MapSpawnRotation * -1;
+    FVector RotatedVector = ReverseRotation.RotateVector(GetActorLocation());
+    SetActorLocation(RotatedVector);
+
+    FRotator NewRotation = GetActorRotation() + ReverseRotation;
+    SetActorRotation(NewRotation);
+}
 

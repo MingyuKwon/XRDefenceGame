@@ -12,6 +12,7 @@
 class UNiagaraComponent;
 class UXRDefenceGameInstance;
 class UAudioSubsystem;
+class ACostShowChip;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -70,6 +71,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
 	float ObjectAccessRadius = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Property Parameter")
+	float Cost = 5;
+
+
 };
 
 UCLASS()
@@ -92,6 +97,12 @@ public:
 	virtual void GrabStart_Implementation() override;
 	virtual void GrabEnd_Implementation() override;
 	virtual bool IsOnBoard_Implementation() override;
+
+	virtual float GetCost_Implementation() override;
+	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
+	virtual bool GetDisableHighLight_Implementation() override;
+
+	
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
@@ -136,7 +147,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void SetbDisableInteractable(bool flag);
 
+	UFUNCTION(BlueprintCallable)
+	virtual void SetTrashEffect(bool flag, bool onlyNiagara = false);
+
+
 protected:
+	UFUNCTION(BlueprintCallable)
+	virtual void CallBackForPallette();
 
 	UXRDefenceGameInstance* GameInstance;
 	UAudioSubsystem* AudioManager;
@@ -166,12 +183,28 @@ protected:
 	USoundBase* SoundHighLight;
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
-	USoundBase* SoundAction;
+	USoundBase* SoundAction; 
 
 
 
 	UFUNCTION(BlueprintCallable)
 	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Default();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_OnBoardHighLight();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Damage();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_HandHighLight();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Death();
+
 	
 	bool bLockOnBoardHighLight = false;
 	bool bLockDamage = false;
@@ -193,6 +226,10 @@ protected:
 
 	UFUNCTION()
 	virtual void OtherCharacterSpawnCallBack(FVector spawnLocation);
+
+	UFUNCTION()
+	virtual void GameEndCallBack();
+
 
 
 	UPROPERTY()
@@ -224,16 +261,28 @@ protected:
 
 	virtual void DestroyMyself();
 
-	virtual void SetPropertyUIVisible(bool flag);
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	TMap<int32, ECharacterType> TurretTypeMap;
 
+
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprint parameter")
 	TSubclassOf<class ACharacterUI> characterProperyUIClass;
 
 	ACharacterUI* CharacterPropertyUI = nullptr;
+
+	virtual void SetPropertyUIVisible(bool flag);
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprint parameter")
+	TSubclassOf<class ACostShowChip> costShowUIClass;
+
+	ACostShowChip* CostShowUI = nullptr;
+
+
+	void SpawnCostShowUI();
 
 	void SpawnCharacterPropertyUI();
 
@@ -259,10 +308,10 @@ protected:
 	virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm);
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
 	EObjectType ObjectType;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Vital Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
 	ECharacterType CharacterType;
 
 
@@ -440,5 +489,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetRingPosition();
+
+	UFUNCTION(BlueprintCallable)
+	bool GebPalletteBeamAvailable() { return bPalletteBeamAvailable; }
+
+	UFUNCTION(BlueprintCallable)
+	bool GetbDisableInteractable() { return bDisableInteractable; }
+
+
+	
 
 };

@@ -21,6 +21,7 @@
 #include "MotionWarpingComponent.h"
 #include "Managet/AudioSubsystem.h"
 #include "Managet/XRDefenceGameInstance.h"
+#include "Battle/CostShowChip.h"
 
 AXR_Character::AXR_Character()
 {
@@ -96,12 +97,12 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 		if (XRGamePlayMode)
 		{
 			XRGamePlayMode->OnCharacterSpawnEvent.Broadcast(GetActorLocation());
-
+			if (isSpawnedByHand) XRGamePlayMode->OnCostEvent.Broadcast(ObjectType ,CharacterProperty.Cost);
 		}
 
 		if (isSpawnedByHand)
 		{
-			OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+			CallBackForPallette();
 		}
 	}
 
@@ -150,6 +151,7 @@ void AXR_Character::InitializeCharacter()
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
 		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
+		XRGamePlayMode->OnGameEnd.AddDynamic(this, &AXR_Character::GameEndCallBack);
 	}
 
 	HealRing->Deactivate();
@@ -157,6 +159,7 @@ void AXR_Character::InitializeCharacter()
 
 	if (!DefaultPlaceInBoard)
 	{
+		SpawnCostShowUI();
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
 
 	}
@@ -177,6 +180,12 @@ void AXR_Character::InitializeCharacter()
 	
 }
 
+void AXR_Character::GameEndCallBack()
+{
+	bBehaviorAvailable = false;
+}
+
+
 void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform)
 {
 	CharacterProperty.currentHealth = inheritform.currentHealth + (CharacterProperty.MaxHealth -inheritform.beforeMaxHealth);
@@ -188,6 +197,31 @@ void AXR_Character::SetOnBoardAuto()
 	bOnBoard = true;
 	OnBoardCalledFunction(true, false);
 
+}
+
+void AXR_Character::SpawnCostShowUI()
+{
+	if (costShowUIClass)
+	{
+		FVector SpawnLocation = GetActorLocation() - GetActorForwardVector() * 4;
+		FRotator SpawnRotation = GetActorRotation();
+
+
+		if (GetMesh())
+		{
+			SpawnLocation.Z = GetMesh()->GetComponentLocation().Z + 0.25f;
+		}
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		CostShowUI = GetWorld()->SpawnActor<ACostShowChip>(costShowUIClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (CostShowUI)
+		{
+			CostShowUI->SetGoldCostCount(CharacterProperty.Cost);
+		}
+	}
 }
 
 void AXR_Character::SpawnCharacterPropertyUI()
@@ -435,7 +469,7 @@ void AXR_Character::GrabEnd_Implementation()
 	if (FloorRingMesh->bBeneathTrash)
 	{
 		Death(true);
-		OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+		CallBackForPallette();
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeathInTrash, GetActorLocation(), 0.5f);
 
 		return;
@@ -535,7 +569,7 @@ void AXR_Character::Death(bool bDieInTrash)
 	
 	if (bDieInTrash)
 	{
-
+		XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
 	}
 	else
 	{
@@ -559,6 +593,7 @@ void AXR_Character::Death(bool bDieInTrash)
 
 
 }
+
 
 void AXR_Character::DestroyMyself()
 {
@@ -589,32 +624,56 @@ void AXR_Character::DamageTimerFunction()
 
 void AXR_Character::SetbDisableInteractable(bool flag)
 {
+	if (bOnBoard) return;
 	if (bDisableInteractable == flag) return;
 
 	bDisableInteractable = flag;
 
-	if (bDisableInteractable)
+	SetTrashEffect(bDisableInteractable);
+}
+
+void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
+{
+	if (flag)
 	{
+		FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
+
 		if (DisableHighlightMaterial && CharacterMesh->GetMaterial(0) == HighlightMaterial)
 		{
-			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
-			CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
-
-			FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
+			if (!onlyNiagara)
+			{
+				CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
+				CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
+			}
 
 		}
 	}
 	else
 	{
+		FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Blue);
+
 		if (HighlightMaterial && CharacterMesh->GetMaterial(0) == DisableHighlightMaterial)
 		{
-			CharacterMesh->SetMaterial(0, HighlightMaterial);
-			CharacterMesh->SetMaterial(1, HighlightMaterial);
+			if (!onlyNiagara)
+			{
+				CharacterMesh->SetMaterial(0, HighlightMaterial);
+				CharacterMesh->SetMaterial(1, HighlightMaterial);
 
-			FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Blue);
+			}
 
 		}
 	}
+}
+
+void AXR_Character::CallBackForPallette()
+{
+	if (CostShowUI)
+	{
+		CostShowUI->Destroy();
+	}
+
+	OnSetBoardEvent.Broadcast(ObjectType, CharacterType, SpawnPlaceIndex);
+
 }
 
 void AXR_Character::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -656,6 +715,21 @@ void AXR_Character::BindReverseDissolveCallBack()
 bool AXR_Character::IsOnBoard_Implementation()
 {
 	return bOnBoard;
+}
+
+float AXR_Character::GetCost_Implementation()
+{
+	return CharacterProperty.Cost;
+}
+
+void AXR_Character::SetDisableHighLight_Implementation(bool bDisable)
+{
+	SetbDisableInteractable(bDisable);
+}
+
+bool AXR_Character::GetDisableHighLight_Implementation()
+{
+	return bDisableInteractable;
 }
 
 void AXR_Character::Heal(float healAmount)
@@ -841,56 +915,82 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 	switch (HightestState)
 	{
 	case EMaterialState::EMS_Default :
-		if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
-		if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
-
+		ChangeMaterialEMS_Default();
 		break;
 
 	case EMaterialState::EMS_OnBoardHighLight:
+		ChangeMaterialEMS_OnBoardHighLight();
+		break;
+
+	case EMaterialState::EMS_Damage:
+		ChangeMaterialEMS_Damage();
+		break;
+
+	case EMaterialState::EMS_HandHighLight:
+
+		ChangeMaterialEMS_HandHighLight();
+		break;
+		
+	case EMaterialState::EMS_Death:
+		ChangeMaterialEMS_Death();
+		break;
+
+	} 
+}
+
+void AXR_Character::ChangeMaterialEMS_Default()
+{
+	if (DefaultSkeletalMaterialFirst) CharacterMesh->SetMaterial(0, DefaultSkeletalMaterialFirst);
+	if (DefaultSkeletalMaterialSecond) CharacterMesh->SetMaterial(1, DefaultSkeletalMaterialSecond);
+
+}
+
+void AXR_Character::ChangeMaterialEMS_OnBoardHighLight()
+{
+	if (HighlightMaterial)
+	{
+		CharacterMesh->SetMaterial(0, HighlightMaterial);
+		CharacterMesh->SetMaterial(1, HighlightMaterial);
+	}
+
+}
+
+void AXR_Character::ChangeMaterialEMS_Damage()
+{
+	if (DamagedMaterial)
+	{
+		CharacterMesh->SetMaterial(0, DamagedMaterial);
+		CharacterMesh->SetMaterial(1, DamagedMaterial);
+
+	}
+
+}
+
+void AXR_Character::ChangeMaterialEMS_HandHighLight()
+{
+	if (bDisableInteractable)
+	{
+		if (DisableHighlightMaterial)
+		{
+			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
+			CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
+		}
+	}
+	else
+	{
 		if (HighlightMaterial)
 		{
 			CharacterMesh->SetMaterial(0, HighlightMaterial);
 			CharacterMesh->SetMaterial(1, HighlightMaterial);
 		}
-		break;
-
-	case EMaterialState::EMS_Damage:
-
-		if (DamagedMaterial)
-		{
-			CharacterMesh->SetMaterial(0, DamagedMaterial);
-			CharacterMesh->SetMaterial(1, DamagedMaterial);
-
-		}
-		break;
-
-	case EMaterialState::EMS_HandHighLight:
-
-		if (bDisableInteractable)
-		{
-			if (DisableHighlightMaterial)
-			{
-				CharacterMesh->SetMaterial(0, DisableHighlightMaterial);
-				CharacterMesh->SetMaterial(1, DisableHighlightMaterial);
-			}
-		}
-		else
-		{
-			if (HighlightMaterial)
-			{
-				CharacterMesh->SetMaterial(0, HighlightMaterial);
-				CharacterMesh->SetMaterial(1, HighlightMaterial);
-			}
-		}
-
-
-		break;
-		
-	case EMaterialState::EMS_Death:
-		break;
-
-	} 
+	}
 }
+
+void AXR_Character::ChangeMaterialEMS_Death()
+{
+
+}
+
 
 
 void AXR_Character::CharacterActionStart()
