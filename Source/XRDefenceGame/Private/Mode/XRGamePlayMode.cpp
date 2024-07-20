@@ -16,6 +16,8 @@ void AXRGamePlayMode::TriggerOnMapLocationEvent(FVector SpawnLocation)
 
 void AXRGamePlayMode::TriggerOnMapSpawnEvent()
 {
+	bSpawnMapSuccess = true;
+
 	OnMapSpawnEvent.Broadcast();
 }
 

@@ -78,6 +78,8 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapSpawnEvent();
 
+    UPROPERTY(BlueprintReadWrite, Category = "Spawn")
+    bool bSpawnMapSuccess = false;
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnGameStartEvent();
