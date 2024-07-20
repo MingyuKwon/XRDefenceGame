@@ -21,6 +21,11 @@ void AXRGamePlayMode::TriggerOnMapSpawnEvent()
 	OnMapSpawnEvent.Broadcast();
 }
 
+void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation)
+{
+	OnMapSpawnPawnMoveEvent.Broadcast(objectType, SpawnLocatoin, SpawnRotation);
+}
+
 void AXRGamePlayMode::TriggerOnGameStartEvent()
 {
 	OnGameStart.Broadcast();

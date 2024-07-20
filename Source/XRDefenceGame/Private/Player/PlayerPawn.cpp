@@ -9,5 +9,10 @@ APlayerPawn::APlayerPawn()
 
 }
 
+void APlayerPawn::SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation)
+{
+	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;
 
+	SetActorLocation(GetActorLocation() + ReverseLocation);
 
+}

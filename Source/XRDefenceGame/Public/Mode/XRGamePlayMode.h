@@ -22,6 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameTimerTickEvent, float, leftTime
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapRotateEvent, float, RotateAmount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapLocationEvent, FVector, SpawnLocation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapSpawnEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnMapSpawnPawnMoveEvent, EObjectType, objectType, FVector, SpawnLocatoin, FRotator, SpawnRotation);
 
 
 UCLASS()
@@ -68,6 +69,9 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapSpawnEvent OnMapSpawnEvent;
 
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnMapSpawnPawnMoveEvent OnMapSpawnPawnMoveEvent;
+
     
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapRotateEvent(float RotateAmount);
@@ -77,6 +81,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapSpawnEvent();
+
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation);
+
 
     UPROPERTY(BlueprintReadWrite, Category = "Spawn")
     bool bSpawnMapSuccess = false;
@@ -90,9 +98,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnNexusDamageEventEvent(ENexusType nexusType, float currentHealth);
 
-
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);
+
+
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
     AXR_Character* PoolSpawnActor(ECharacterType characterType);
