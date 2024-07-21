@@ -213,6 +213,24 @@ void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_OnBoardHighLight()
 
 }
 
+void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_Stun()
+{
+    Super::ChangeMaterialEMS_Stun();
+
+    if (StunMaterial)
+    {
+        GunMeshComponent->SetMaterial(0, StunMaterial);
+        GunMeshComponent2->SetMaterial(0, StunMaterial);
+
+        EtcMeshComponent1->SetMaterial(0, StunMaterial);
+        EtcMeshComponent2->SetMaterial(0, StunMaterial);
+        EtcMeshComponent3->SetMaterial(0, StunMaterial);
+        EtcMeshComponent4->SetMaterial(0, StunMaterial);
+        EtcMeshComponent5->SetMaterial(0, StunMaterial);
+
+    }
+}
+
 void AMyXR_CharacterDeffenceBattle::ChangeMaterialEMS_Damage()
 {
     Super::ChangeMaterialEMS_Damage();

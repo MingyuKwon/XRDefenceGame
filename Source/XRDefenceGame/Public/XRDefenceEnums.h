@@ -51,6 +51,7 @@ enum class EMaterialState : uint8
 {
     EMS_Default,
     EMS_OnBoardHighLight,
+    EMS_Stun,
     EMS_Damage,
     EMS_HandHighLight,
     EMS_Death,

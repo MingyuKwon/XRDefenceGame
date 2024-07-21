@@ -150,6 +150,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void SetTrashEffect(bool flag, bool onlyNiagara = false);
 
+	UFUNCTION(BlueprintCallable)
+	virtual void TriggerStun();
+
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -197,6 +200,10 @@ protected:
 	virtual void ChangeMaterialEMS_OnBoardHighLight();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMaterialEMS_Stun();
+
+
+	UFUNCTION(BlueprintCallable)
 	virtual void ChangeMaterialEMS_Damage();
 
 	UFUNCTION(BlueprintCallable)
@@ -207,6 +214,7 @@ protected:
 
 	
 	bool bLockOnBoardHighLight = false;
+	bool bLockOnStun = false;
 	bool bLockDamage = false;
 	bool bLockHandHighLight = false;
 	bool bLockDeath = false;
@@ -314,6 +322,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
 	ECharacterType CharacterType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
+	float StunTime = 1.f;
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
@@ -357,6 +368,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* HighlightMaterial;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
+	UMaterialInstance* StunMaterial;
+
 
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* DisableHighlightMaterial;
@@ -427,6 +442,10 @@ protected:
 	UFUNCTION()
 	virtual void BuffEndTimerFunction();
 
+	UFUNCTION()
+	virtual void StunEndTimerFunction();
+
+
 	UPROPERTY(EditAnywhere, Category = "Buff Parameter")
 	float BuffTime = 5.f;
 
@@ -438,7 +457,13 @@ protected:
 
 	FTimerHandle BehaviorAvailableTimerHandle;
 
+	FTimerHandle StunTimerHandle;
+
+
 	bool bBehaviorAvailable = false;
+
+	bool bNowStun = false;
+
 
 private:
 
@@ -496,7 +521,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetbDisableInteractable() { return bDisableInteractable; }
 
+	UFUNCTION(BlueprintCallable)
+	bool GetbIsNowStun() { return bNowStun; }
 
+	
 	
 
 };

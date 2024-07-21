@@ -665,6 +665,19 @@ void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 	}
 }
 
+void AXR_Character::TriggerStun()
+{
+	bNowStun = true;
+	ChangeMaterialState(EMaterialState::EMS_Stun, true);
+	GetWorld()->GetTimerManager().SetTimer(StunTimerHandle, this, &AXR_Character::StunEndTimerFunction, StunTime, false);
+}
+
+void AXR_Character::StunEndTimerFunction()
+{
+	ChangeMaterialState(EMaterialState::EMS_Stun, false);
+	bNowStun = false;
+}
+
 void AXR_Character::CallBackForPallette()
 {
 	if (CostShowUI)
@@ -873,10 +886,15 @@ void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* So
 
 void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
 {
+	
 	switch (materialState)
 	{
 	case EMaterialState::EMS_OnBoardHighLight:
 		bLockOnBoardHighLight = bLock;
+		break;
+
+	case EMaterialState::EMS_Stun:
+		bLockOnStun = bLock;
 		break;
 
 	case EMaterialState::EMS_Damage:
@@ -897,14 +915,17 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 	if (bLockDeath)
 	{
 		HightestState = EMaterialState::EMS_Death;
-	}
-	else if (bLockHandHighLight)
+	}else if (bLockHandHighLight)
 	{
 		HightestState = EMaterialState::EMS_HandHighLight;
 	}
 	else if (bLockDamage)
 	{
 		HightestState = EMaterialState::EMS_Damage;
+	}
+	else if (bLockOnStun)
+	{
+		HightestState = EMaterialState::EMS_Stun;
 	}
 	else if (bLockOnBoardHighLight)
 	{
@@ -920,6 +941,10 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 
 	case EMaterialState::EMS_OnBoardHighLight:
 		ChangeMaterialEMS_OnBoardHighLight();
+		break;
+
+	case EMaterialState::EMS_Stun:
+		ChangeMaterialEMS_Stun();
 		break;
 
 	case EMaterialState::EMS_Damage:
@@ -951,6 +976,16 @@ void AXR_Character::ChangeMaterialEMS_OnBoardHighLight()
 	{
 		CharacterMesh->SetMaterial(0, HighlightMaterial);
 		CharacterMesh->SetMaterial(1, HighlightMaterial);
+	}
+
+}
+
+void AXR_Character::ChangeMaterialEMS_Stun()
+{
+	if (StunMaterial)
+	{
+		CharacterMesh->SetMaterial(0, StunMaterial);
+		CharacterMesh->SetMaterial(1, StunMaterial);
 	}
 
 }
