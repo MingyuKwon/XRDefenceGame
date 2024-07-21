@@ -313,6 +313,12 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 		return;
 	}
 
+	if (inputGesture == EGesture::Thumb_Rock)
+	{
+		playerPawn->GestureRightAction(inputGesture);
+		return;
+	}
+
 	currentRightGesture = inputGesture;
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
