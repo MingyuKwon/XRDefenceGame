@@ -61,6 +61,28 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Pawn Parameter")
 	EObjectType controllerObjectType;
 
+
+
+
+
+	FTimerHandle CanFireTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bcanFire = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CannotFire();
+
+
+	FTimerHandle CanSpeedBuffTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bcanSpeedBuff = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CannotBuff();
+
+
 private:
 
 	// This will be saved in GameMode
@@ -113,6 +135,9 @@ private:
 	virtual void DefaultGoldEarn();
 
 	UFUNCTION()
+	void GestureCoolTimeTick();
+
+	UFUNCTION()
 	virtual void GoldCostEventCallBack(EObjectType objectType, float cost);
 
 
@@ -127,11 +152,23 @@ private:
 
 
 	FTimerHandle DefaultGoldTimerHandle;
-
-	void StartDefaultGoldEarn();
-
-
+	void StartDefaultTimeTick();
 	bool CanAffordCost(float Cost);
 
+
+	FTimerHandle GestureCoolTimeTimeHandle;
+	int32 GestureCoolTime = 10;
+	int32 GestureCoolTimeUnit = 10;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetGestureCoolTime() { return GestureCoolTime; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsGestureWorkable() { return GestureCoolTime == 0; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetGestureCoolTime() { GestureCoolTime = GestureCoolTimeUnit; }
 
 };

@@ -7,6 +7,7 @@
 #include "XRDefenceEnums.h"
 #include "PlayerPawn.generated.h"
 
+class AXR_Character;
 UCLASS()
 class XRDEFENCEGAME_API APlayerPawn : public APawn
 {
@@ -29,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AXR_Character*> GetRangeCharacters(FVector impactPoint, float radius, EObjectType objectype);
 
 
 	UPROPERTY(BlueprintReadWrite)
@@ -59,6 +63,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIPurpleHealth(float HealthAmount);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIGestureCoolTime(float percent);
 
 
 	UFUNCTION()

@@ -127,7 +127,9 @@ protected:
     virtual void ChangeMaterialEMS_Damage() override;
     virtual void ChangeMaterialEMS_HandHighLight() override;
     virtual void ChangeMaterialEMS_Death() override;
+    virtual void ChangeMaterialEMS_Stun() override;
 
+    
 
     UPROPERTY(EditDefaultsOnly, Category = "Buff Parameter")
     int32 DamageUpgradeCount = 0;

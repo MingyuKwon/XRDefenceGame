@@ -665,6 +665,19 @@ void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 	}
 }
 
+void AXR_Character::TriggerStun()
+{
+	bNowStun = true;
+	ChangeMaterialState(EMaterialState::EMS_Stun, true);
+	GetWorld()->GetTimerManager().SetTimer(StunTimerHandle, this, &AXR_Character::StunEndTimerFunction, StunTime, false);
+}
+
+void AXR_Character::StunEndTimerFunction()
+{
+	ChangeMaterialState(EMaterialState::EMS_Stun, false);
+	bNowStun = false;
+}
+
 void AXR_Character::CallBackForPallette()
 {
 	if (CostShowUI)
@@ -847,17 +860,32 @@ void AXR_Character::SetAnimState(EAnimationState state)
 {
 	AnimState = state; 
 
-	if (state > EAnimationState::EAS_IdleAndWalk)
-	{
-		CharacterMovementComponent->MaxWalkSpeed = 0.f;
-	}
-	else
-	{
-		CharacterMovementComponent->MaxWalkSpeed = 5.f;
-	}
-
-
 }
+
+void AXR_Character::TriggerMoveSlow()
+{
+	MoveSpeedDown();
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedUpHandle, this, &AXR_Character::MoveSpeedUp, 2.0f, false);
+}
+
+void AXR_Character::TriggerMoveFast()
+{
+	MoveSpeedUp();
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, this, &AXR_Character::MoveSpeedDown, 2.0f, false);
+}
+
+void AXR_Character::MoveSpeedUp()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedUp"));
+	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
+}
+
+void AXR_Character::MoveSpeedDown()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedDown"));
+	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed - 2.f;
+}
+
 
 void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
 {
@@ -873,10 +901,15 @@ void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* So
 
 void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
 {
+	
 	switch (materialState)
 	{
 	case EMaterialState::EMS_OnBoardHighLight:
 		bLockOnBoardHighLight = bLock;
+		break;
+
+	case EMaterialState::EMS_Stun:
+		bLockOnStun = bLock;
 		break;
 
 	case EMaterialState::EMS_Damage:
@@ -897,14 +930,17 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 	if (bLockDeath)
 	{
 		HightestState = EMaterialState::EMS_Death;
-	}
-	else if (bLockHandHighLight)
+	}else if (bLockHandHighLight)
 	{
 		HightestState = EMaterialState::EMS_HandHighLight;
 	}
 	else if (bLockDamage)
 	{
 		HightestState = EMaterialState::EMS_Damage;
+	}
+	else if (bLockOnStun)
+	{
+		HightestState = EMaterialState::EMS_Stun;
 	}
 	else if (bLockOnBoardHighLight)
 	{
@@ -920,6 +956,10 @@ void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock
 
 	case EMaterialState::EMS_OnBoardHighLight:
 		ChangeMaterialEMS_OnBoardHighLight();
+		break;
+
+	case EMaterialState::EMS_Stun:
+		ChangeMaterialEMS_Stun();
 		break;
 
 	case EMaterialState::EMS_Damage:
@@ -951,6 +991,16 @@ void AXR_Character::ChangeMaterialEMS_OnBoardHighLight()
 	{
 		CharacterMesh->SetMaterial(0, HighlightMaterial);
 		CharacterMesh->SetMaterial(1, HighlightMaterial);
+	}
+
+}
+
+void AXR_Character::ChangeMaterialEMS_Stun()
+{
+	if (StunMaterial)
+	{
+		CharacterMesh->SetMaterial(0, StunMaterial);
+		CharacterMesh->SetMaterial(1, StunMaterial);
 	}
 
 }
@@ -1001,4 +1051,5 @@ void AXR_Character::CharacterActionStart()
 		GetMesh()->GetAnimInstance()->Montage_Play(CharacterActionMontage);
 	}
 }
+
 

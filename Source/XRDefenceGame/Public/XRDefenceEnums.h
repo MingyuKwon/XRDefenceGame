@@ -22,6 +22,9 @@ enum class EGesture : uint8
     Rock_Scissors,
     Rock_Paper,
     Rock_Thumb,
+    Scissors_Thumb,
+    Thumb_Rock,
+
     None
 };
 
@@ -50,6 +53,7 @@ enum class EMaterialState : uint8
 {
     EMS_Default,
     EMS_OnBoardHighLight,
+    EMS_Stun,
     EMS_Damage,
     EMS_HandHighLight,
     EMS_Death,

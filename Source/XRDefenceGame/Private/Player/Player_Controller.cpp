@@ -83,14 +83,26 @@ void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHe
 
 }
 
-void APlayer_Controller::StartDefaultGoldEarn()
+void APlayer_Controller::StartDefaultTimeTick()
 {
+	// Gold TIck
 	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
+	// Gesture CoolTime Tick
+	GetWorld()->GetTimerManager().SetTimer(GestureCoolTimeTimeHandle, this, &APlayer_Controller::GestureCoolTimeTick, 1.f, true);
+
 }
 
 bool APlayer_Controller::CanAffordCost(float Cost)
 {
 	return Cost <= playerState->GetGold();
+}
+
+void APlayer_Controller::GestureCoolTimeTick()
+{
+	if (GestureCoolTime <= 0) return;
+	GestureCoolTime = GestureCoolTime - 1;
+
+	UpdateUserHandUI();
 }
 
 void APlayer_Controller::UpdateUserHandUI()
@@ -106,6 +118,9 @@ void APlayer_Controller::UpdateUserHandUI()
 	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
 
 	playerPawn->SetUITime(curerntLeftTime);
+
+	playerPawn->SetUIGestureCoolTime(1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit);
+	
 }
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
@@ -153,7 +168,7 @@ void APlayer_Controller::BeginPlay()
 
 void APlayer_Controller::OnGameStart()
 {
-	StartDefaultGoldEarn();
+	StartDefaultTimeTick();
 }
 
 void APlayer_Controller::OnGameEnd()
@@ -191,6 +206,22 @@ bool APlayer_Controller::GetPlayer_State()
 	}
 
 	return true;
+}
+
+void APlayer_Controller::CannotFire()
+{
+	bcanFire = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(CanFireTimerHandle);
+
+}
+
+void APlayer_Controller::CannotBuff()
+{
+	bcanSpeedBuff = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(CanSpeedBuffTimerHandle);
+
 }
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
@@ -243,6 +274,9 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 		if (inputPose != Pose::scissors) {
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Scissors);
 			currentRightGesture = EGesture::None;
+
+			GetWorld()->GetTimerManager().SetTimer(CanFireTimerHandle, this, &APlayer_Controller::CannotFire, 0.3f, false);
+
 		}
 			
 	}
@@ -262,6 +296,8 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Thumb);
 			currentRightGesture = EGesture::None;
 
+			GetWorld()->GetTimerManager().SetTimer(CanSpeedBuffTimerHandle, this, &APlayer_Controller::CannotBuff, 0.3f, false);
+
 		}
 	}
 
@@ -275,7 +311,39 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
 
+
+	if (inputGesture == EGesture::Scissors_Thumb )
+	{
+		if (bcanFire) {
+			playerPawn->GestureRightAction(inputGesture);
+			bcanFire = false;
+			GetWorld()->GetTimerManager().ClearTimer(CanFireTimerHandle);
+		}
+			
+		return;
+	}
+
+	if (inputGesture == EGesture::Thumb_Rock)
+	{
+		if (bcanSpeedBuff) {
+			playerPawn->GestureRightAction(inputGesture);
+			bcanSpeedBuff = false;
+			GetWorld()->GetTimerManager().ClearTimer(CanSpeedBuffTimerHandle);
+		}
+		return;
+	}
+
 	currentRightGesture = inputGesture;
+
+	if (currentRightGesture == EGesture::Rock_Scissors)
+	{
+		bcanFire = true;
+	}
+
+	if (currentRightGesture == EGesture::Rock_Thumb)
+	{
+		bcanSpeedBuff = true;
+	}
 
 	// This differs with pose , because it doesnot trigger every tick except None
 	playerPawn->GestureRightAction(inputGesture);
