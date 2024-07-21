@@ -137,7 +137,7 @@ void AProjectile::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (FVector::Dist(GetActorLocation(), explodePosition) <= 1.f && !bExplode)
+    if (FVector::Dist(GetActorLocation(), explodePosition) <= 2.f && !bExplode)
     {
         bExplode = true;
 

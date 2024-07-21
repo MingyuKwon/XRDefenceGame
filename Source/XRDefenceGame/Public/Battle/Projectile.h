@@ -48,6 +48,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float shotSpeed;
 	float BulletDamage = 0.f;
+
+	UPROPERTY(EditAnywhere)
 	float damageRadius = 5.f;
 
 	FVector explodePosition;
@@ -60,7 +62,9 @@ private:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable)
 	void SetTarget(FVector TargetPosition);
+	UFUNCTION(BlueprintCallable)
 	void SetDamage(float Damage);
 
 };
