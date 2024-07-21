@@ -323,7 +323,7 @@ protected:
 	ECharacterType CharacterType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
-	float StunTime = 1.f;
+	float StunTime = 2.f;
 
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
