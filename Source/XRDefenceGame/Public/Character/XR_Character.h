@@ -538,7 +538,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetbIsNowStun() { return bNowStun; }
 
-	
+	UFUNCTION(BlueprintCallable)
+	bool GetIsNowCanWalkBasedOnAnimation() { return AnimState <= EAnimationState::EAS_IdleAndWalk ; }
+
 	
 
 };
