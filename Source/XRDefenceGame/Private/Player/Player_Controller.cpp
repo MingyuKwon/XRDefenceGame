@@ -101,6 +101,8 @@ void APlayer_Controller::GestureCoolTimeTick()
 {
 	if (GestureCoolTime <= 0) return;
 	GestureCoolTime = GestureCoolTime - 1;
+
+	UpdateUserHandUI();
 }
 
 void APlayer_Controller::UpdateUserHandUI()
@@ -116,6 +118,9 @@ void APlayer_Controller::UpdateUserHandUI()
 	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
 
 	playerPawn->SetUITime(curerntLeftTime);
+
+	playerPawn->SetUIGestureCoolTime(1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit);
+	
 }
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)

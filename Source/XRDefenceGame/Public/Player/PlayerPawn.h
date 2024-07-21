@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIPurpleHealth(float HealthAmount);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIGestureCoolTime(float percent);
+
 
 	UFUNCTION()
 	inline FVector GetLeftHandPosition() { SetLeftHandPosition(); return LeftHandPosition; }
