@@ -92,6 +92,8 @@ void AProjectile::Explode()
         UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitImpactParticle, GetActorLocation());
     }
 
+    Projectile_Movement->Activate(false);
+
     TArray<AActor*> IgnoreActor;
 
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
@@ -137,10 +139,10 @@ void AProjectile::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (FVector::Dist(GetActorLocation(), explodePosition) <= 2.f && !bExplode)
+    if (FVector::Dist(GetActorLocation(), explodePosition) <= 3.f && !bExplode)
     {
         bExplode = true;
-
+        SetActorLocation(explodePosition);
         Explode();
     }
 }
