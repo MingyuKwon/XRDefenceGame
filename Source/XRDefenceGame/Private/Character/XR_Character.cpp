@@ -860,17 +860,30 @@ void AXR_Character::SetAnimState(EAnimationState state)
 {
 	AnimState = state; 
 
-	if (state > EAnimationState::EAS_IdleAndWalk)
-	{
-		CharacterMovementComponent->MaxWalkSpeed = 0.f;
-	}
-	else
-	{
-		CharacterMovementComponent->MaxWalkSpeed = 5.f;
-	}
-
-
 }
+
+void AXR_Character::TriggerMoveSlow()
+{
+	MoveSpeedDown();
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedUpHandle, this, &AXR_Character::MoveSpeedUp, 2.0f, false);
+}
+
+void AXR_Character::TriggerMoveFast()
+{
+	MoveSpeedUp();
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, this, &AXR_Character::MoveSpeedDown, 2.0f, false);
+}
+
+void AXR_Character::MoveSpeedUp()
+{
+	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
+}
+
+void AXR_Character::MoveSpeedDown()
+{
+	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed - 2.f;
+}
+
 
 void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
 {
@@ -1036,4 +1049,5 @@ void AXR_Character::CharacterActionStart()
 		GetMesh()->GetAnimInstance()->Montage_Play(CharacterActionMontage);
 	}
 }
+
 

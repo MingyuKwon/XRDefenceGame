@@ -153,6 +153,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void TriggerStun();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void TriggerMoveFast();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void TriggerMoveSlow();
+
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -459,11 +465,19 @@ protected:
 
 	FTimerHandle StunTimerHandle;
 
+	FTimerHandle MoveSpeedUpHandle;
+
+	FTimerHandle MoveSpeedDownHandle;
 
 	bool bBehaviorAvailable = false;
 
 	bool bNowStun = false;
 
+	UFUNCTION(BlueprintCallable)
+	void MoveSpeedUp();
+
+	UFUNCTION(BlueprintCallable)
+	void MoveSpeedDown();
 
 private:
 
