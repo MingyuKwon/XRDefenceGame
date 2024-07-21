@@ -83,14 +83,24 @@ void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHe
 
 }
 
-void APlayer_Controller::StartDefaultGoldEarn()
+void APlayer_Controller::StartDefaultTimeTick()
 {
+	// Gold TIck
 	GetWorld()->GetTimerManager().SetTimer(DefaultGoldTimerHandle, this, &APlayer_Controller::DefaultGoldEarn, 1.f, true);
+	// Gesture CoolTime Tick
+	GetWorld()->GetTimerManager().SetTimer(GestureCoolTimeTimeHandle, this, &APlayer_Controller::GestureCoolTimeTick, 1.f, true);
+
 }
 
 bool APlayer_Controller::CanAffordCost(float Cost)
 {
 	return Cost <= playerState->GetGold();
+}
+
+void APlayer_Controller::GestureCoolTimeTick()
+{
+	if (GestureCoolTime <= 0) return;
+	GestureCoolTime = GestureCoolTime - 1;
 }
 
 void APlayer_Controller::UpdateUserHandUI()
@@ -153,7 +163,7 @@ void APlayer_Controller::BeginPlay()
 
 void APlayer_Controller::OnGameStart()
 {
-	StartDefaultGoldEarn();
+	StartDefaultTimeTick();
 }
 
 void APlayer_Controller::OnGameEnd()

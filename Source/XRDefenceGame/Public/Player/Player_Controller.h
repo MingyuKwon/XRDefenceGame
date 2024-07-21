@@ -122,6 +122,9 @@ private:
 	virtual void DefaultGoldEarn();
 
 	UFUNCTION()
+	void GestureCoolTimeTick();
+
+	UFUNCTION()
 	virtual void GoldCostEventCallBack(EObjectType objectType, float cost);
 
 
@@ -136,11 +139,24 @@ private:
 
 
 	FTimerHandle DefaultGoldTimerHandle;
-
-	void StartDefaultGoldEarn();
-
-
+	void StartDefaultTimeTick();
 	bool CanAffordCost(float Cost);
 
+
+	FTimerHandle GestureCoolTimeTimeHandle;
+
+	int32 GestureCoolTime = 10;
+	int32 GestureCoolTimeUnit = 10;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetGestureCoolTime() { return GestureCoolTime; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsGestureWorkable() { return GestureCoolTime == 0; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetGestureCoolTime() { GestureCoolTime = GestureCoolTimeUnit; }
 
 };
