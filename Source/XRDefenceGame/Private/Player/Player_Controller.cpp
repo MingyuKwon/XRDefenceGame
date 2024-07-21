@@ -193,6 +193,14 @@ bool APlayer_Controller::GetPlayer_State()
 	return true;
 }
 
+void APlayer_Controller::CannotFire()
+{
+	bcanFire = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(CanFireTimerHandle);
+
+}
+
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
 	if (!GetPlayerPawn()) return;
@@ -243,6 +251,9 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 		if (inputPose != Pose::scissors) {
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Scissors);
 			currentRightGesture = EGesture::None;
+
+			GetWorld()->GetTimerManager().SetTimer(CanFireTimerHandle, this, &APlayer_Controller::CannotFire, 0.3f, false);
+
 		}
 			
 	}
@@ -275,7 +286,24 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
 
+
+	if (inputGesture == EGesture::Scissors_Thumb )
+	{
+		if (bcanFire) {
+			playerPawn->GestureRightAction(inputGesture);
+			bcanFire = false;
+			GetWorld()->GetTimerManager().ClearTimer(CanFireTimerHandle);
+		}
+			
+		return;
+	}
+
 	currentRightGesture = inputGesture;
+
+	if (currentRightGesture == EGesture::Rock_Scissors)
+	{
+		bcanFire = true;
+	}
 
 	// This differs with pose , because it doesnot trigger every tick except None
 	playerPawn->GestureRightAction(inputGesture);

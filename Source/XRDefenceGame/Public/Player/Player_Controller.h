@@ -61,6 +61,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Pawn Parameter")
 	EObjectType controllerObjectType;
 
+	FTimerHandle CanFireTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bcanFire = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CannotFire();
+
+
 private:
 
 	// This will be saved in GameMode

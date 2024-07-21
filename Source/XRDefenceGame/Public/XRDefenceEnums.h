@@ -22,6 +22,7 @@ enum class EGesture : uint8
     Rock_Scissors,
     Rock_Paper,
     Rock_Thumb,
+    Scissors_Thumb,
     None
 };
 
