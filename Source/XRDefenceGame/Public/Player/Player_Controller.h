@@ -61,6 +61,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Pawn Parameter")
 	EObjectType controllerObjectType;
 
+
+
+
+
 	FTimerHandle CanFireTimerHandle;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -68,6 +72,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CannotFire();
+
+
+	FTimerHandle CanSpeedBuffTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bcanSpeedBuff = false;
+
+	UFUNCTION(BlueprintCallable)
+	void CannotBuff();
 
 
 private:
@@ -144,7 +157,6 @@ private:
 
 
 	FTimerHandle GestureCoolTimeTimeHandle;
-
 	int32 GestureCoolTime = 10;
 	int32 GestureCoolTimeUnit = 10;
 

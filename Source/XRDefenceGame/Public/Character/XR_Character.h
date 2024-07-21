@@ -473,10 +473,10 @@ protected:
 
 	bool bNowStun = false;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	void MoveSpeedUp();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	void MoveSpeedDown();
 
 private:

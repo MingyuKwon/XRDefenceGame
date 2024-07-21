@@ -216,6 +216,14 @@ void APlayer_Controller::CannotFire()
 
 }
 
+void APlayer_Controller::CannotBuff()
+{
+	bcanSpeedBuff = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(CanSpeedBuffTimerHandle);
+
+}
+
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
 	if (!GetPlayerPawn()) return;
@@ -288,6 +296,8 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Thumb);
 			currentRightGesture = EGesture::None;
 
+			GetWorld()->GetTimerManager().SetTimer(CanSpeedBuffTimerHandle, this, &APlayer_Controller::CannotBuff, 0.3f, false);
+
 		}
 	}
 
@@ -315,7 +325,11 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 
 	if (inputGesture == EGesture::Thumb_Rock)
 	{
-		playerPawn->GestureRightAction(inputGesture);
+		if (bcanSpeedBuff) {
+			playerPawn->GestureRightAction(inputGesture);
+			bcanSpeedBuff = false;
+			GetWorld()->GetTimerManager().ClearTimer(CanSpeedBuffTimerHandle);
+		}
 		return;
 	}
 
@@ -324,6 +338,11 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 	if (currentRightGesture == EGesture::Rock_Scissors)
 	{
 		bcanFire = true;
+	}
+
+	if (currentRightGesture == EGesture::Rock_Thumb)
+	{
+		bcanSpeedBuff = true;
 	}
 
 	// This differs with pose , because it doesnot trigger every tick except None

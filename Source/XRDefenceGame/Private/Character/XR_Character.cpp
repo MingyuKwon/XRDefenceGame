@@ -876,11 +876,13 @@ void AXR_Character::TriggerMoveFast()
 
 void AXR_Character::MoveSpeedUp()
 {
+	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedUp"));
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
 }
 
 void AXR_Character::MoveSpeedDown()
 {
+	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedDown"));
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed - 2.f;
 }
 
