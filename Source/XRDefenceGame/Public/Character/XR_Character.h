@@ -345,6 +345,10 @@ protected:
 	TObjectPtr<UNiagaraComponent> HealRing;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> SpeedBuffNiagara;
+
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UMotionWarpingComponent* MotionWarpingComponent;
 
 
@@ -474,10 +478,10 @@ protected:
 	bool bNowStun = false;
 
 	UFUNCTION()
-	void MoveSpeedUp();
+	void MoveSpeedUp(bool bEffectOn);
 
 	UFUNCTION()
-	void MoveSpeedDown();
+	void MoveSpeedDown(bool bEffectOn);
 
 private:
 

@@ -39,6 +39,11 @@ AXR_Character::AXR_Character()
 	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
 	HealRing->SetupAttachment(GetMesh());
 
+	SpeedBuffNiagara = CreateDefaultSubobject<UNiagaraComponent>(FName("SpeedBuffNiagara"));
+	SpeedBuffNiagara->SetupAttachment(GetMesh());
+
+	
+
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(FName("MotionWarping"));
 
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
@@ -156,6 +161,7 @@ void AXR_Character::InitializeCharacter()
 
 	HealRing->Deactivate();
 	BuffRing->Deactivate();
+	SpeedBuffNiagara->Deactivate();
 
 	if (!DefaultPlaceInBoard)
 	{
@@ -864,25 +870,45 @@ void AXR_Character::SetAnimState(EAnimationState state)
 
 void AXR_Character::TriggerMoveSlow()
 {
-	MoveSpeedDown();
-	GetWorld()->GetTimerManager().SetTimer(MoveSpeedUpHandle, this, &AXR_Character::MoveSpeedUp, 2.0f, false);
+	MoveSpeedDown(true);
+
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, [this]()
+		{
+			this->MoveSpeedUp(false);
+		}, 2.0f, false);
 }
 
 void AXR_Character::TriggerMoveFast()
 {
-	MoveSpeedUp();
-	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, this, &AXR_Character::MoveSpeedDown, 2.0f, false);
+	MoveSpeedUp(true);
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, [this]()
+		{
+			this->MoveSpeedDown(false);
+		}
+		, 2.0f, false);
 }
 
-void AXR_Character::MoveSpeedUp()
+void AXR_Character::MoveSpeedUp(bool bEffectOn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedUp"));
+	if (bEffectOn)
+	{
+		SpeedBuffNiagara->Deactivate();
+		SpeedBuffNiagara->SetVariableLinearColor(FName("BodyColor"), FLinearColor::Blue);
+		SpeedBuffNiagara->Activate(true);
+	}
+
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
 }
 
-void AXR_Character::MoveSpeedDown()
+void AXR_Character::MoveSpeedDown(bool bEffectOn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedDown"));
+	if (bEffectOn)
+	{
+		SpeedBuffNiagara->Deactivate();
+		SpeedBuffNiagara->SetVariableLinearColor(FName("BodyColor"), FLinearColor::Red);
+		SpeedBuffNiagara->Activate(true);
+	}
+
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed - 2.f;
 }
 
