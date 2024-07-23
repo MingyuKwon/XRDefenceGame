@@ -304,6 +304,10 @@ protected:
 
 	virtual void UpdateCharacterPropertyUI();
 
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastUpdateCharacterPropertyUI();
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	FCharacterStatus CharacterProperty;
 

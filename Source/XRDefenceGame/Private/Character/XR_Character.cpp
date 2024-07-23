@@ -257,8 +257,19 @@ void AXR_Character::SpawnCharacterPropertyUI()
 
 void AXR_Character::UpdateCharacterPropertyUI()
 {
+	if (HasAuthority())
+	{
+		MulticastUpdateCharacterPropertyUI();
+	}
+
+}
+
+void AXR_Character::MulticastUpdateCharacterPropertyUI_Implementation()
+{
 	if (CharacterPropertyUI)
 	{
+		if(!HasAuthority())	UE_LOG(LogTemp, Display, TEXT("MulticastUpdateCharacterPropertyUI_Implementation In Client"));
+
 		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
 		CharacterPropertyUI->SetDamageCount(CharacterProperty.currentDamage);
 		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);

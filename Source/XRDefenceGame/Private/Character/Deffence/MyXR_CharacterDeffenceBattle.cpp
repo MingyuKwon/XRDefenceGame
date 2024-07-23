@@ -610,9 +610,9 @@ void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterVal
     outForm.RangeUpgradeCount = RangeUpgradeCount;
 }
 
-void AMyXR_CharacterDeffenceBattle::UpdateCharacterPropertyUI()
+void AMyXR_CharacterDeffenceBattle::MulticastUpdateCharacterPropertyUI_Implementation()
 {
-    Super::UpdateCharacterPropertyUI();
+    Super::MulticastUpdateCharacterPropertyUI_Implementation();
 
     if (CharacterPropertyUI)
     {

@@ -56,7 +56,8 @@ protected:
 
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
-    virtual void UpdateCharacterPropertyUI() override;
+    virtual void MulticastUpdateCharacterPropertyUI_Implementation() override;
+
 
     UPROPERTY(EditAnywhere, Category = "Anim Parameter")
     UAnimMontage* GunFireMontage = nullptr;
