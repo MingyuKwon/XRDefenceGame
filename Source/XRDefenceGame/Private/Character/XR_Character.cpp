@@ -26,6 +26,7 @@
 AXR_Character::AXR_Character()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	FromPaletteToCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("FromPaletteToCharacter"));
 	FromPaletteToCharacter->SetupAttachment(RootComponent);
@@ -566,13 +567,11 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 
 void AXR_Character::Death(bool bDieInTrash)
 {
-	FloorRingMesh->bTickReject = true;
-	bOnBoard = false;
-	bBehaviorAvailable = false;
+	if (HasAuthority())
+	{
+		MulticastDeath(bDieInTrash);
+	}
 
-	StartDissolveTimeline(false);
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
-	
 	if (bDieInTrash)
 	{
 		XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
@@ -580,6 +579,28 @@ void AXR_Character::Death(bool bDieInTrash)
 	else
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+
+	}
+}
+
+void AXR_Character::MulticastDeath_Implementation(bool bDieInTrash)
+{
+	FloorRingMesh->bTickReject = true;
+	bOnBoard = false;
+	bBehaviorAvailable = false;
+
+	StartDissolveTimeline(false);
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+
+
+	SetAnimState(EAnimationState::EAS_Death);
+	if (CharacterDeathMontage)
+	{
+		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
+	}
+
+	if (!bDieInTrash)
+	{
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeath, GetActorLocation(), 0.5f);
 
 		if (CharacterPropertyUI)
@@ -589,15 +610,13 @@ void AXR_Character::Death(bool bDieInTrash)
 		}
 	}
 
-	SetAnimState(EAnimationState::EAS_Death);
-	if (CharacterDeathMontage)
-	{
-		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
-	}
-
 	CharacterMovementComponent->MaxWalkSpeed = 0.f;
+}
 
 
+void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 

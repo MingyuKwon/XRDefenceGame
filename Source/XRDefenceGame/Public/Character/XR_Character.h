@@ -161,6 +161,8 @@ public:
 
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual void CallBackForPallette();
 
@@ -439,6 +441,9 @@ protected:
 	virtual void StartDissolveTimeline(bool bNotReverse);
 
 	virtual void Death(bool bDieInTrash);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDeath(bool bDieInTrash);
 
 	UFUNCTION()
 	virtual void DeathTimerFunction();
