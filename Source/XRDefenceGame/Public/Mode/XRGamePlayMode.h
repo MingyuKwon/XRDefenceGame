@@ -59,6 +59,7 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FGameTimerTickEvent OnGameTimerTickEvent;
 
+    void PostTravelSetPlayerLocation();
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapRotateEvent OnMapRotateEvent;
@@ -72,7 +73,6 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapSpawnPawnMoveEvent OnMapSpawnPawnMoveEvent;
 
-    
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapRotateEvent(float RotateAmount);
 
@@ -84,7 +84,6 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation);
-
 
     UPROPERTY(BlueprintReadWrite, Category = "Spawn")
     bool bSpawnMapSuccess = false;
@@ -125,5 +124,11 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION()
     void GameTimerCallBack();
 
+
+protected:
+
+    virtual void BeginPlay() override;
+
+    virtual void PostLogin(APlayerController* NewPlayer) override;
 
 };

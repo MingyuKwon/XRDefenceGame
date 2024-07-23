@@ -10,6 +10,7 @@
 APlayerPawn::APlayerPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+    bReplicates = true;
 
 }
 

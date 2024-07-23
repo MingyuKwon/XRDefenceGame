@@ -3,6 +3,9 @@
 
 #include "Mode/XRGamePlayMode.h"
 #include "Character/XR_Character.h"
+#include "GameFramework/PlayerStart.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/Player_Controller.h"
 
 void AXRGamePlayMode::TriggerOnMapRotateEvent(float RotateAmount)
 {
@@ -37,6 +40,55 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 	OnGameEnd.Broadcast();
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
 
+}
+
+void AXRGamePlayMode::PostTravelSetPlayerLocation()
+{
+    for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation0"));
+
+        APlayerController* PlayerController = Iterator->Get();
+        if (PlayerController)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation %s"), *PlayerController->GetName());
+
+            if (!PlayerController->IsPendingKill() && PlayerController->HasAuthority())
+            {
+                APawn* PlayerPawn = PlayerController->GetPawn();
+                if (PlayerPawn)
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation2 %s"), *PlayerController->GetName());
+
+                    if (PlayerController->IsLocalController())
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation3 %s"), *PlayerController->GetName());
+
+                        PlayerPawn->SetActorLocation(FVector(80.0f, 0.0f, 40.0f));
+                        PlayerPawn->SetActorRotation(FRotator(0, 180, 0));
+                    }
+                    else
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation4 %s"), *PlayerController->GetName());
+
+                        PlayerPawn->SetActorLocation(FVector(-80.0f, 0.0f, 40.0f));
+						PlayerPawn->SetActorRotation(FRotator(0, 0, 0));
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    UE_LOG(LogTemp, Warning, TEXT("PostLogin Debug %s"), *NewPlayer->GetName());
+
+	PostTravelSetPlayerLocation();
 }
 
 void AXRGamePlayMode::TriggerOnNexusDamageEventEvent(ENexusType nexusType, float currentHealth)
@@ -74,6 +126,14 @@ void AXRGamePlayMode::GameTimerCallBack()
 		TriggerOnGameEndEvent();
 	}
 }
+
+void AXRGamePlayMode::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+
+
 
 void AXRGamePlayMode::TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType)
 {

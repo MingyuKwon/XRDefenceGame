@@ -19,6 +19,7 @@ class XRDEFENCEGAME_API APlayer_Controller : public APlayerController
 	
 
 public:
+	APlayer_Controller();
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
@@ -58,12 +59,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetControllerObjectType(EObjectType objectType);
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Pawn Parameter")
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
 	EObjectType controllerObjectType;
-
-
-
-
 
 	FTimerHandle CanFireTimerHandle;
 
@@ -74,6 +71,9 @@ public:
 	void CannotFire();
 
 
+	FTimerHandle DebugHandle;
+
+
 	FTimerHandle CanSpeedBuffTimerHandle;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -81,6 +81,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CannotBuff();
+
+	// Server
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetControllerObjectType(EObjectType NewObjectType);
 
 
 private:

@@ -6,6 +6,13 @@
 #include "Player/Player_State.h"
 #include "Kismet/GameplayStatics.h"
 #include "Mode/XRGamePlayMode.h"
+#include "Net/UnrealNetwork.h"
+
+APlayer_Controller::APlayer_Controller()
+{
+	bReplicates = true;
+	FString name = GetName();
+}
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
@@ -125,7 +132,14 @@ void APlayer_Controller::UpdateUserHandUI()
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
 {
-	controllerObjectType = objectType;
+	if (HasAuthority())
+	{
+		controllerObjectType = objectType;
+	}
+	else
+	{
+		ServerSetControllerObjectType(objectType);
+	}
 }
 
 void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
@@ -161,14 +175,24 @@ void APlayer_Controller::BeginPlay()
 		XRGamePlayMode->OnGameStart.AddDynamic(this, &APlayer_Controller::OnGameStart);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &APlayer_Controller::OnGameEnd);
 		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
-
 	}
+
+	if (HasAuthority())
+	{
+		SetControllerObjectType(EObjectType::EOT_Deffence);
+	}
+	else
+	{
+		SetControllerObjectType(EObjectType::EOT_Offence);
+	}
+
 
 }
 
 void APlayer_Controller::OnGameStart()
 {
 	StartDefaultTimeTick();
+
 }
 
 void APlayer_Controller::OnGameEnd()
@@ -186,9 +210,11 @@ bool APlayer_Controller::GetPlayerPawn()
 {
 	playerPawn = (playerPawn == nullptr) ? Cast<APlayerPawn>(GetPawn()) : playerPawn;
 
+	FString name = GetName();
+
 	if (playerPawn == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("APlayer_Controller::GetPlayerPawn : playerPawn == nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("%s  APlayer_Controller::GetPlayerPawn : playerPawn == nullptr"), *name);
 		return false;
 	}
 
@@ -223,6 +249,22 @@ void APlayer_Controller::CannotBuff()
 	GetWorld()->GetTimerManager().ClearTimer(CanSpeedBuffTimerHandle);
 
 }
+
+void APlayer_Controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayer_Controller, controllerObjectType);
+
+}
+
+void APlayer_Controller::ServerSetControllerObjectType_Implementation(EObjectType NewObjectType)
+{
+	FString name = GetName();
+	controllerObjectType = NewObjectType;
+
+}
+
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
