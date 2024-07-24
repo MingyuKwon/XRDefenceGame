@@ -28,7 +28,7 @@ protected:
 	void SpawnCharacter();
 
 
-	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
+	virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand) override;
 
 	virtual void BehaviorAvailableTimerFunction() override;
 

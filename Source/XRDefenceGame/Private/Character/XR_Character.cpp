@@ -86,9 +86,15 @@ AXR_Character::AXR_Character()
 }
 
 
-
-
 void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+{
+	if (HasAuthority())
+	{
+		OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
+	}
+}
+
+void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
 	if (bOnBoard)
 	{
@@ -203,7 +209,7 @@ void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheri
 void AXR_Character::SetOnBoardAuto()
 {
 	bOnBoard = true;
-	OnBoardCalledFunction(true, false);
+	OnBoardCalledFunctionServer(true, false);
 
 }
 
@@ -520,7 +526,7 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 
 	}
 
-	OnBoardCalledFunction(isOnBoard, true);
+	OnBoardCalledFunctionServer(isOnBoard, true);
 
 }
 

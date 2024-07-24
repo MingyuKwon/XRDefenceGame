@@ -320,6 +320,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
 	bool bOnBoard = false;
 
+	virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand);
+
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
 
 	virtual void BeginPlay() override;

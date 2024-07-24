@@ -92,9 +92,9 @@ void AGoldMine::ChangeMaterialEMS_Death()
 
 }
 
-void AGoldMine::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AGoldMine::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+	Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 
 	BroadCastGoldMineOnBoard(true);
 	GetWorld()->GetTimerManager().SetTimer(GoldMineTimerHandler, this, &AGoldMine::BroadCastGoldMineTick, 1.0f, true);

@@ -102,9 +102,9 @@ void AMyXR_CharacterDeffenceBuff::SetPalletteCharacterOnBoard(bool isOnBoard, AX
 
 }
 
-void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-    Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+    Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 
     RingMeshComponent1->SetVisibility(isOnBoard);
     RingMeshComponent2->SetVisibility(isOnBoard);

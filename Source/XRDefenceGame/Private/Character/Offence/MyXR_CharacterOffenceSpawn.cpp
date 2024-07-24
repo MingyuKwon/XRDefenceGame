@@ -41,9 +41,9 @@ void AMyXR_CharacterOffenceSpawn::SpawnCharacter()
 	}
 }
 
-void AMyXR_CharacterOffenceSpawn::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AMyXR_CharacterOffenceSpawn::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+	Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 }
 
 void AMyXR_CharacterOffenceSpawn::BehaviorAvailableTimerFunction()

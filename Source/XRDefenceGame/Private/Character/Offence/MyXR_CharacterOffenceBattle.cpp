@@ -142,9 +142,9 @@ void AMyXR_CharacterOffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLoca
 
 }
 
-void AMyXR_CharacterOffenceBattle::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AMyXR_CharacterOffenceBattle::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+	Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 }
 
 void AMyXR_CharacterOffenceBattle::BehaviorAvailableTimerFunction()

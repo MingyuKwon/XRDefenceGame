@@ -41,7 +41,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* RingMeshComponent3;
 
-    virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
+    virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand) override;
 
     AXR_Character* BeneathBuffableCharacter;
 

@@ -33,7 +33,7 @@ protected:
 	virtual void ChangeMaterialEMS_Death() override;
 
 
-	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
+	virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand) override;
 
 	virtual void DissolveCallBack(float percent) override;
 

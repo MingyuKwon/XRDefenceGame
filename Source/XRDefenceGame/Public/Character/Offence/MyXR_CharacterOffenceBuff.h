@@ -16,7 +16,7 @@ class XRDEFENCEGAME_API AMyXR_CharacterOffenceBuff : public AMyXR_CharacterOffen
 	
 
 protected:
-	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand) override;
+	virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand) override;
 
 	virtual void BehaviorAvailableTimerFunction() override;
 
