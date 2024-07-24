@@ -237,6 +237,9 @@ protected:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void TakeDamageMulticast(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
 	UFUNCTION()
 	virtual void TargetDieCallBack(AXR_Character* DieTarget);
 

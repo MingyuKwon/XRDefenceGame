@@ -581,17 +581,19 @@ void AXR_Character::Death(bool bDieInTrash)
 	if (HasAuthority())
 	{
 		MulticastDeath(bDieInTrash);
+
+		if (bDieInTrash)
+		{
+			XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
+		}
+		else
+		{
+			XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+
+		}
 	}
 
-	if (bDieInTrash)
-	{
-		XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
-	}
-	else
-	{
-		XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
 
-	}
 }
 
 void AXR_Character::MulticastDeath_Implementation(bool bDieInTrash)
@@ -842,7 +844,18 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (CharacterProperty.currentHealth == 0) return 0;
+	if (HasAuthority())
+	{
+		TakeDamageMulticast(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	}
+
+	return DamageAmount;
+
+}
+
+void AXR_Character::TakeDamageMulticast_Implementation(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (CharacterProperty.currentHealth == 0) return;
 
 	CharacterProperty.currentHealth -= DamageAmount;
 	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
@@ -860,7 +873,6 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		Death(false);
 	}
 
-	return DamageAmount;
 }
 
 void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
