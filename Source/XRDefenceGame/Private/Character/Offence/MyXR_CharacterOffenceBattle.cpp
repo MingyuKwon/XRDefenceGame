@@ -45,8 +45,6 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 		{
 			if (IHandInteractInterface::Execute_IsOnBoard(Actor))
 			{
-				UE_LOG(LogTemp, Display, TEXT("Nexus Execute_IsOnBoard"));
-
 				LiveNexuses.Add(Actor);
 			}
 		}
@@ -80,8 +78,6 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 				Cast<AMyXR_CharacterDeffenceBuff>(xrChar) == nullptr && 
 				(FromMetoNexusDistance > FVector::Dist2D(xrChar->GetActorLocation(), nearestNexus->GetActorLocation())) )
 			{
-				UE_LOG(LogTemp, Display, TEXT("NearbyCharacters Execute_IsOnBoard"));
-
 				NearbyCharacters.Add(xrChar);
 			}
 		}
