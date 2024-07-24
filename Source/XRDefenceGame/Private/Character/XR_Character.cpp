@@ -250,6 +250,7 @@ void AXR_Character::SpawnCharacterPropertyUI()
 			SetPropertyUIVisible(false);
 		}
 
+		UE_LOG(LogTemp, Warning, TEXT("%s Debug SpawnCharacterPropertyUI"), *CharacterPropertyUI->GetName())
 		UpdateCharacterPropertyUI();
 
 	}
@@ -257,10 +258,7 @@ void AXR_Character::SpawnCharacterPropertyUI()
 
 void AXR_Character::UpdateCharacterPropertyUI()
 {
-	if (HasAuthority())
-	{
-		MulticastUpdateCharacterPropertyUI();
-	}
+	if (HasAuthority()) MulticastUpdateCharacterPropertyUI();
 
 }
 
