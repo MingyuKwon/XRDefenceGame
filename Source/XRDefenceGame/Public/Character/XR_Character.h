@@ -107,6 +107,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
 
+	UFUNCTION(BlueprintCallable)
 	virtual void SetOnBoardAuto();
 
 	// Event that invoke when character set on Board

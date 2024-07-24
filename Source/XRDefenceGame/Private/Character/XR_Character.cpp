@@ -31,25 +31,30 @@ AXR_Character::AXR_Character()
 
 	FromPaletteToCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("FromPaletteToCharacter"));
 	FromPaletteToCharacter->SetupAttachment(RootComponent);
+	FromPaletteToCharacter->SetIsReplicated(true);
 
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
+	FromCharacterToRing->SetIsReplicated(true);
 
 	BuffRing = CreateDefaultSubobject<UNiagaraComponent>(FName("BuffRing"));
 	BuffRing->SetupAttachment(GetMesh());
+	BuffRing->SetIsReplicated(true);
 
 	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
 	HealRing->SetupAttachment(GetMesh());
+	HealRing->SetIsReplicated(true);
 
 	SpeedBuffNiagara = CreateDefaultSubobject<UNiagaraComponent>(FName("SpeedBuffNiagara"));
 	SpeedBuffNiagara->SetupAttachment(GetMesh());
+	SpeedBuffNiagara->SetIsReplicated(true);
 
 	
-
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(FName("MotionWarping"));
 
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
+	FloorRingMesh->SetIsReplicated(true);
 
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("DissolveTimeline"));
 
@@ -92,6 +97,7 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 	{
 		OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 	}
+
 }
 
 void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
@@ -102,10 +108,10 @@ void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedBy
 
 		GetWorld()->GetTimerManager().SetTimer(BehaviorAvailableTimerHandle, this, &AXR_Character::BehaviorAvailableTimerFunction, 2.0f, false);
 
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.7f);
+
 		SpawnCharacterPropertyUI();
 		FloorRingMesh->bCharacterOnBoard = true;
-
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.7f);
 
 		if (XRGamePlayMode)
 		{
@@ -171,13 +177,13 @@ void AXR_Character::InitializeCharacter()
 	BuffRing->Deactivate();
 	SpeedBuffNiagara->Deactivate();
 
-	if (!DefaultPlaceInBoard)
+	FHitResult PallettetraceResult;
+	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, GetActorLocation(), GetActorLocation() + FVector::DownVector * 100.f, ECC_Pallette);
+	
+	if (PallettetraceResult.bBlockingHit)
 	{
 		SpawnCostShowUI();
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
-
 	}
-
 
 	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
@@ -209,7 +215,8 @@ void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheri
 void AXR_Character::SetOnBoardAuto()
 {
 	bOnBoard = true;
-	OnBoardCalledFunctionServer(true, false);
+	OnBoardCalledFunction(true, false);	
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
 
 }
 
@@ -242,8 +249,6 @@ void AXR_Character::SpawnCharacterPropertyUI()
 {
 	if (characterProperyUIClass)
 	{
-
-
 		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 6);
 		FRotator SpawnRotation = GetActorRotation();
 
@@ -259,7 +264,6 @@ void AXR_Character::SpawnCharacterPropertyUI()
 			SetPropertyUIVisible(false);
 		}
 
-		if(!HasAuthority()) UE_LOG(LogTemp, Warning, TEXT("%s Debug SpawnCharacterPropertyUI"), *CharacterPropertyUI->GetName())
 		UpdateCharacterPropertyUI();
 
 	}
@@ -267,22 +271,14 @@ void AXR_Character::SpawnCharacterPropertyUI()
 
 void AXR_Character::UpdateCharacterPropertyUI()
 {
-	if (HasAuthority()) MulticastUpdateCharacterPropertyUI();
-
-}
-
-void AXR_Character::MulticastUpdateCharacterPropertyUI_Implementation()
-{
 	if (CharacterPropertyUI)
 	{
-		if(!HasAuthority())	UE_LOG(LogTemp, Display, TEXT("MulticastUpdateCharacterPropertyUI_Implementation In Client"));
-
-		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
-		CharacterPropertyUI->SetDamageCount(CharacterProperty.currentDamage);
-		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
+		CharacterPropertyUI->SetHealthPercentMulticast(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
+		CharacterPropertyUI->SetDamageCountMulticast(CharacterProperty.currentDamage);
+		CharacterPropertyUI->SetUtilCountMulticast(CharacterProperty.Util_Fast);
 	}
-}
 
+}
 
 void AXR_Character::SetPropertyUIVisible(bool flag)
 {
@@ -290,14 +286,14 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 
 	if (CharacterType == ECharacterType::ECT_DefenceNexus)
 	{
-		CharacterPropertyUI->SetDamgeUtilVisible(false);
+		CharacterPropertyUI->SetDamgeUtilVisibleMulticast(false);
 		return;
 	}
 
 
 	if (ObjectType == EObjectType::EOT_Deffence && CharacterType != ECharacterType::ECT_DefenceP)
 	{
-		CharacterPropertyUI->SetDamgeUtilVisible(true);
+		CharacterPropertyUI->SetDamgeUtilVisibleMulticast(true);
 		return;
 	}
 
@@ -306,12 +302,13 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 		flag = false;
 	}
 
-	CharacterPropertyUI->SetDamgeUtilVisible(flag);
+	CharacterPropertyUI->SetDamgeUtilVisibleMulticast(flag);
 }
 
-
-
-
+void AXR_Character::MulticastUpdateCharacterPropertyUI_Implementation()
+{
+	
+}
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 {
@@ -526,7 +523,7 @@ void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* b
 
 	}
 
-	OnBoardCalledFunctionServer(isOnBoard, true);
+	OnBoardCalledFunction(isOnBoard, true);
 
 }
 

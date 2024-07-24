@@ -12,6 +12,7 @@ UFloorRingSMC::UFloorRingSMC()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 
 }
 
