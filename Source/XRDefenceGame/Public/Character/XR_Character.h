@@ -124,6 +124,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CharacterActionCall();
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void MultiCharacterActionCall();
+
+
 	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionImpact();
 
@@ -258,7 +262,7 @@ protected:
 	AXR_Character* TargetCharacter2 = nullptr;
 
 
-	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
 
 

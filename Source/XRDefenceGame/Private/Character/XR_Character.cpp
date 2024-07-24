@@ -22,6 +22,7 @@
 #include "Managet/AudioSubsystem.h"
 #include "Managet/XRDefenceGameInstance.h"
 #include "Battle/CostShowChip.h"
+#include "Net/UnrealNetwork.h"
 
 AXR_Character::AXR_Character()
 {
@@ -628,6 +629,9 @@ void AXR_Character::MulticastDeath_Implementation(bool bDieInTrash)
 void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AXR_Character, AnimState);
+
 }
 
 
@@ -804,7 +808,12 @@ void AXR_Character::BuffEndTimerFunction()
 
 void AXR_Character::CharacterActionCall()
 {
+	if (HasAuthority()) MultiCharacterActionCall();
 
+}
+
+void AXR_Character::MultiCharacterActionCall_Implementation()
+{
 	if (AnimState <= EAnimationState::EAS_IdleAndWalk)
 	{
 		CharacterActionStart();
