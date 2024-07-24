@@ -236,6 +236,8 @@ void AXR_Character::SpawnCharacterPropertyUI()
 {
 	if (characterProperyUIClass)
 	{
+
+
 		FVector SpawnLocation = GetActorLocation() + FVector(0, 0, 6);
 		FRotator SpawnRotation = GetActorRotation();
 
@@ -251,7 +253,7 @@ void AXR_Character::SpawnCharacterPropertyUI()
 			SetPropertyUIVisible(false);
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("%s Debug SpawnCharacterPropertyUI"), *CharacterPropertyUI->GetName())
+		if(!HasAuthority()) UE_LOG(LogTemp, Warning, TEXT("%s Debug SpawnCharacterPropertyUI"), *CharacterPropertyUI->GetName())
 		UpdateCharacterPropertyUI();
 
 	}
@@ -631,6 +633,7 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AXR_Character, AnimState);
+	DOREPLIFETIME(AXR_Character, CharacterProperty);
 
 }
 

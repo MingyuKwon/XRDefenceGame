@@ -127,7 +127,6 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void MultiCharacterActionCall();
 
-
 	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionImpact();
 
@@ -315,7 +314,7 @@ protected:
 	virtual void MulticastUpdateCharacterPropertyUI();
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter",  Replicated)
 	FCharacterStatus CharacterProperty;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
