@@ -43,6 +43,8 @@ public:
 protected:
     virtual void OtherCharacterSpawnCallBack(FVector spawnLocation) override;
 
+    virtual void BeginPlay() override;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
     class UNiagaraSystem* trailBeam;
 
@@ -97,8 +99,6 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
-
-    virtual void InitializeCharacter() override;  
 
     UFUNCTION()
     void BindDissolveCallBack() override;

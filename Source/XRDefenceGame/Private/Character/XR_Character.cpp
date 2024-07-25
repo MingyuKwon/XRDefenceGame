@@ -131,11 +131,15 @@ void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
+
+	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+
+
 	if (!GetCharacterMesh()) return;
 
 	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
 	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
-
 
 	if (HasAuthority())
 	{
@@ -146,8 +150,6 @@ void AXR_Character::BeginPlay()
 			SetOnBoardAuto();
 		}
 	}
-
-
 
 }
 
@@ -170,9 +172,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 
 void AXR_Character::InitializeCharacter()
 {
-	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
-
-	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 	if (XRGamePlayMode)
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
@@ -872,8 +871,8 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
 		ChangeMaterialState(EMaterialState::EMS_Damage, true);
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
 
-		TakeDamageMulticast(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 		if (CharacterProperty.currentHealth <= 0)
 		{
@@ -885,10 +884,6 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 }
 
-void AXR_Character::TakeDamageMulticast_Implementation(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
-}
 
 void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 {
@@ -970,7 +965,7 @@ void AXR_Character::MoveSpeedDown(bool bEffectOn)
 }
 
 
-void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
+void AXR_Character::PlaySoundViaManager_Implementation(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
 {
 	if (GameInstance)
 	{

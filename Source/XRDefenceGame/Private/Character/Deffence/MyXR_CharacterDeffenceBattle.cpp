@@ -99,29 +99,6 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
 
 }
 
-void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
-{
-    if (GunMeshComponent == nullptr) return;
-    if (GunMeshComponent2 == nullptr) return;
-    if (EtcMeshComponent1 == nullptr) return;
-    if (EtcMeshComponent2 == nullptr) return;
-    if (EtcMeshComponent3 == nullptr) return;
-    if (EtcMeshComponent4 == nullptr) return;
-    if (EtcMeshComponent5 == nullptr) return;
-
-    DefaultGunMaterial = Cast<UMaterialInstance>(GunMeshComponent->GetMaterial(0));
-    DefaultGun2Material = Cast<UMaterialInstance>(GunMeshComponent2->GetMaterial(0));
-    DefaultEtcMaterialFirst = Cast<UMaterialInstance>(EtcMeshComponent1->GetMaterial(0));
-    DefaultEtcMaterialSecond = Cast<UMaterialInstance>(EtcMeshComponent2->GetMaterial(0));
-    DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
-    DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
-    DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
-
-    DefaultTargetRotation = GetActorRotation();
-    TargetRotation = DefaultTargetRotation;
-
-    Super::InitializeCharacter();
-}
 
 void AMyXR_CharacterDeffenceBattle::BindDissolveCallBack()
 {
@@ -517,6 +494,30 @@ void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLoc
     {
         RenewTargetCharacter12();
     }
+}
+
+void AMyXR_CharacterDeffenceBattle::BeginPlay()
+{
+    if (GunMeshComponent == nullptr) return;
+    if (GunMeshComponent2 == nullptr) return;
+    if (EtcMeshComponent1 == nullptr) return;
+    if (EtcMeshComponent2 == nullptr) return;
+    if (EtcMeshComponent3 == nullptr) return;
+    if (EtcMeshComponent4 == nullptr) return;
+    if (EtcMeshComponent5 == nullptr) return;
+
+    DefaultGunMaterial = Cast<UMaterialInstance>(GunMeshComponent->GetMaterial(0));
+    DefaultGun2Material = Cast<UMaterialInstance>(GunMeshComponent2->GetMaterial(0));
+    DefaultEtcMaterialFirst = Cast<UMaterialInstance>(EtcMeshComponent1->GetMaterial(0));
+    DefaultEtcMaterialSecond = Cast<UMaterialInstance>(EtcMeshComponent2->GetMaterial(0));
+    DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
+    DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
+    DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
+
+    DefaultTargetRotation = GetActorRotation();
+    TargetRotation = DefaultTargetRotation;
+
+    Super::BeginPlay();
 }
 
 void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
