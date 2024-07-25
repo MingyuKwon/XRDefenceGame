@@ -23,6 +23,8 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    if (!HasAuthority()) return;
+
     if (bOnBoard)
     {
         if (TargetCharacter)
@@ -633,6 +635,8 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
 void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     Super::OnSphereOverlapBegin( OverlappedComp,  OtherActor,  OtherComp,  OtherBodyIndex,  bFromSweep, SweepResult);
+
+    if (!HasAuthority()) return;
 
     if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
     {

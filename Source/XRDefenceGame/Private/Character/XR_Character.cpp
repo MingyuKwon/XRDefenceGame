@@ -144,6 +144,11 @@ void AXR_Character::BeginPlay()
 
 	SetRingProperty();
 
+	HealRing->Deactivate();
+	BuffRing->Deactivate();
+	SpeedBuffNiagara->Deactivate();
+
+
 	if (HasAuthority())
 	{
 		InitializeCharacter();
@@ -165,7 +170,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 		XRAIController = Cast<AXRAIController>(NewController);
 		if (XRAIController)
 		{
-			
 			XRAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 			XRAIController->RunBehaviorTree(BehaviorTree);
 		}
@@ -181,10 +185,6 @@ void AXR_Character::InitializeCharacter()
 		XRGamePlayMode->OnCharacterSpawnEvent.AddDynamic(this, &AXR_Character::OtherCharacterSpawnCallBack);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &AXR_Character::GameEndCallBack);
 	}
-
-	HealRing->Deactivate();
-	BuffRing->Deactivate();
-	SpeedBuffNiagara->Deactivate();
 
 	FHitResult PallettetraceResult;
 	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, GetActorLocation(), GetActorLocation() + FVector::DownVector * 100.f, ECC_Pallette);
@@ -413,7 +413,6 @@ void AXR_Character::Tick(float DeltaTime)
 	if (!bOnBoard)
 	{
 		FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
-
 	}
 }
 
