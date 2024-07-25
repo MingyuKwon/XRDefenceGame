@@ -43,6 +43,9 @@ public:
 	bool bTickReject = false;
 	bool bCharacterOnBoard = false;
 
+	UFUNCTION(NetMulticast, Reliable)
+	void SetbCharacterOnBoard(bool flag);
+
 
 protected:
 	virtual void BeginPlay() override;

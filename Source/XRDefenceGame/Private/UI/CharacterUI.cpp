@@ -30,7 +30,6 @@ void ACharacterUI::SetUtilCountMulticast_Implementation(int32 count)
 void ACharacterUI::SetDamgeUtilVisibleMulticast_Implementation(bool flag)
 {
 	SetDamgeUtilVisible(flag);
-	if (!HasAuthority()) UE_LOG(LogTemp, Display, TEXT("SetDamgeUtilVisibleMulticast_Implementation"));
 }
 
 

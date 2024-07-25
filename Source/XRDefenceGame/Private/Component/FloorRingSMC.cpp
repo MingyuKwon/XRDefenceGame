@@ -36,6 +36,11 @@ void UFloorRingSMC::SetMaterialCall()
 	}
 }
 
+void UFloorRingSMC::SetbCharacterOnBoard_Implementation(bool flag)
+{
+	bCharacterOnBoard = flag;
+}
+
 void UFloorRingSMC::BeginPlay()
 {
 	Super::BeginPlay();
@@ -74,6 +79,7 @@ void UFloorRingSMC::CheckTrashBeneath(bool bBeneath, FHitResult& FloortraceResul
 
 void UFloorRingSMC::CheckBeneath(bool bBeneath, FHitResult& FloortraceResult)
 {
+	if(!(XRCharacter->HasAuthority())) UE_LOG(LogTemp, Warning, TEXT("%s bBeneath : %s"), *XRCharacter->GetName(), bBeneath ? *FString("true") : *FString("false"));
 	bBeneath = bBeneath && !XRCharacter->GetbDisableInteractable();
 
 	if (bBeneath)

@@ -312,7 +312,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter",  Replicated)
 	FCharacterStatus CharacterProperty;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter", Replicated)
 	bool bOnBoard = false;
 
 	virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand);

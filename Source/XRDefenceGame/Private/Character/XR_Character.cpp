@@ -111,7 +111,9 @@ void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedBy
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.7f);
 
 		SpawnCharacterPropertyUI();
-		FloorRingMesh->bCharacterOnBoard = true;
+
+		FloorRingMesh->SetbCharacterOnBoard(true);
+
 
 		if (XRGamePlayMode)
 		{
@@ -135,11 +137,12 @@ void AXR_Character::BeginPlay()
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
-
 	if (!GetCharacterMesh()) return;
 
 	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
 	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
+
+	SetRingProperty();
 
 	if (HasAuthority())
 	{
@@ -191,10 +194,9 @@ void AXR_Character::InitializeCharacter()
 		SpawnCostShowUI();
 	}
 
-	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
 
-	if (ObjectType == EObjectType::EOT_Deffence)
+	if (ObjectType == EObjectType::EOT_Deffence) 
 	{
 		sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
 		sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
@@ -222,7 +224,6 @@ void AXR_Character::SetOnBoardAuto()
 {
 	bOnBoard = true;
 	OnBoardCalledFunction(true, false);	
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
 
 }
 
@@ -640,6 +641,9 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, AnimState);
 	DOREPLIFETIME(AXR_Character, CharacterProperty);
 	DOREPLIFETIME(AXR_Character, bBehaviorAvailable);
+	DOREPLIFETIME(AXR_Character, bOnBoard);
+
+	
 }
 
 
