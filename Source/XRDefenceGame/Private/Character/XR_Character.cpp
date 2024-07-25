@@ -431,6 +431,9 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	if (!GetCharacterMesh()) return;
 	if (bHightLighting) return;
 
+	if (!HasAuthority()) return;
+
+
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
 
 	bHightLighting = true;
@@ -449,6 +452,8 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 {
 	if (!GetCharacterMesh()) return;
 	if (!bHightLighting) return;
+
+	if (!HasAuthority()) return;
 
 	bHightLighting = false;
 
@@ -474,11 +479,15 @@ void AXR_Character::InteractEnd_Implementation()
 
 void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 {
+	if (!HasAuthority()) return;
+
 	SetActorLocation(GrabPosition);
 }
 
 void AXR_Character::GrabStart_Implementation()
 {
+	if (!HasAuthority()) return;
+
 	FromPaletteToCharacter->SetVisibility(true);
 	FromCharacterToRing->SetVisibility(true);
 	bPalletteBeamAvailable = true;
@@ -492,6 +501,8 @@ void AXR_Character::GrabStart_Implementation()
 
 void AXR_Character::GrabEnd_Implementation()
 {
+	if (!HasAuthority()) return;
+
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 	bPalletteBeamAvailable = false;

@@ -253,6 +253,7 @@ void APlayer_Controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
+	if (!IsLocalController()) return;
 	if (!GetPlayerPawn()) return;
 
 	currentLeftPose = inputPose;
@@ -272,6 +273,8 @@ void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 
 void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
 {
+	if (!IsLocalController()) return;
+
 	if (!GetPlayerPawn()) return;
 
 	currentRightPose = inputPose;
@@ -294,6 +297,8 @@ void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
 
 void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 {
+	if (!IsLocalController()) return;
+
 	if (currentRightGesture == EGesture::None) return;
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
@@ -335,6 +340,8 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 
 void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 {
+	if (!IsLocalController()) return;
+
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
 
@@ -379,6 +386,8 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (bRightGrabbing) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
@@ -401,6 +410,8 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -411,6 +422,8 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 
 void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (currentRightInteractInterface != handInteractInterface) return;
 
 	if (currentRightInteractInterface)
@@ -425,6 +438,8 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 
 void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (bLeftGrabbing) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
@@ -447,6 +462,8 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -458,6 +475,8 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 
 void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (currentLeftInteractInterface != handInteractInterface) return;
 
 	if (currentLeftInteractInterface)
@@ -472,6 +491,8 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 
 void APlayer_Controller::LeftGrabStart()
 {
+	if (!IsLocalController()) return;
+
 	if (bLeftGrabbing) return;
 
 	if (IsLeftGrabable())
@@ -485,6 +506,8 @@ void APlayer_Controller::LeftGrabStart()
 
 void APlayer_Controller::LeftGrabEnd()
 {
+	if (!IsLocalController()) return;
+
 	if (!bLeftGrabbing) return;
 
 	if (IsLeftGrabable())
@@ -499,6 +522,8 @@ void APlayer_Controller::LeftGrabEnd()
 
 void APlayer_Controller::RightGrabStart()
 {
+	if (!IsLocalController()) return;
+
 	if (bRightGrabbing) return;
 
 	if (IsRightGrabable())
@@ -506,19 +531,22 @@ void APlayer_Controller::RightGrabStart()
 		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
 	}
 
-
 	bRightGrabbing = true;
 
 }
 
 void APlayer_Controller::RightGrabEnd()
 {
+	if (!IsLocalController()) return;
+
 	if (!bRightGrabbing) return;
 
 	if (IsRightGrabable())
 	{
 		IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
 		ReleaseRightInteract(currentRightInteractInterface);
+
+
 	}
 
 	bRightGrabbing = false;
