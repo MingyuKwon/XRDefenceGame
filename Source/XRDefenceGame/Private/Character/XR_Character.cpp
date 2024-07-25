@@ -618,18 +618,7 @@ void AXR_Character::Death(bool bDieInTrash)
 
 		}
 
-		MulticastDeath(bDieInTrash);
-
-	}
-
-
-}
-
-void AXR_Character::MulticastDeath_Implementation(bool bDieInTrash)
-{
-	if (CharacterDeathMontage)
-	{
-		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
+		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
 
 }
@@ -823,12 +812,8 @@ void AXR_Character::BuffEndTimerFunction()
 
 void AXR_Character::CharacterActionCall()
 {
-	if (HasAuthority()) MultiCharacterActionCall();
+	if (!HasAuthority()) return;
 
-}
-
-void AXR_Character::MultiCharacterActionCall_Implementation()
-{
 	if (AnimState <= EAnimationState::EAS_IdleAndWalk)
 	{
 		CharacterActionStart();
@@ -1128,14 +1113,20 @@ void AXR_Character::ChangeMaterialEMS_Death()
 
 }
 
-
+void AXR_Character::PlayAnimMontageMulti_Implementation(USkeletalMeshComponent* skeletalComponent, UAnimMontage* montage)
+{
+	if (skeletalComponent && montage)
+	{
+		skeletalComponent->GetAnimInstance()->Montage_Play(montage);
+	}
+}
 
 void AXR_Character::CharacterActionStart()
 {
 	if (CharacterActionMontage && GetMesh()->GetAnimInstance())
 	{
 		SetAnimState(EAnimationState::EAS_Action);
-		GetMesh()->GetAnimInstance()->Montage_Play(CharacterActionMontage);
+		PlayAnimMontageMulti(GetMesh(), CharacterActionMontage);
 	}
 }
 

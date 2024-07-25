@@ -13,6 +13,7 @@ class UNiagaraComponent;
 class UXRDefenceGameInstance;
 class UAudioSubsystem;
 class ACostShowChip;
+class UAnimMontage;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -125,9 +126,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CharacterActionCall();
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void MultiCharacterActionCall();
-
 	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionImpact();
 
@@ -235,8 +233,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionStart();
 
-	UFUNCTION(BlueprintCallable)
-	void SetAnimState(EAnimationState state);
 
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -262,12 +258,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
 
+	UFUNCTION(BlueprintCallable)
+	void SetAnimState(EAnimationState state);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void PlayAnimMontageMulti(USkeletalMeshComponent* skeletalComponent, UAnimMontage* montage);
+
 
 	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
-	class UAnimMontage* CharacterActionMontage = nullptr;
+	UAnimMontage* CharacterActionMontage = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
-	class UAnimMontage* CharacterDeathMontage = nullptr;
+	UAnimMontage* CharacterDeathMontage = nullptr;
 
 
 	UPROPERTY()
@@ -450,8 +452,7 @@ protected:
 
 	virtual void Death(bool bDieInTrash);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastDeath(bool bDieInTrash);
+
 
 	UFUNCTION()
 	virtual void DeathTimerFunction();

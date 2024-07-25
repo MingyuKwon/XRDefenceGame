@@ -615,12 +615,12 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
     if (GunFireMontage && GunMeshComponent->GetAnimInstance())
     {
         SetAnimState(EAnimationState::EAS_Action);
-        GunMeshComponent->GetAnimInstance()->Montage_Play(GunFireMontage);
+        PlayAnimMontageMulti(GunMeshComponent, GunFireMontage);
+
 
         if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance() && TargetCharacter2)
         {
-            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage2);
-
+            PlayAnimMontageMulti(GunMeshComponent2, GunFireMontage2);
         }
     }
 
