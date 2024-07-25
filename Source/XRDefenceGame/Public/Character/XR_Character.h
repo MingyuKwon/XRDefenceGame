@@ -202,7 +202,7 @@ protected:
 
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
 
 	UFUNCTION(BlueprintCallable)
@@ -310,9 +310,6 @@ protected:
 	void SpawnCharacterPropertyUI();
 
 	virtual void UpdateCharacterPropertyUI();
-
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastUpdateCharacterPropertyUI();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter",  Replicated)
@@ -464,8 +461,8 @@ protected:
 	UFUNCTION()
 	virtual void BehaviorAvailableTimerFunction();
 
-	UFUNCTION()
 	virtual void DamageTimerFunction();
+
 
 	UFUNCTION()
 	virtual void BuffEndTimerFunction();
@@ -491,6 +488,7 @@ protected:
 
 	FTimerHandle MoveSpeedDownHandle;
 
+	UPROPERTY(Replicated)
 	bool bBehaviorAvailable = false;
 
 	bool bNowStun = false;

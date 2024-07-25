@@ -346,12 +346,12 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectStart_Implementation()
 {
-    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight, true);
+    ChangeMaterialState_Implementation(EMaterialState::EMS_OnBoardHighLight, true);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
 {
-    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight,false);
+    ChangeMaterialState_Implementation(EMaterialState::EMS_OnBoardHighLight,false);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType buffType)
@@ -610,16 +610,6 @@ void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterVal
     outForm.RangeUpgradeCount = RangeUpgradeCount;
 }
 
-void AMyXR_CharacterDeffenceBattle::MulticastUpdateCharacterPropertyUI_Implementation()
-{
-    Super::MulticastUpdateCharacterPropertyUI_Implementation();
-
-    if (CharacterPropertyUI)
-    {
-        CharacterPropertyUI->SetDamageCount(DamageUpgradeCount);
-        CharacterPropertyUI->SetUtilCount(RangeUpgradeCount);
-    }
-}
 
 void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
 {

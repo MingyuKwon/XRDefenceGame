@@ -53,7 +53,7 @@ void AXRGamePlayMode::PostTravelSetPlayerLocation()
         {
             UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation %s"), *PlayerController->GetName());
 
-            if (!PlayerController->IsPendingKill() && PlayerController->HasAuthority())
+            if (PlayerController->HasAuthority())
             {
                 APawn* PlayerPawn = PlayerController->GetPawn();
                 if (PlayerPawn)

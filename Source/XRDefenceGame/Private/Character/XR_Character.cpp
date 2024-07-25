@@ -131,12 +131,17 @@ void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeCharacter();
 
-	if (DefaultPlaceInBoard)
+	if (HasAuthority())
 	{
-		SetOnBoardAuto();
+		InitializeCharacter();
+
+		if (DefaultPlaceInBoard)
+		{
+			SetOnBoardAuto();
+		}
 	}
+
 }
 
 void AXR_Character::PossessedBy(AController* NewController)
@@ -305,10 +310,6 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 	CharacterPropertyUI->SetDamgeUtilVisibleMulticast(flag);
 }
 
-void AXR_Character::MulticastUpdateCharacterPropertyUI_Implementation()
-{
-	
-}
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 {
@@ -637,7 +638,7 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(AXR_Character, AnimState);
 	DOREPLIFETIME(AXR_Character, CharacterProperty);
-
+	DOREPLIFETIME(AXR_Character, bBehaviorAvailable);
 }
 
 
@@ -859,7 +860,23 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	if (HasAuthority())
 	{
+		if (CharacterProperty.currentHealth == 0) return DamageAmount;
+
+		CharacterProperty.currentHealth -= DamageAmount;
+		CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+
+		UpdateCharacterPropertyUI();
+
+		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
+
+		ChangeMaterialState(EMaterialState::EMS_Damage, true);
+
 		TakeDamageMulticast(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+		if (CharacterProperty.currentHealth <= 0)
+		{
+			Death(false);
+		}
 	}
 
 	return DamageAmount;
@@ -868,24 +885,7 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 void AXR_Character::TakeDamageMulticast_Implementation(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (CharacterProperty.currentHealth == 0) return;
-
-	CharacterProperty.currentHealth -= DamageAmount;
-	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
-
-	UpdateCharacterPropertyUI();
-
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
-
-
-	ChangeMaterialState(EMaterialState::EMS_Damage, true);
-	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
-
-	if (CharacterProperty.currentHealth <= 0)
-	{
-		Death(false);
-	}
-
 }
 
 void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
@@ -980,9 +980,11 @@ void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* So
 	}
 }
 
-void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
+
+void AXR_Character::ChangeMaterialState_Implementation(EMaterialState materialState, bool bLock)
 {
-	
+	if (!GetCharacterMesh()) return;
+
 	switch (materialState)
 	{
 	case EMaterialState::EMS_OnBoardHighLight:

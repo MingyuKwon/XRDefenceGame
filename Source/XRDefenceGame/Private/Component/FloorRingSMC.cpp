@@ -163,7 +163,7 @@ void UFloorRingSMC::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, ActorLocation, TraceEndLocation, ECC_Pallette);
 
 	CheckBeneath(FloortraceResult.bBlockingHit && !PallettetraceResult.bBlockingHit, FloortraceResult);
-	CheckBuffable(Cast<IBuffableInterface>(FloortraceResult.GetActor()) != nullptr, FloortraceResult);
+	//CheckBuffable(Cast<IBuffableInterface>(FloortraceResult.GetActor()) != nullptr, FloortraceResult);
 
 	if (bBeneathBoard) return;
 
