@@ -16,7 +16,7 @@ UFloorRingSMC::UFloorRingSMC()
 
 }
 
-void UFloorRingSMC::ChangeRingColorRotation(float Percent, float SpinSpeed)
+void UFloorRingSMC::ChangeRingColorRotation_Implementation(float Percent, float SpinSpeed)
 {
 	if (DynamicMaterialInstance)
 	{

@@ -34,7 +34,7 @@ public:
 	TEnumAsByte<ECharacterType> ownerCharacterType;
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void ChangeRingColorRotation(float Percent, float SpinSpeed);
 
 	UFUNCTION(BlueprintCallable)
