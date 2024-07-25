@@ -53,7 +53,7 @@ protected:
 
     virtual void TargetDieCallBack(AXR_Character* DieTarget) override;
 
-
+    UFUNCTION(NetMulticast, Reliable)
     virtual void FireBullet(bool isDouble = false);
 
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;

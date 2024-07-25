@@ -529,13 +529,11 @@ void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
     RenewTargetCharacter12();
 }
 
-void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
+void AMyXR_CharacterDeffenceBattle::FireBullet_Implementation(bool isDouble)
 {
     if (isDouble && !TargetCharacter2) return;
 
     FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
-
-
 
     USkeletalMeshComponent* GunMesh;
 
@@ -552,8 +550,11 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
     const USkeletalMeshSocket* MuzzleSocket = GunMesh->GetSocketByName(SockeName);
     AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
+
     if (MuzzleSocket && TempChar)
     {
+        if (!HasAuthority()) UE_LOG(LogTemp, Display, TEXT("FireBullet_Implementation in Clinet"));
+
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMesh);
 
         if (bRangeAttack)
@@ -584,7 +585,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 EndPosition = BulletScan.ImpactPoint;
             }
 
-            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.currentDamage, GetController(), this, nullptr);
+            if(HasAuthority()) UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.currentDamage, GetController(), this, nullptr);
 
             if (trailBeam)
             {
@@ -597,10 +598,10 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 }
             }
         }
-
  
         if (shootParticle)
         {
+
             UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
         }
     }

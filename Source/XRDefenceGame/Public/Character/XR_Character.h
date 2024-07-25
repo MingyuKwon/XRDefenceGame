@@ -252,10 +252,10 @@ protected:
 
 
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter" , Replicated)
 	AXR_Character* TargetCharacter = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	AXR_Character* TargetCharacter2 = nullptr;
 
 

@@ -110,17 +110,22 @@ void AProjectile::Explode()
         }
     }
 
-    UGameplayStatics::ApplyRadialDamage(
-        GetWorld(),
-        BulletDamage,
-        GetActorLocation(),
-        damageRadius,
-        UDamageType::StaticClass(),
-        IgnoreActor,
-        this,
-        GetInstigatorController(),
-        true
-    );
+    if (HasAuthority())
+    {
+        UGameplayStatics::ApplyRadialDamage(
+            GetWorld(),
+            BulletDamage,
+            GetActorLocation(),
+            damageRadius,
+            UDamageType::StaticClass(),
+            IgnoreActor,
+            this,
+            GetInstigatorController(),
+            true
+        );
+    }
+
+
 
     if (BombRangeNiagara)
     {

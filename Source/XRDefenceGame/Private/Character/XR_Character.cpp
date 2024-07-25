@@ -641,8 +641,8 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, CharacterProperty);
 	DOREPLIFETIME(AXR_Character, bBehaviorAvailable);
 	DOREPLIFETIME(AXR_Character, bOnBoard);
-
-	
+	DOREPLIFETIME(AXR_Character, TargetCharacter);
+	DOREPLIFETIME(AXR_Character, TargetCharacter2);
 }
 
 
