@@ -16,7 +16,7 @@ UFloorRingSMC::UFloorRingSMC()
 
 }
 
-void UFloorRingSMC::ChangeRingColorRotation_Implementation(float Percent, float SpinSpeed)
+void UFloorRingSMC::ChangeRingColorRotation(float Percent, float SpinSpeed)
 {
 	if (DynamicMaterialInstance)
 	{
@@ -34,6 +34,11 @@ void UFloorRingSMC::SetMaterialCall()
 	{
 		DynamicMaterialInstance = CreateAndSetMaterialInstanceDynamic(0);
 	}
+}
+
+void UFloorRingSMC::SetbTickReject_Implementation(bool flag)
+{
+	bTickReject = flag;
 }
 
 void UFloorRingSMC::SetbCharacterOnBoard_Implementation(bool flag)

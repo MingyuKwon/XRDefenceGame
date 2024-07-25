@@ -433,17 +433,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
 	UCurveFloat* DissolveCurve;
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DissolveCallBackMulti(float percent);
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DissolveCallBackReverseMulti(float percent);
+
+
 	virtual void DissolveCallBack(float percent);
 
-	UFUNCTION()
 	virtual void DissolveCallBackReverse(float percent);
 
 	//TimeLIne
-
-	virtual void BindDissolveCallBack();
-
-	virtual void BindReverseDissolveCallBack();
 
 	virtual void StartDissolveTimeline(bool bNotReverse);
 

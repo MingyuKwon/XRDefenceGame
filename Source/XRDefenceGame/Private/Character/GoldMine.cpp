@@ -22,7 +22,7 @@ void AGoldMine::Tick(float DeltaTime)
 
 	if (TimeCount >= LifTime)
 	{
-		Death(false);
+		//Death(false);
 		TimeCount = -1.f;
 	}
 

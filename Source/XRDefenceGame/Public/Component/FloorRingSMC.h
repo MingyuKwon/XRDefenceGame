@@ -34,13 +34,17 @@ public:
 	TEnumAsByte<ECharacterType> ownerCharacterType;
 
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable)
 	void ChangeRingColorRotation(float Percent, float SpinSpeed);
 
 	UFUNCTION(BlueprintCallable)
 	void SetMaterialCall();
 
 	bool bTickReject = false;
+	UFUNCTION(NetMulticast, Reliable)
+	void SetbTickReject(bool flag);
+
+
 	bool bCharacterOnBoard = false;
 
 	UFUNCTION(NetMulticast, Reliable)

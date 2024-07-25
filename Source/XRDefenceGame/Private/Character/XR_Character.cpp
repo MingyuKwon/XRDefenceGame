@@ -566,12 +566,12 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 		if (bNotReverse)
 		{
 			TimelineComponent->SetPlayRate(1.0f);
-			BindDissolveCallBack();
+			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackMulti);
 		}
 		else
 		{
 			TimelineComponent->SetPlayRate(2.0f);
-			BindReverseDissolveCallBack();
+			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackReverseMulti);
 		}
 
 		TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
@@ -586,7 +586,27 @@ void AXR_Character::Death(bool bDieInTrash)
 {
 	if (HasAuthority())
 	{
-		MulticastDeath(bDieInTrash);
+		bOnBoard = false;
+		bBehaviorAvailable = false;
+		StartDissolveTimeline(false);
+
+		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+		
+		SetAnimState(EAnimationState::EAS_Death);
+
+		if (!bDieInTrash)
+		{
+			PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeath, GetActorLocation(), 0.5f);
+
+			if (CharacterPropertyUI)
+			{
+				CharacterPropertyUI->Destroy();
+				CharacterPropertyUI = nullptr;
+			}
+		}
+
+		CharacterMovementComponent->MaxWalkSpeed = 0.f;
+		FloorRingMesh->SetbTickReject(true);
 
 		if (bDieInTrash)
 		{
@@ -597,6 +617,9 @@ void AXR_Character::Death(bool bDieInTrash)
 			XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
 
 		}
+
+		MulticastDeath(bDieInTrash);
+
 	}
 
 
@@ -604,32 +627,11 @@ void AXR_Character::Death(bool bDieInTrash)
 
 void AXR_Character::MulticastDeath_Implementation(bool bDieInTrash)
 {
-	FloorRingMesh->bTickReject = true;
-	bOnBoard = false;
-	bBehaviorAvailable = false;
-
-	StartDissolveTimeline(false);
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
-
-
-	SetAnimState(EAnimationState::EAS_Death);
 	if (CharacterDeathMontage)
 	{
 		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
 	}
 
-	if (!bDieInTrash)
-	{
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeath, GetActorLocation(), 0.5f);
-
-		if (CharacterPropertyUI)
-		{
-			CharacterPropertyUI->Destroy();
-			CharacterPropertyUI = nullptr;
-		}
-	}
-
-	CharacterMovementComponent->MaxWalkSpeed = 0.f;
 }
 
 
@@ -765,15 +767,17 @@ void AXR_Character::DissolveCallBackReverse(float percent)
 
 }
 
-void AXR_Character::BindDissolveCallBack()
+void AXR_Character::DissolveCallBackMulti_Implementation(float percent)
 {
-	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
+	DissolveCallBack(percent);
 }
 
-void AXR_Character::BindReverseDissolveCallBack()
+void AXR_Character::DissolveCallBackReverseMulti_Implementation(float percent)
 {
-	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackReverse);
+	DissolveCallBackReverse(percent);
 }
+
+
 
 
 bool AXR_Character::IsOnBoard_Implementation()

@@ -100,9 +100,6 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
 
-    UFUNCTION()
-    void BindDissolveCallBack() override;
-
     virtual void DissolveCallBack(float percent) override;
 
     virtual void DissolveCallBackReverse(float percent) override;

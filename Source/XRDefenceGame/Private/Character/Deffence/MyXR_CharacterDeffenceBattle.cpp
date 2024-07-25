@@ -102,11 +102,6 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
 }
 
 
-void AMyXR_CharacterDeffenceBattle::BindDissolveCallBack()
-{
-    InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBattle::DissolveCallBack);
-}
-
 void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
 {
     GunMeshComponent->SetScalarParameterValueOnMaterials("Dissolve", percent);

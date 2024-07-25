@@ -23,8 +23,6 @@ public:
 protected:
     virtual void BeginPlay() override;
 
-    virtual void BindDissolveCallBack() override;
-
     virtual void DissolveCallBack(float percent) override;
 
     virtual void DissolveCallBackReverse(float percent) override;

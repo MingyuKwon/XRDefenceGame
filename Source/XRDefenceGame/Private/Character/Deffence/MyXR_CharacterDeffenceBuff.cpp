@@ -70,10 +70,6 @@ void AMyXR_CharacterDeffenceBuff::BeginPlay()
 
 }
 
-void AMyXR_CharacterDeffenceBuff::BindDissolveCallBack()
-{
-    InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBuff::DissolveCallBack);
-}
 
 
 void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)

@@ -104,6 +104,8 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 
 void AMyXR_CharacterOffenceBattle::SetOffenceTarget()
 {
+	if (!HasAuthority()) return;
+
 	AXR_Character* FirstNear;
 	AXR_Character* SecondNear;
 
