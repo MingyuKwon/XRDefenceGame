@@ -131,6 +131,11 @@ void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!GetCharacterMesh()) return;
+
+	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
+	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
+
 
 	if (HasAuthority())
 	{
@@ -141,6 +146,8 @@ void AXR_Character::BeginPlay()
 			SetOnBoardAuto();
 		}
 	}
+
+
 
 }
 
@@ -164,11 +171,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 void AXR_Character::InitializeCharacter()
 {
 	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
-
-	if (!GetCharacterMesh()) return;
-
-	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
-	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
 
 	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 	if (XRGamePlayMode)
