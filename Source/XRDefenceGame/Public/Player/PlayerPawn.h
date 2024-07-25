@@ -46,6 +46,9 @@ public:
 	void SetRightHandPosition();
 
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent);
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount);
 

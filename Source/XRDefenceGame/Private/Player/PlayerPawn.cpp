@@ -76,3 +76,17 @@ TArray<AXR_Character*> APlayerPawn::GetRangeCharacters(FVector impactPoint, floa
 
 }
 
+void APlayerPawn::UpdateUserLeftHandUI_Implementation(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent)
+{
+    SetUIGoldAmount(GoldAmount, MaxGoldAmount);
+
+    SetUIPurpleHealth(PurpleHealthAmount);
+    SetUIOrnageHealth(OrangeHealthAmount);
+    SetUBlueHealth(BlueHealthAmount);
+    SetUIHealth(TotalHealthAmount);
+
+    SetUITime(TimeSecond);
+
+    SetUIGestureCoolTime(GesturePercent);
+
+}

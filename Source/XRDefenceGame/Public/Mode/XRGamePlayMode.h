@@ -125,6 +125,9 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     void GameTimerCallBack();
 
 
+    FTimerHandle GameStartTimer;
+
+
 protected:
 
     virtual void BeginPlay() override;

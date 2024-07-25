@@ -112,22 +112,17 @@ void APlayer_Controller::GestureCoolTimeTick()
 	UpdateUserHandUI();
 }
 
-void APlayer_Controller::UpdateUserHandUI()
+void APlayer_Controller::UpdateUserHandUI_Implementation()
 {
 	if (!GetPlayerPawn()) return;
 	if (!GetPlayer_State()) return;
 
-	playerPawn->SetUIGoldAmount(playerState->GetGold(), playerState->GetMaxGold());
-
-	playerPawn->SetUIPurpleHealth(purpleNexusHealth);
-	playerPawn->SetUIOrnageHealth(orangeNexusHealth);
-	playerPawn->SetUBlueHealth(blueNexusHealth);
-	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
-
-	playerPawn->SetUITime(curerntLeftTime);
-
-	playerPawn->SetUIGestureCoolTime(1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit);
-	
+	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
+		curerntLeftTime, 
+		purpleNexusHealth + orangeNexusHealth + blueNexusHealth, 
+		orangeNexusHealth, blueNexusHealth, purpleNexusHealth,
+		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
+		);
 }
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)

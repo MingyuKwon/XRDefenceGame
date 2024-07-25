@@ -644,7 +644,10 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, bOnBoard);
 	DOREPLIFETIME(AXR_Character, TargetCharacter);
 	DOREPLIFETIME(AXR_Character, TargetCharacter2);
+	DOREPLIFETIME(AXR_Character, bNowStun);
+
 }
+
 
 
 void AXR_Character::DestroyMyself()

@@ -130,6 +130,11 @@ void AXRGamePlayMode::GameTimerCallBack()
 void AXRGamePlayMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorld()->GetTimerManager().SetTimer(GameStartTimer, [this]() {
+		TriggerOnGameStartEvent();
+		}, 2.f, false);
+
 }
 
 

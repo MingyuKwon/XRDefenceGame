@@ -490,6 +490,7 @@ protected:
 	UPROPERTY(Replicated)
 	bool bBehaviorAvailable = false;
 
+	UPROPERTY(Replicated)
 	bool bNowStun = false;
 
 	UFUNCTION()
