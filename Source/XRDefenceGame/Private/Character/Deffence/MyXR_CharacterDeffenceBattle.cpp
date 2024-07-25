@@ -23,6 +23,8 @@ void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    if (!HasAuthority()) return;
+
     if (bOnBoard)
     {
         if (TargetCharacter)
@@ -99,34 +101,6 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
 
 }
 
-void AMyXR_CharacterDeffenceBattle::InitializeCharacter()
-{
-    if (GunMeshComponent == nullptr) return;
-    if (GunMeshComponent2 == nullptr) return;
-    if (EtcMeshComponent1 == nullptr) return;
-    if (EtcMeshComponent2 == nullptr) return;
-    if (EtcMeshComponent3 == nullptr) return;
-    if (EtcMeshComponent4 == nullptr) return;
-    if (EtcMeshComponent5 == nullptr) return;
-
-    DefaultGunMaterial = Cast<UMaterialInstance>(GunMeshComponent->GetMaterial(0));
-    DefaultGun2Material = Cast<UMaterialInstance>(GunMeshComponent2->GetMaterial(0));
-    DefaultEtcMaterialFirst = Cast<UMaterialInstance>(EtcMeshComponent1->GetMaterial(0));
-    DefaultEtcMaterialSecond = Cast<UMaterialInstance>(EtcMeshComponent2->GetMaterial(0));
-    DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
-    DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
-    DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
-
-    DefaultTargetRotation = GetActorRotation();
-    TargetRotation = DefaultTargetRotation;
-
-    Super::InitializeCharacter();
-}
-
-void AMyXR_CharacterDeffenceBattle::BindDissolveCallBack()
-{
-    InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBattle::DissolveCallBack);
-}
 
 void AMyXR_CharacterDeffenceBattle::DissolveCallBack(float percent)
 {
@@ -346,12 +320,12 @@ void AMyXR_CharacterDeffenceBattle::InteractableEffectEnd_Implementation()
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectStart_Implementation()
 {
-    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight, true);
+    ChangeMaterialState_Implementation(EMaterialState::EMS_OnBoardHighLight, true);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffableEffectEnd_Implementation()
 {
-    ChangeMaterialState(EMaterialState::EMS_OnBoardHighLight,false);
+    ChangeMaterialState_Implementation(EMaterialState::EMS_OnBoardHighLight,false);
 }
 
 void AMyXR_CharacterDeffenceBattle::BuffApplied_Implementation(ECharacterType buffType)
@@ -519,6 +493,30 @@ void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLoc
     }
 }
 
+void AMyXR_CharacterDeffenceBattle::BeginPlay()
+{
+    if (GunMeshComponent == nullptr) return;
+    if (GunMeshComponent2 == nullptr) return;
+    if (EtcMeshComponent1 == nullptr) return;
+    if (EtcMeshComponent2 == nullptr) return;
+    if (EtcMeshComponent3 == nullptr) return;
+    if (EtcMeshComponent4 == nullptr) return;
+    if (EtcMeshComponent5 == nullptr) return;
+
+    DefaultGunMaterial = Cast<UMaterialInstance>(GunMeshComponent->GetMaterial(0));
+    DefaultGun2Material = Cast<UMaterialInstance>(GunMeshComponent2->GetMaterial(0));
+    DefaultEtcMaterialFirst = Cast<UMaterialInstance>(EtcMeshComponent1->GetMaterial(0));
+    DefaultEtcMaterialSecond = Cast<UMaterialInstance>(EtcMeshComponent2->GetMaterial(0));
+    DefaultEtcMaterialThird = Cast<UMaterialInstance>(EtcMeshComponent3->GetMaterial(0));
+    DefaultEtcMaterialForth = Cast<UMaterialInstance>(EtcMeshComponent4->GetMaterial(0));
+    DefaultEtcMaterialFifth = Cast<UMaterialInstance>(EtcMeshComponent5->GetMaterial(0));
+
+    DefaultTargetRotation = GetActorRotation();
+    TargetRotation = DefaultTargetRotation;
+
+    Super::BeginPlay();
+}
+
 void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
 {
     Super::TargetDieCallBack(DieTarget);
@@ -526,13 +524,11 @@ void AMyXR_CharacterDeffenceBattle::TargetDieCallBack(AXR_Character* DieTarget)
     RenewTargetCharacter12();
 }
 
-void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
+void AMyXR_CharacterDeffenceBattle::FireBullet_Implementation(bool isDouble)
 {
     if (isDouble && !TargetCharacter2) return;
 
     FName SockeName = isDouble ? FName("MuzzleSocket2") : FName("MuzzleSocket");
-
-
 
     USkeletalMeshComponent* GunMesh;
 
@@ -549,8 +545,11 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
     const USkeletalMeshSocket* MuzzleSocket = GunMesh->GetSocketByName(SockeName);
     AXR_Character* TempChar = isDouble ? TargetCharacter2 : TargetCharacter;
 
+
     if (MuzzleSocket && TempChar)
     {
+        if (!HasAuthority()) UE_LOG(LogTemp, Display, TEXT("FireBullet_Implementation in Clinet"));
+
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMesh);
 
         if (bRangeAttack)
@@ -581,7 +580,7 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 EndPosition = BulletScan.ImpactPoint;
             }
 
-            UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.currentDamage, GetController(), this, nullptr);
+            if(HasAuthority()) UGameplayStatics::ApplyDamage(TempChar, CharacterProperty.currentDamage, GetController(), this, nullptr);
 
             if (trailBeam)
             {
@@ -594,10 +593,10 @@ void AMyXR_CharacterDeffenceBattle::FireBullet(bool isDouble)
                 }
             }
         }
-
  
         if (shootParticle)
         {
+
             UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), shootParticle, MuzzleTransform.GetLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
         }
     }
@@ -610,28 +609,18 @@ void AMyXR_CharacterDeffenceBattle::PackCharacterValueTransmitForm(FCharacterVal
     outForm.RangeUpgradeCount = RangeUpgradeCount;
 }
 
-void AMyXR_CharacterDeffenceBattle::UpdateCharacterPropertyUI()
-{
-    Super::UpdateCharacterPropertyUI();
-
-    if (CharacterPropertyUI)
-    {
-        CharacterPropertyUI->SetDamageCount(DamageUpgradeCount);
-        CharacterPropertyUI->SetUtilCount(RangeUpgradeCount);
-    }
-}
 
 void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
 {
     if (GunFireMontage && GunMeshComponent->GetAnimInstance())
     {
         SetAnimState(EAnimationState::EAS_Action);
-        GunMeshComponent->GetAnimInstance()->Montage_Play(GunFireMontage);
+        PlayAnimMontageMulti(GunMeshComponent, GunFireMontage);
+
 
         if (GunMeshComponent2->GetSkeletalMeshAsset() && GunMeshComponent2->GetAnimInstance() && TargetCharacter2)
         {
-            GunMeshComponent2->GetAnimInstance()->Montage_Play(GunFireMontage2);
-
+            PlayAnimMontageMulti(GunMeshComponent2, GunFireMontage2);
         }
     }
 
@@ -642,6 +631,8 @@ void AMyXR_CharacterDeffenceBattle::CharacterActionStart()
 void AMyXR_CharacterDeffenceBattle::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     Super::OnSphereOverlapBegin( OverlappedComp,  OtherActor,  OtherComp,  OtherBodyIndex,  bFromSweep, SweepResult);
+
+    if (!HasAuthority()) return;
 
     if (OtherActor && (OtherActor != this) && OtherComp && Cast<AMyXR_CharacterOffenceBattle>(OtherActor))
     {

@@ -17,7 +17,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetGoldCostCount(int32 count);
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetGoldCostVisible(bool flag);
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void SetGoldCostCountMulti(float percent);
+
 
 };

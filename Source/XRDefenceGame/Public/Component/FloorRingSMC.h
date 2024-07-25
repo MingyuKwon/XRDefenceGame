@@ -41,7 +41,14 @@ public:
 	void SetMaterialCall();
 
 	bool bTickReject = false;
+	UFUNCTION(NetMulticast, Reliable)
+	void SetbTickReject(bool flag);
+
+
 	bool bCharacterOnBoard = false;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetbCharacterOnBoard(bool flag);
 
 
 protected:

@@ -13,6 +13,7 @@ class UNiagaraComponent;
 class UXRDefenceGameInstance;
 class UAudioSubsystem;
 class ACostShowChip;
+class UAnimMontage;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -107,6 +108,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
 
+	UFUNCTION(BlueprintCallable)
 	virtual void SetOnBoardAuto();
 
 	// Event that invoke when character set on Board
@@ -161,13 +163,15 @@ public:
 
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual void CallBackForPallette();
 
 	UXRDefenceGameInstance* GameInstance;
 	UAudioSubsystem* AudioManager;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
@@ -196,7 +200,7 @@ protected:
 
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	virtual void ChangeMaterialState(EMaterialState materialState, bool bLock);
 
 	UFUNCTION(BlueprintCallable)
@@ -229,8 +233,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void CharacterActionStart();
 
-	UFUNCTION(BlueprintCallable)
-	void SetAnimState(EAnimationState state);
 
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -246,22 +248,28 @@ protected:
 
 
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter" , Replicated)
 	AXR_Character* TargetCharacter = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	AXR_Character* TargetCharacter2 = nullptr;
 
 
-	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	EAnimationState AnimState = EAnimationState::EAS_IdleAndWalk;
 
+	UFUNCTION(BlueprintCallable)
+	void SetAnimState(EAnimationState state);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void PlayAnimMontageMulti(USkeletalMeshComponent* skeletalComponent, UAnimMontage* montage);
+
 
 	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
-	class UAnimMontage* CharacterActionMontage = nullptr;
+	UAnimMontage* CharacterActionMontage = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Anim Parameter")
-	class UAnimMontage* CharacterDeathMontage = nullptr;
+	UAnimMontage* CharacterDeathMontage = nullptr;
 
 
 	UPROPERTY()
@@ -302,11 +310,14 @@ protected:
 
 	virtual void UpdateCharacterPropertyUI();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug Parameter",  Replicated)
 	FCharacterStatus CharacterProperty;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Debug Parameter", Replicated)
 	bool bOnBoard = false;
+
+	virtual void OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand);
 
 	virtual void OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand);
 
@@ -343,6 +354,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> HealRing;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> SpeedBuffNiagara;
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UMotionWarpingComponent* MotionWarpingComponent;
@@ -420,21 +435,24 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Dissolve Parameter")
 	UCurveFloat* DissolveCurve;
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DissolveCallBackMulti(float percent);
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DissolveCallBackReverseMulti(float percent);
+
+
 	virtual void DissolveCallBack(float percent);
 
-	UFUNCTION()
 	virtual void DissolveCallBackReverse(float percent);
 
 	//TimeLIne
 
-	virtual void BindDissolveCallBack();
-
-	virtual void BindReverseDissolveCallBack();
-
 	virtual void StartDissolveTimeline(bool bNotReverse);
 
 	virtual void Death(bool bDieInTrash);
+
+
 
 	UFUNCTION()
 	virtual void DeathTimerFunction();
@@ -442,8 +460,8 @@ protected:
 	UFUNCTION()
 	virtual void BehaviorAvailableTimerFunction();
 
-	UFUNCTION()
 	virtual void DamageTimerFunction();
+
 
 	UFUNCTION()
 	virtual void BuffEndTimerFunction();
@@ -469,15 +487,16 @@ protected:
 
 	FTimerHandle MoveSpeedDownHandle;
 
+	UPROPERTY(Replicated)
 	bool bBehaviorAvailable = false;
 
 	bool bNowStun = false;
 
 	UFUNCTION()
-	void MoveSpeedUp();
+	void MoveSpeedUp(bool bEffectOn);
 
 	UFUNCTION()
-	void MoveSpeedDown();
+	void MoveSpeedDown(bool bEffectOn);
 
 private:
 

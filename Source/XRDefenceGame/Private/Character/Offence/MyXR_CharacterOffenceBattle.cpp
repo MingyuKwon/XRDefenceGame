@@ -104,12 +104,14 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 
 void AMyXR_CharacterOffenceBattle::SetOffenceTarget()
 {
+	if (!HasAuthority()) return;
+
 	AXR_Character* FirstNear;
 	AXR_Character* SecondNear;
 
 	FindNearbyEnemy(FirstNear, SecondNear);
-
 	TargetCharacter = FirstNear;
+
 }
 
 void AMyXR_CharacterOffenceBattle::CharacterActionStart()
@@ -142,9 +144,9 @@ void AMyXR_CharacterOffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLoca
 
 }
 
-void AMyXR_CharacterOffenceBattle::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AMyXR_CharacterOffenceBattle::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+	Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 }
 
 void AMyXR_CharacterOffenceBattle::BehaviorAvailableTimerFunction()

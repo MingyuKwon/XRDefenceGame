@@ -18,13 +18,28 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetHealthPercent(float percent);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void SetHealthPercentMulticast(float percent);
+
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetDamageCount(int32 count);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetDamageCountMulticast(int32 count);
+
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUtilCount(int32 count);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void SetUtilCountMulticast(int32 count);
+
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetDamgeUtilVisible(bool flag);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetDamgeUtilVisibleMulticast(bool flag);
 
 };

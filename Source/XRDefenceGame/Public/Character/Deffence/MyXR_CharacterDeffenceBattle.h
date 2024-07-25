@@ -43,6 +43,8 @@ public:
 protected:
     virtual void OtherCharacterSpawnCallBack(FVector spawnLocation) override;
 
+    virtual void BeginPlay() override;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
     class UNiagaraSystem* trailBeam;
 
@@ -51,12 +53,11 @@ protected:
 
     virtual void TargetDieCallBack(AXR_Character* DieTarget) override;
 
-
+    UFUNCTION(NetMulticast, Reliable)
     virtual void FireBullet(bool isDouble = false);
 
     virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm) override;
 
-    virtual void UpdateCharacterPropertyUI() override;
 
     UPROPERTY(EditAnywhere, Category = "Anim Parameter")
     UAnimMontage* GunFireMontage = nullptr;
@@ -98,11 +99,6 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
-
-    virtual void InitializeCharacter() override;  
-
-    UFUNCTION()
-    void BindDissolveCallBack() override;
 
     virtual void DissolveCallBack(float percent) override;
 

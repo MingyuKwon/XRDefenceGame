@@ -70,10 +70,6 @@ void AMyXR_CharacterDeffenceBuff::BeginPlay()
 
 }
 
-void AMyXR_CharacterDeffenceBuff::BindDissolveCallBack()
-{
-    InterpFunction.BindDynamic(this, &AMyXR_CharacterDeffenceBuff::DissolveCallBack);
-}
 
 
 void AMyXR_CharacterDeffenceBuff::DissolveCallBack(float percent)
@@ -102,9 +98,9 @@ void AMyXR_CharacterDeffenceBuff::SetPalletteCharacterOnBoard(bool isOnBoard, AX
 
 }
 
-void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-    Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+    Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 
     RingMeshComponent1->SetVisibility(isOnBoard);
     RingMeshComponent2->SetVisibility(isOnBoard);

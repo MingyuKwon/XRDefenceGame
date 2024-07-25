@@ -6,7 +6,12 @@
 ACostShowChip::ACostShowChip()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+}
 
+void ACostShowChip::SetGoldCostCountMulti_Implementation(float percent)
+{
+	SetGoldCostCount(percent);
 }
 
 

@@ -6,9 +6,9 @@
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-void AMyXR_CharacterOffenceBuff::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+void AMyXR_CharacterOffenceBuff::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
-	Super::OnBoardCalledFunction(isOnBoard, isSpawnedByHand);
+	Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 }
 
 void AMyXR_CharacterOffenceBuff::BehaviorAvailableTimerFunction()

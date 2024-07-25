@@ -22,27 +22,39 @@
 #include "Managet/AudioSubsystem.h"
 #include "Managet/XRDefenceGameInstance.h"
 #include "Battle/CostShowChip.h"
+#include "Net/UnrealNetwork.h"
 
 AXR_Character::AXR_Character()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	FromPaletteToCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("FromPaletteToCharacter"));
 	FromPaletteToCharacter->SetupAttachment(RootComponent);
+	FromPaletteToCharacter->SetIsReplicated(true);
 
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
+	FromCharacterToRing->SetIsReplicated(true);
 
 	BuffRing = CreateDefaultSubobject<UNiagaraComponent>(FName("BuffRing"));
 	BuffRing->SetupAttachment(GetMesh());
+	BuffRing->SetIsReplicated(true);
 
 	HealRing = CreateDefaultSubobject<UNiagaraComponent>(FName("HealRing"));
 	HealRing->SetupAttachment(GetMesh());
+	HealRing->SetIsReplicated(true);
 
+	SpeedBuffNiagara = CreateDefaultSubobject<UNiagaraComponent>(FName("SpeedBuffNiagara"));
+	SpeedBuffNiagara->SetupAttachment(GetMesh());
+	SpeedBuffNiagara->SetIsReplicated(true);
+
+	
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(FName("MotionWarping"));
 
 	FloorRingMesh = CreateDefaultSubobject<UFloorRingSMC>(FName("FloorRingMesh"));
 	FloorRingMesh->SetupAttachment(RootComponent);
+	FloorRingMesh->SetIsReplicated(true);
 
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("DissolveTimeline"));
 
@@ -79,9 +91,16 @@ AXR_Character::AXR_Character()
 }
 
 
-
-
 void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
+{
+	if (HasAuthority())
+	{
+		OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
+	}
+
+}
+
+void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand)
 {
 	if (bOnBoard)
 	{
@@ -89,10 +108,12 @@ void AXR_Character::OnBoardCalledFunction(bool isOnBoard, bool isSpawnedByHand)
 
 		GetWorld()->GetTimerManager().SetTimer(BehaviorAvailableTimerHandle, this, &AXR_Character::BehaviorAvailableTimerFunction, 2.0f, false);
 
-		SpawnCharacterPropertyUI();
-		FloorRingMesh->bCharacterOnBoard = true;
-
 		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnBoard, GetActorLocation(), 0.7f);
+
+		SpawnCharacterPropertyUI();
+
+		FloorRingMesh->SetbCharacterOnBoard(true);
+
 
 		if (XRGamePlayMode)
 		{
@@ -112,12 +133,32 @@ void AXR_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeCharacter();
+	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
 
-	if (DefaultPlaceInBoard)
+	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+
+	if (!GetCharacterMesh()) return;
+
+	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
+	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
+
+	SetRingProperty();
+
+	HealRing->Deactivate();
+	BuffRing->Deactivate();
+	SpeedBuffNiagara->Deactivate();
+
+
+	if (HasAuthority())
 	{
-		SetOnBoardAuto();
+		InitializeCharacter();
+
+		if (DefaultPlaceInBoard)
+		{
+			SetOnBoardAuto();
+		}
 	}
+
 }
 
 void AXR_Character::PossessedBy(AController* NewController)
@@ -129,7 +170,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 		XRAIController = Cast<AXRAIController>(NewController);
 		if (XRAIController)
 		{
-			
 			XRAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 			XRAIController->RunBehaviorTree(BehaviorTree);
 		}
@@ -139,14 +179,6 @@ void AXR_Character::PossessedBy(AController* NewController)
 
 void AXR_Character::InitializeCharacter()
 {
-	GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
-
-	if (!GetCharacterMesh()) return;
-
-	DefaultSkeletalMaterialFirst = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(0));
-	DefaultSkeletalMaterialSecond = Cast<UMaterialInstance>(CharacterMesh->GetMaterial(1));
-
-	XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 	if (XRGamePlayMode)
 	{
 		XRGamePlayMode->OnChrarcterDieEvent.AddDynamic(this, &AXR_Character::TargetDieCallBack);
@@ -154,21 +186,17 @@ void AXR_Character::InitializeCharacter()
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &AXR_Character::GameEndCallBack);
 	}
 
-	HealRing->Deactivate();
-	BuffRing->Deactivate();
-
-	if (!DefaultPlaceInBoard)
+	FHitResult PallettetraceResult;
+	GetWorld()->LineTraceSingleByChannel(PallettetraceResult, GetActorLocation(), GetActorLocation() + FVector::DownVector * 100.f, ECC_Pallette);
+	
+	if (PallettetraceResult.bBlockingHit)
 	{
 		SpawnCostShowUI();
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundSpawnPallette, GetActorLocation(), 0.5f);
-
 	}
 
-
-	SetRingProperty();
 	CharacterMovementComponent->MaxWalkSpeed = 5.f;
 
-	if (ObjectType == EObjectType::EOT_Deffence)
+	if (ObjectType == EObjectType::EOT_Deffence) 
 	{
 		sphereOverlapCheck->SetWorldScale3D(FVector(1.0f));
 		sphereOverlapCheck->SetSphereRadius(CharacterProperty.Util_Range);
@@ -195,7 +223,7 @@ void AXR_Character::NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheri
 void AXR_Character::SetOnBoardAuto()
 {
 	bOnBoard = true;
-	OnBoardCalledFunction(true, false);
+	OnBoardCalledFunction(true, false);	
 
 }
 
@@ -209,7 +237,17 @@ void AXR_Character::SpawnCostShowUI()
 
 		if (GetMesh())
 		{
-			SpawnLocation.Z = GetMesh()->GetComponentLocation().Z + 0.25f;
+			FHitResult PallettetraceResult;
+			GetWorld()->LineTraceSingleByChannel(PallettetraceResult, GetActorLocation(), GetActorLocation() + FVector::DownVector * 100.f, ECC_Pallette);
+
+			if (PallettetraceResult.bBlockingHit)
+			{
+				SpawnLocation.Z = PallettetraceResult.ImpactPoint.Z + 0.5f;
+			}
+			else
+			{
+				SpawnLocation.Z = GetMesh()->GetComponentLocation().Z + 0.25f;
+			}
 		}
 
 		FActorSpawnParameters SpawnParams;
@@ -219,7 +257,7 @@ void AXR_Character::SpawnCostShowUI()
 		CostShowUI = GetWorld()->SpawnActor<ACostShowChip>(costShowUIClass, SpawnLocation, SpawnRotation, SpawnParams);
 		if (CostShowUI)
 		{
-			CostShowUI->SetGoldCostCount(CharacterProperty.Cost);
+			CostShowUI->SetGoldCostCountMulti(CharacterProperty.Cost);
 		}
 	}
 }
@@ -252,12 +290,12 @@ void AXR_Character::UpdateCharacterPropertyUI()
 {
 	if (CharacterPropertyUI)
 	{
-		CharacterPropertyUI->SetHealthPercent(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
-		CharacterPropertyUI->SetDamageCount(CharacterProperty.currentDamage);
-		CharacterPropertyUI->SetUtilCount(CharacterProperty.Util_Fast);
+		CharacterPropertyUI->SetHealthPercentMulticast(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
+		CharacterPropertyUI->SetDamageCountMulticast(CharacterProperty.currentDamage);
+		CharacterPropertyUI->SetUtilCountMulticast(CharacterProperty.Util_Fast);
 	}
-}
 
+}
 
 void AXR_Character::SetPropertyUIVisible(bool flag)
 {
@@ -265,14 +303,14 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 
 	if (CharacterType == ECharacterType::ECT_DefenceNexus)
 	{
-		CharacterPropertyUI->SetDamgeUtilVisible(false);
+		CharacterPropertyUI->SetDamgeUtilVisibleMulticast(false);
 		return;
 	}
 
 
 	if (ObjectType == EObjectType::EOT_Deffence && CharacterType != ECharacterType::ECT_DefenceP)
 	{
-		CharacterPropertyUI->SetDamgeUtilVisible(true);
+		CharacterPropertyUI->SetDamgeUtilVisibleMulticast(true);
 		return;
 	}
 
@@ -281,11 +319,8 @@ void AXR_Character::SetPropertyUIVisible(bool flag)
 		flag = false;
 	}
 
-	CharacterPropertyUI->SetDamgeUtilVisible(flag);
+	CharacterPropertyUI->SetDamgeUtilVisibleMulticast(flag);
 }
-
-
-
 
 
 void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
@@ -388,7 +423,6 @@ void AXR_Character::Tick(float DeltaTime)
 	if (!bOnBoard)
 	{
 		FromCharacterToRing->SetVectorParameter("User.BeamEnd", FloorRingMesh->GetComponentLocation());
-
 	}
 }
 
@@ -542,12 +576,12 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 		if (bNotReverse)
 		{
 			TimelineComponent->SetPlayRate(1.0f);
-			BindDissolveCallBack();
+			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackMulti);
 		}
 		else
 		{
 			TimelineComponent->SetPlayRate(2.0f);
-			BindReverseDissolveCallBack();
+			InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackReverseMulti);
 		}
 
 		TimelineComponent->AddInterpFloat(DissolveCurve, InterpFunction, FName("Alpha"));
@@ -560,38 +594,56 @@ void AXR_Character::StartDissolveTimeline(bool bNotReverse)
 
 void AXR_Character::Death(bool bDieInTrash)
 {
-	FloorRingMesh->bTickReject = true;
-	bOnBoard = false;
-	bBehaviorAvailable = false;
-
-	StartDissolveTimeline(false);
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
-	
-	if (bDieInTrash)
+	if (HasAuthority())
 	{
-		XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
-	}
-	else
-	{
-		XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeath, GetActorLocation(), 0.5f);
+		bOnBoard = false;
+		bBehaviorAvailable = false;
+		StartDissolveTimeline(false);
 
-		if (CharacterPropertyUI)
+		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AXR_Character::DeathTimerFunction, 2.0f, false);
+		
+		SetAnimState(EAnimationState::EAS_Death);
+
+		if (!bDieInTrash)
 		{
-			CharacterPropertyUI->Destroy();
-			CharacterPropertyUI = nullptr;
+			PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDeath, GetActorLocation(), 0.5f);
+
+			if (CharacterPropertyUI)
+			{
+				CharacterPropertyUI->Destroy();
+				CharacterPropertyUI = nullptr;
+			}
 		}
+
+		CharacterMovementComponent->MaxWalkSpeed = 0.f;
+		FloorRingMesh->SetbTickReject(true);
+
+		if (bDieInTrash)
+		{
+			XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
+		}
+		else
+		{
+			XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+
+		}
+
+		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
 
-	SetAnimState(EAnimationState::EAS_Death);
-	if (CharacterDeathMontage)
-	{
-		GetMesh()->GetAnimInstance()->Montage_Play(CharacterDeathMontage);
-	}
-
-	CharacterMovementComponent->MaxWalkSpeed = 0.f;
+}
 
 
+void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AXR_Character, AnimState);
+	DOREPLIFETIME(AXR_Character, CharacterProperty);
+	DOREPLIFETIME(AXR_Character, bBehaviorAvailable);
+	DOREPLIFETIME(AXR_Character, bOnBoard);
+	DOREPLIFETIME(AXR_Character, TargetCharacter);
+	DOREPLIFETIME(AXR_Character, TargetCharacter2);
 }
 
 
@@ -714,15 +766,17 @@ void AXR_Character::DissolveCallBackReverse(float percent)
 
 }
 
-void AXR_Character::BindDissolveCallBack()
+void AXR_Character::DissolveCallBackMulti_Implementation(float percent)
 {
-	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBack);
+	DissolveCallBack(percent);
 }
 
-void AXR_Character::BindReverseDissolveCallBack()
+void AXR_Character::DissolveCallBackReverseMulti_Implementation(float percent)
 {
-	InterpFunction.BindDynamic(this, &AXR_Character::DissolveCallBackReverse);
+	DissolveCallBackReverse(percent);
 }
+
+
 
 
 bool AXR_Character::IsOnBoard_Implementation()
@@ -768,8 +822,9 @@ void AXR_Character::BuffEndTimerFunction()
 
 void AXR_Character::CharacterActionCall()
 {
+	if (!HasAuthority()) return;
 
-	if (AnimState <= EAnimationState::EAS_IdleAndWalk)
+	if (GetIsNowCanWalkBasedOnAnimation())
 	{
 		CharacterActionStart();
 	}
@@ -806,26 +861,31 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (CharacterProperty.currentHealth == 0) return 0;
-
-	CharacterProperty.currentHealth -= DamageAmount;
-	CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
-
-	UpdateCharacterPropertyUI();
-
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
-
-
-	ChangeMaterialState(EMaterialState::EMS_Damage, true);
-	GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
-
-	if (CharacterProperty.currentHealth <= 0)
+	if (HasAuthority())
 	{
-		Death(false);
+		if (CharacterProperty.currentHealth == 0) return DamageAmount;
+
+		CharacterProperty.currentHealth -= DamageAmount;
+		CharacterProperty.currentHealth = FMath::Clamp(CharacterProperty.currentHealth, 0.f, CharacterProperty.MaxHealth);
+
+		UpdateCharacterPropertyUI();
+
+		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
+
+		ChangeMaterialState(EMaterialState::EMS_Damage, true);
+		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
+
+
+		if (CharacterProperty.currentHealth <= 0)
+		{
+			Death(false);
+		}
 	}
 
 	return DamageAmount;
+
 }
+
 
 void AXR_Character::TargetDieCallBack(AXR_Character* DieTarget)
 {
@@ -864,30 +924,50 @@ void AXR_Character::SetAnimState(EAnimationState state)
 
 void AXR_Character::TriggerMoveSlow()
 {
-	MoveSpeedDown();
-	GetWorld()->GetTimerManager().SetTimer(MoveSpeedUpHandle, this, &AXR_Character::MoveSpeedUp, 2.0f, false);
+	MoveSpeedDown(true);
+
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, [this]()
+		{
+			this->MoveSpeedUp(false);
+		}, 2.0f, false);
 }
 
 void AXR_Character::TriggerMoveFast()
 {
-	MoveSpeedUp();
-	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, this, &AXR_Character::MoveSpeedDown, 2.0f, false);
+	MoveSpeedUp(true);
+	GetWorld()->GetTimerManager().SetTimer(MoveSpeedDownHandle, [this]()
+		{
+			this->MoveSpeedDown(false);
+		}
+		, 2.0f, false);
 }
 
-void AXR_Character::MoveSpeedUp()
+void AXR_Character::MoveSpeedUp(bool bEffectOn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedUp"));
+	if (bEffectOn)
+	{
+		SpeedBuffNiagara->Deactivate();
+		SpeedBuffNiagara->SetVariableLinearColor(FName("BodyColor"), FLinearColor::Blue);
+		SpeedBuffNiagara->Activate(true);
+	}
+
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
 }
 
-void AXR_Character::MoveSpeedDown()
+void AXR_Character::MoveSpeedDown(bool bEffectOn)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveSpeedDown"));
+	if (bEffectOn)
+	{
+		SpeedBuffNiagara->Deactivate();
+		SpeedBuffNiagara->SetVariableLinearColor(FName("BodyColor"), FLinearColor::Red);
+		SpeedBuffNiagara->Activate(true);
+	}
+
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed - 2.f;
 }
 
 
-void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
+void AXR_Character::PlaySoundViaManager_Implementation(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
 {
 	if (GameInstance)
 	{
@@ -899,9 +979,11 @@ void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* So
 	}
 }
 
-void AXR_Character::ChangeMaterialState(EMaterialState materialState, bool bLock)
+
+void AXR_Character::ChangeMaterialState_Implementation(EMaterialState materialState, bool bLock)
 {
-	
+	if (!GetCharacterMesh()) return;
+
 	switch (materialState)
 	{
 	case EMaterialState::EMS_OnBoardHighLight:
@@ -1041,14 +1123,20 @@ void AXR_Character::ChangeMaterialEMS_Death()
 
 }
 
-
+void AXR_Character::PlayAnimMontageMulti_Implementation(USkeletalMeshComponent* skeletalComponent, UAnimMontage* montage)
+{
+	if (skeletalComponent && montage)
+	{
+		skeletalComponent->GetAnimInstance()->Montage_Play(montage);
+	}
+}
 
 void AXR_Character::CharacterActionStart()
 {
 	if (CharacterActionMontage && GetMesh()->GetAnimInstance())
 	{
 		SetAnimState(EAnimationState::EAS_Action);
-		GetMesh()->GetAnimInstance()->Montage_Play(CharacterActionMontage);
+		PlayAnimMontageMulti(GetMesh(), CharacterActionMontage);
 	}
 }
 

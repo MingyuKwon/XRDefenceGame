@@ -12,6 +12,7 @@ UFloorRingSMC::UFloorRingSMC()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 
 }
 
@@ -33,6 +34,16 @@ void UFloorRingSMC::SetMaterialCall()
 	{
 		DynamicMaterialInstance = CreateAndSetMaterialInstanceDynamic(0);
 	}
+}
+
+void UFloorRingSMC::SetbTickReject_Implementation(bool flag)
+{
+	bTickReject = flag;
+}
+
+void UFloorRingSMC::SetbCharacterOnBoard_Implementation(bool flag)
+{
+	bCharacterOnBoard = flag;
 }
 
 void UFloorRingSMC::BeginPlay()
