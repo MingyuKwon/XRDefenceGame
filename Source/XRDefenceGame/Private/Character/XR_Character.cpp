@@ -247,7 +247,7 @@ void AXR_Character::SpawnCostShowUI()
 		CostShowUI = GetWorld()->SpawnActor<ACostShowChip>(costShowUIClass, SpawnLocation, SpawnRotation, SpawnParams);
 		if (CostShowUI)
 		{
-			CostShowUI->SetGoldCostCount(CharacterProperty.Cost);
+			CostShowUI->SetGoldCostCountMulti(CharacterProperty.Cost);
 		}
 	}
 }
@@ -814,7 +814,7 @@ void AXR_Character::CharacterActionCall()
 {
 	if (!HasAuthority()) return;
 
-	if (AnimState <= EAnimationState::EAS_IdleAndWalk)
+	if (GetIsNowCanWalkBasedOnAnimation())
 	{
 		CharacterActionStart();
 	}
