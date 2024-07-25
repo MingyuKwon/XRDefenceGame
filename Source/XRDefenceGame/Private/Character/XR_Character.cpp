@@ -237,7 +237,17 @@ void AXR_Character::SpawnCostShowUI()
 
 		if (GetMesh())
 		{
-			SpawnLocation.Z = GetMesh()->GetComponentLocation().Z + 0.25f;
+			FHitResult PallettetraceResult;
+			GetWorld()->LineTraceSingleByChannel(PallettetraceResult, GetActorLocation(), GetActorLocation() + FVector::DownVector * 100.f, ECC_Pallette);
+
+			if (PallettetraceResult.bBlockingHit)
+			{
+				SpawnLocation.Z = PallettetraceResult.ImpactPoint.Z + 0.5f;
+			}
+			else
+			{
+				SpawnLocation.Z = GetMesh()->GetComponentLocation().Z + 0.25f;
+			}
 		}
 
 		FActorSpawnParameters SpawnParams;
