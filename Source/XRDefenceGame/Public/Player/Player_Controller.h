@@ -59,6 +59,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetControllerObjectType(EObjectType objectType);
 
+
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
 	EObjectType controllerObjectType;
 
@@ -85,8 +86,6 @@ public:
 	// Server
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerSetControllerObjectType(EObjectType NewObjectType);
 
 
 private:

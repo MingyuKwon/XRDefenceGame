@@ -16,6 +16,8 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
+	if (!IsLocalController()) return;
+
 	if (!GetPlayerPawn()) return;
 
 	if (bRightGrabbing)
@@ -127,14 +129,7 @@ void APlayer_Controller::UpdateUserHandUI_Implementation()
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
 {
-	if (HasAuthority())
-	{
-		controllerObjectType = objectType;
-	}
-	else
-	{
-		ServerSetControllerObjectType(objectType);
-	}
+	controllerObjectType = objectType;
 }
 
 void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
@@ -174,14 +169,15 @@ void APlayer_Controller::BeginPlay()
 
 	if (HasAuthority())
 	{
-		SetControllerObjectType(EObjectType::EOT_Deffence);
+		if (IsLocalController())
+		{
+			SetControllerObjectType(EObjectType::EOT_Deffence);
+		}
+		else
+		{
+			SetControllerObjectType(EObjectType::EOT_Offence);
+		}
 	}
-	else
-	{
-		SetControllerObjectType(EObjectType::EOT_Offence);
-	}
-
-
 }
 
 void APlayer_Controller::OnGameStart()
@@ -253,12 +249,6 @@ void APlayer_Controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 }
 
-void APlayer_Controller::ServerSetControllerObjectType_Implementation(EObjectType NewObjectType)
-{
-	FString name = GetName();
-	controllerObjectType = NewObjectType;
-
-}
 
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
