@@ -158,6 +158,7 @@ void AXR_Character::BeginPlay()
 		}
 	}
 
+
 	if (HasAuthority())
 	{
 		InitializeCharacter();
