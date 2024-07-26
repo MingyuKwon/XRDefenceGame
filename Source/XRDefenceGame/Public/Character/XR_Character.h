@@ -397,7 +397,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* DisableHighlightMaterial;
 
-	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	bool bDisableInteractable = false;
 
 

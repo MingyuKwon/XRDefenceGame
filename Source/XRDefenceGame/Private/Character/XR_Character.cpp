@@ -148,7 +148,6 @@ void AXR_Character::BeginPlay()
 	BuffRing->Deactivate();
 	SpeedBuffNiagara->Deactivate();
 
-
 	if (HasAuthority())
 	{
 		InitializeCharacter();
@@ -160,6 +159,7 @@ void AXR_Character::BeginPlay()
 	}
 
 }
+
 
 void AXR_Character::PossessedBy(AController* NewController)
 {
@@ -397,6 +397,8 @@ void AXR_Character::SetRingProperty()
 
 }
 
+
+
 FVector AXR_Character::GetRingPosition()
 {
 	 return FloorRingMesh->GetComponentLocation(); 
@@ -484,7 +486,7 @@ void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 	SetActorLocation(GrabPosition);
 }
 
-void AXR_Character::GrabStart_Implementation()
+void AXR_Character::GrabStart_Implementation ()
 {
 	if (!HasAuthority()) return;
 
@@ -656,7 +658,7 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, TargetCharacter);
 	DOREPLIFETIME(AXR_Character, TargetCharacter2);
 	DOREPLIFETIME(AXR_Character, bNowStun);
-
+	DOREPLIFETIME(AXR_Character, bDisableInteractable);
 }
 
 
