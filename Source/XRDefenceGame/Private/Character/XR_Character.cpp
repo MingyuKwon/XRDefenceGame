@@ -971,7 +971,7 @@ void AXR_Character::TriggerMoveFast()
 		, 2.0f, false);
 }
 
-void AXR_Character::MoveSpeedUp(bool bEffectOn)
+void AXR_Character::MoveSpeedUp_Implementation(bool bEffectOn)
 {
 	if (bEffectOn)
 	{
@@ -983,7 +983,7 @@ void AXR_Character::MoveSpeedUp(bool bEffectOn)
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
 }
 
-void AXR_Character::MoveSpeedDown(bool bEffectOn)
+void AXR_Character::MoveSpeedDown_Implementation(bool bEffectOn)
 {
 	if (bEffectOn)
 	{

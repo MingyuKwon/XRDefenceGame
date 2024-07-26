@@ -162,8 +162,8 @@ private:
 
 
 	FTimerHandle GestureCoolTimeTimeHandle;
-	int32 GestureCoolTime = 10;
-	int32 GestureCoolTimeUnit = 10;
+	int32 GestureCoolTime = 5;
+	int32 GestureCoolTimeUnit = 5;
 
 public:
 

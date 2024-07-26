@@ -493,10 +493,10 @@ protected:
 	UPROPERTY(Replicated)
 	bool bNowStun = false;
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void MoveSpeedUp(bool bEffectOn);
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void MoveSpeedDown(bool bEffectOn);
 
 private:
