@@ -690,7 +690,7 @@ void AXR_Character::DamageTimerFunction()
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
 }
 
-void AXR_Character::SetbDisableInteractable(bool flag)
+void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
 {
 	if (bOnBoard) return;
 	if (bDisableInteractable == flag) return;
@@ -722,6 +722,7 @@ void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 
 		if (HighlightMaterial && CharacterMesh->GetMaterial(0) == DisableHighlightMaterial)
 		{
+
 			if (!onlyNiagara)
 			{
 				CharacterMesh->SetMaterial(0, HighlightMaterial);
@@ -1116,8 +1117,11 @@ void AXR_Character::ChangeMaterialEMS_Damage()
 
 void AXR_Character::ChangeMaterialEMS_HandHighLight()
 {
+	if (!HasAuthority()) UE_LOG(LogTemp, Display, TEXT("SetTrashEffect_Implementation in Client             bDisableInteractable %s"), bDisableInteractable ? *FString("True") : *FString("False"));
+
 	if (bDisableInteractable)
 	{
+
 		if (DisableHighlightMaterial)
 		{
 			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);

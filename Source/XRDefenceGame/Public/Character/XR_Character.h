@@ -146,7 +146,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotoionWarpingTransform();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	virtual void SetbDisableInteractable(bool flag);
 
 	UFUNCTION(BlueprintCallable)
