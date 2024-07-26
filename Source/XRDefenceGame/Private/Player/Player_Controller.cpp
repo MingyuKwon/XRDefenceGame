@@ -401,7 +401,6 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-
         IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
 

@@ -23,6 +23,7 @@
 #include "Managet/XRDefenceGameInstance.h"
 #include "Battle/CostShowChip.h"
 #include "Net/UnrealNetwork.h"
+#include "NiagaraSystemInstanceController.h"
 
 AXR_Character::AXR_Character()
 {
@@ -147,6 +148,15 @@ void AXR_Character::BeginPlay()
 	HealRing->Deactivate();
 	BuffRing->Deactivate();
 	SpeedBuffNiagara->Deactivate();
+
+	if (SpeedBuffNiagara)
+	{
+		FNiagaraSystemInstanceControllerPtr SystemInstanceController = SpeedBuffNiagara->GetSystemInstanceController();
+		if (SystemInstanceController)
+		{
+			SystemInstanceController->SetForceSolo(true);
+		}
+	}
 
 	if (HasAuthority())
 	{
@@ -702,6 +712,8 @@ void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
 
 void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 {
+	GetCharacterMesh();
+
 	if (flag)
 	{
 		FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
