@@ -44,6 +44,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	USoundBase* SoundBomb;
 
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void ExplodeEffect();
+
 private:
 	UPROPERTY(EditAnywhere)
 	float shotSpeed;

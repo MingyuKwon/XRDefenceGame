@@ -80,6 +80,24 @@ void AProjectile::SetDamage(float Damage)
     BulletDamage = Damage;
 }
 
+void AProjectile::ExplodeEffect_Implementation()
+{
+    if (HitImpactParticle)
+    {
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitImpactParticle, GetActorLocation());
+    }
+
+    if (BombRangeNiagara)
+    {
+        UNiagaraComponent* NG = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BombRangeNiagara, GetActorLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
+
+        if (NG)
+        {
+            NG->SetVariableFloat(FName("Radius"), damageRadius);
+        }
+    }
+}
+
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 
@@ -87,11 +105,6 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 
 void AProjectile::Explode()
 {
-    if (HitImpactParticle)
-    {
-        UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitImpactParticle, GetActorLocation());
-    }
-
     Projectile_Movement->Activate(false);
 
     TArray<AActor*> IgnoreActor;
@@ -125,17 +138,7 @@ void AProjectile::Explode()
         );
     }
 
-
-
-    if (BombRangeNiagara)
-    {
-        UNiagaraComponent* NG = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BombRangeNiagara, GetActorLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
-
-        if (NG)
-        {
-            NG->SetVariableFloat(FName("Radius"), damageRadius);
-        }
-    }
+    ExplodeEffect();
 
     Destroy();
 }
