@@ -7,22 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/Player_Controller.h"
 
-void AXRGamePlayMode::TriggerOnMapRotateEvent(float RotateAmount)
-{
-	OnMapRotateEvent.Broadcast(RotateAmount);
-}
 
-void AXRGamePlayMode::TriggerOnMapLocationEvent(FVector SpawnLocation)
-{
-	OnMapLocationEvent.Broadcast(SpawnLocation);
-}
-
-void AXRGamePlayMode::TriggerOnMapSpawnEvent()
-{
-	bSpawnMapSuccess = true;
-
-	OnMapSpawnEvent.Broadcast();
-}
 
 void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation)
 {
@@ -46,8 +31,6 @@ void AXRGamePlayMode::PostTravelSetPlayerLocation()
 {
     for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation0"));
-
         APlayerController* PlayerController = Iterator->Get();
         if (PlayerController)
         {
@@ -85,8 +68,6 @@ void AXRGamePlayMode::PostTravelSetPlayerLocation()
 void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
-
-    UE_LOG(LogTemp, Warning, TEXT("PostLogin Debug %s"), *NewPlayer->GetName());
 
 	PostTravelSetPlayerLocation();
 }
