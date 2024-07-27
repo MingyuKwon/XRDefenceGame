@@ -702,6 +702,8 @@ void AXR_Character::DamageTimerFunction()
 
 void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
 {
+	if (!HasAuthority()) return;
+
 	if (bOnBoard) return;
 	if (bDisableInteractable == flag) return;
 

@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ReleaseGestureRight(EGesture currentGesture);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation);
 
 	UFUNCTION(BlueprintCallable)

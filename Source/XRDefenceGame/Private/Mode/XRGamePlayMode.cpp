@@ -6,7 +6,8 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/Player_Controller.h"
-
+#include "Player/PlayerPawn.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 
 void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation)
@@ -29,6 +30,8 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 
 void AXRGamePlayMode::PostTravelSetPlayerLocation()
 {
+	UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
+
     for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
     {
         APlayerController* PlayerController = Iterator->Get();
@@ -38,7 +41,7 @@ void AXRGamePlayMode::PostTravelSetPlayerLocation()
 
             if (PlayerController->HasAuthority())
             {
-                APawn* PlayerPawn = PlayerController->GetPawn();
+                APlayerPawn* PlayerPawn = Cast<APlayerPawn>(PlayerController->GetPawn());
                 if (PlayerPawn)
                 {
                     UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation2 %s"), *PlayerController->GetName());
@@ -49,6 +52,9 @@ void AXRGamePlayMode::PostTravelSetPlayerLocation()
 
                         PlayerPawn->SetActorLocation(FVector(80.0f, 0.0f, 40.0f));
                         PlayerPawn->SetActorRotation(FRotator(0, 180, 0));
+
+						if(GI) PlayerPawn->SetPawnTransformForGameStart(GI->PlayerGamePlayLocation, GI->PlayerGamePlayRotation);
+						
                     }
                     else
                     {
@@ -56,6 +62,8 @@ void AXRGamePlayMode::PostTravelSetPlayerLocation()
 
                         PlayerPawn->SetActorLocation(FVector(-80.0f, 0.0f, 40.0f));
 						PlayerPawn->SetActorRotation(FRotator(0, 0, 0));
+
+						if (GI) PlayerPawn->SetPawnTransformForGameStart(GI->PlayerGamePlayLocation, GI->PlayerGamePlayRotation);
 
                     }
                 }

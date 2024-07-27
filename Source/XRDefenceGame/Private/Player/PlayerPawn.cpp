@@ -14,8 +14,9 @@ APlayerPawn::APlayerPawn()
 
 }
 
-void APlayerPawn::SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation)
+void APlayerPawn::SetPawnTransformForGameStart_Implementation(FVector MapSpawnLocation, FRotator MapSpawnRotation)
 {
+    if (!(GetController()->IsLocalController())) return;
 
     // Location Relative Set
 	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;

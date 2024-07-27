@@ -61,8 +61,6 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapSpawnPawnMoveEvent OnMapSpawnPawnMoveEvent;
 
-
-
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation);
 
