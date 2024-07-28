@@ -101,9 +101,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION()
     void GameTimerCallBack();
 
-
     FTimerHandle GameStartTimer;
 
+    UFUNCTION()
+    void SetPlayerCharacterOnWantedPosition(APlayerController* NewPlayer);
 
 protected:
 

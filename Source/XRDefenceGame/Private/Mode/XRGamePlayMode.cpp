@@ -34,14 +34,21 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-	APlayerPawn* PlayerPawn = Cast<APlayerPawn>(NewPlayer->GetPawn());
-	PlayerPawn->SetPawnTransformForGameStart();
+	FTimerHandle TimerHandle;
+	FTimerDelegate TimerDelegate;
 
+	TimerDelegate.BindUFunction(this, FName("SetPlayerCharacterOnWantedPosition"), NewPlayer);
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
+}
+
+void AXRGamePlayMode::SetPlayerCharacterOnWantedPosition(APlayerController* NewPlayer)
+{
+	APlayerPawn* PlayerPawn = Cast<APlayerPawn>(NewPlayer->GetPawn());
 	if (PlayerPawn)
 	{
 		PlayerPawn->SetPawnTransformForGameStart();
 	}
-
 }
 
 void AXRGamePlayMode::TriggerOnNexusDamageEventEvent(ENexusType nexusType, float currentHealth)
@@ -79,6 +86,8 @@ void AXRGamePlayMode::GameTimerCallBack()
 		TriggerOnGameEndEvent();
 	}
 }
+
+
 
 void AXRGamePlayMode::BeginPlay()
 {
