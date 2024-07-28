@@ -12,6 +12,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Login Characters")));
 		UE_LOG(LogTemp, Display, TEXT("Multi Test Login Characters"));
 
+
 	}
 
 	if (playerCount >= 2)
