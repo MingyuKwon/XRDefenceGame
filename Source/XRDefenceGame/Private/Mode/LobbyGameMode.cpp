@@ -5,6 +5,8 @@
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
+	Super::PostLogin(NewPlayer);
+
 	playerCount++;
 
 	if (GEngine)
