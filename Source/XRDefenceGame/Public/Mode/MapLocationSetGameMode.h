@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "MapLocationSetGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapRotateEvent, float, RotateAmount);
@@ -34,13 +35,34 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapSpawnEvent();
 
+    UFUNCTION(BlueprintCallable, Category = "Travel")
+    void MoveToLobby(bool bServerTravel);
+
 protected:
 
     virtual void BeginPlay() override;
 
     virtual void PostLogin(APlayerController* NewPlayer) override;
 
-    void PostTravelSetPlayerLocation();
+    UPROPERTY(EditAnywhere)
+    FString LobbyMapName;
+
+    class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
+
+    void InitializeOnlineSubSystem();
+
+    UFUNCTION(BlueprintCallable)
+    void CreateSessionThroughSubSystem();
+    UFUNCTION(BlueprintCallable)
+    void JoinSessionThroughSubSystem();
+
+    UFUNCTION()
+    void OnCreateSession(bool bwasSuccessFul);
+    void OnFindSession(const TArray<FOnlineSessionSearchResult>& SessionResult, bool bWasSuccessFul);
+    void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+    void OnDestroySession(bool bwasSuccessFul);
+    void OnStartSession(bool bwasSuccessFul);
+
 
 
 };
