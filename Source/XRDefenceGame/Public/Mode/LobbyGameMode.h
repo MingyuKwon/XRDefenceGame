@@ -17,10 +17,17 @@ class XRDEFENCEGAME_API ALobbyGameMode : public AGameMode
 protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	FTimerHandle LobbyOutCount;
+	void CountDown();
+	int32 timeCount = 10;
+
 	int32 playerCount = 0;
 
 	UPROPERTY(EditAnywhere)
 	FString GameMapName;
+
+
+
 
 
 };
