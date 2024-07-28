@@ -56,8 +56,6 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FGameTimerTickEvent OnGameTimerTickEvent;
 
-    void PostTravelSetPlayerLocation();
-
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapSpawnPawnMoveEvent OnMapSpawnPawnMoveEvent;
 

@@ -29,7 +29,7 @@ public:
 	void ReleaseGestureRight(EGesture currentGesture);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation);
+	void SetPawnTransformForGameStart();
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AXR_Character*> GetRangeCharacters(FVector impactPoint, float radius, EObjectType objectype);

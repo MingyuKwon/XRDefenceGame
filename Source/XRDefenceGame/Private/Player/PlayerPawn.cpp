@@ -6,6 +6,7 @@
 #include "Character/Offence/MyXR_CharacterOffenceBattle.h"
 #include "Character/Deffence/MyXR_CharacterDeffenceBattle.h"
 #include "Interface/HandInteractInterface.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -14,16 +15,21 @@ APlayerPawn::APlayerPawn()
 
 }
 
-void APlayerPawn::SetPawnTransformForGameStart_Implementation(FVector MapSpawnLocation, FRotator MapSpawnRotation)
+void APlayerPawn::SetPawnTransformForGameStart_Implementation()
 {
     if (!(GetController()->IsLocalController())) return;
 
-    // Location Relative Set
+    UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
+    if (GI == nullptr) return;
+
+    FVector MapSpawnLocation = GI->PlayerGamePlayLocation;
+    FRotator MapSpawnRotation = GI->PlayerGamePlayRotation;
+
+
 	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;
 	FVector ShouldMovetoLocation = GetActorLocation() + ReverseLocation;
 	SetActorLocation(ShouldMovetoLocation);
 
-    // Rotation Relative Set
     FRotator ReverseRotation = MapSpawnRotation * -1;
     FVector RotatedVector = ReverseRotation.RotateVector(GetActorLocation());
     SetActorLocation(RotatedVector);

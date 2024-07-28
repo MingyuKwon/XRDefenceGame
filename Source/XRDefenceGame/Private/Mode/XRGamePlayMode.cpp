@@ -28,56 +28,20 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 
 }
 
-void AXRGamePlayMode::PostTravelSetPlayerLocation()
-{
-	UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
-
-    for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
-    {
-        APlayerController* PlayerController = Iterator->Get();
-        if (PlayerController)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation %s"), *PlayerController->GetName());
-
-            if (PlayerController->HasAuthority())
-            {
-                APlayerPawn* PlayerPawn = Cast<APlayerPawn>(PlayerController->GetPawn());
-                if (PlayerPawn)
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation2 %s"), *PlayerController->GetName());
-
-                    if (PlayerController->IsLocalController())
-                    {
-                        UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation3 %s"), *PlayerController->GetName());
-
-                        PlayerPawn->SetActorLocation(FVector(80.0f, 0.0f, 40.0f));
-                        PlayerPawn->SetActorRotation(FRotator(0, 180, 0));
-
-						if(GI) PlayerPawn->SetPawnTransformForGameStart(GI->PlayerGamePlayLocation, GI->PlayerGamePlayRotation);
-						
-                    }
-                    else
-                    {
-                        UE_LOG(LogTemp, Warning, TEXT("Debug PostTravelSetPlayerLocation4 %s"), *PlayerController->GetName());
-
-                        PlayerPawn->SetActorLocation(FVector(-80.0f, 0.0f, 40.0f));
-						PlayerPawn->SetActorRotation(FRotator(0, 0, 0));
-
-						if (GI) PlayerPawn->SetPawnTransformForGameStart(GI->PlayerGamePlayLocation, GI->PlayerGamePlayRotation);
-
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-	PostTravelSetPlayerLocation();
+	APlayerPawn* PlayerPawn = Cast<APlayerPawn>(NewPlayer->GetPawn());
+	PlayerPawn->SetPawnTransformForGameStart();
+
+	if (PlayerPawn)
+	{
+		PlayerPawn->SetPawnTransformForGameStart();
+	}
+
 }
 
 void AXRGamePlayMode::TriggerOnNexusDamageEventEvent(ENexusType nexusType, float currentHealth)
