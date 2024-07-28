@@ -8,7 +8,7 @@ public class XRDefenceGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" , "Niagara", "MotionWarping" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" , "Niagara", "MotionWarping", "OnlineSubsystemSteam", "OnlineSubsystem", "MultiplayerSession" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
