@@ -10,7 +10,7 @@
 
 
 void AMapLocationSetGameMode::TriggerOnMapRotateEvent(float RotateAmount)
-{
+                                                                                                                 {
 	OnMapRotateEvent.Broadcast(RotateAmount);
 }
 

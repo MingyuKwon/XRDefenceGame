@@ -17,8 +17,24 @@ void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVe
 
 void AXRGamePlayMode::TriggerOnGameStartEvent()
 {
-	OnGameStart.Broadcast();
-	GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AXRGamePlayMode::GameTimerCallBack, 1.0f, true);
+	FTimerHandle TimerHandle;
+	FTimerDelegate TimerDelegate;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Game Start in 5Seconds")));
+	}
+
+	FTimerHandle TriggerOnGameStartEventTimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(TriggerOnGameStartEventTimerHandle, [this]() {
+
+		OnGameStart.Broadcast();
+		GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AXRGamePlayMode::GameTimerCallBack, 1.0f, true);
+
+		}, 5.0f, false);
+
+
 }
 
 void AXRGamePlayMode::TriggerOnGameEndEvent()
