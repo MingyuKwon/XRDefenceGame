@@ -82,4 +82,5 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerGameModeCallPositionReady();
 
+
 };
