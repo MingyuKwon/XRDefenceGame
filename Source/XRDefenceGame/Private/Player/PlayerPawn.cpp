@@ -17,7 +17,7 @@ APlayerPawn::APlayerPawn()
 
 }
 
-void APlayerPawn::SetPawnTransformForGameStart_Implementation()
+void APlayerPawn::SetPawnTransformForGameStart()
 {
     if (!(GetController()->IsLocalController())) return;
 
@@ -104,29 +104,30 @@ void APlayerPawn::BeginPlay()
 {
     Super::BeginPlay();
 
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test BeginPlay()")));
+    }
+
     SetPawnTransformForGameStart();
-
-    FTimerHandle GameModeCallHandle;
-
-    GetWorld()->GetTimerManager().SetTimer(GameModeCallHandle, [this]() {
-
-        GameModeCallPositionReady();
-        }, 1.0f, false);
+    ServerGameModeCallPositionReady();
 }
 
-void APlayerPawn::GameModeCallPositionReady_Implementation()
+void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
 {
     if (HasAuthority())
     {
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test GameModeCallPositionReady")));
+        }
+
         AXRGamePlayMode* GameMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
         if (GameMode)
         {
             GameMode->PlayerPositionSetReady();
         }
 
-        if (GEngine)
-        {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test GameModeCallPositionReady")));
-        }
+
     }
 }

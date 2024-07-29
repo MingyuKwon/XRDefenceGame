@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ReleaseGestureRight(EGesture currentGesture);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable)
 	void SetPawnTransformForGameStart();
 
 	UFUNCTION(BlueprintCallable)
@@ -80,6 +80,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(Server, Reliable)
-	void GameModeCallPositionReady();
+	void ServerGameModeCallPositionReady();
 
 };

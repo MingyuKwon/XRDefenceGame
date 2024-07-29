@@ -17,6 +17,12 @@ void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVe
 
 void AXRGamePlayMode::TriggerOnGameStartEvent()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test TriggerOnGameStartEvent")));
+		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
+
+	}
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
 
@@ -59,12 +65,24 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 
 void AXRGamePlayMode::PlayerPositionSetReady()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test PlayerPositionSetReady")));
+		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
+	}
+
 	currentconnectPlayer++;
 	ShouldGameStart();
 }
 
 void AXRGamePlayMode::ShouldGameStart()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test ShouldGameStart")));
+		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
+	}
+
 	if (currentconnectPlayer >= 2)
 	{
 		TriggerOnGameStartEvent();
