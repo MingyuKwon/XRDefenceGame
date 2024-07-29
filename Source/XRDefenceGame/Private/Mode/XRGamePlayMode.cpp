@@ -60,7 +60,7 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 	}
 
 	TimerDelegate.BindUFunction(this, FName("SetPlayerCharacterOnWantedPosition"), NewPlayer);
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 3.0f, false);
 
 
 
