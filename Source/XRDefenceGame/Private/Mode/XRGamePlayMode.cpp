@@ -56,6 +56,16 @@ void AXRGamePlayMode::SetPlayerCharacterOnWantedPosition(APlayerController* NewP
 	if (PlayerPawn)
 	{
 		PlayerPawn->SetPawnTransformForGameStart();
+		currentconnectPlayer++;
+		ShouldGameStart();
+	}
+}
+
+void AXRGamePlayMode::ShouldGameStart()
+{
+	if (currentconnectPlayer >= 2)
+	{
+		TriggerOnGameStartEvent();
 	}
 }
 

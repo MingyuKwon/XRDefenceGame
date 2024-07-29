@@ -106,6 +106,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION()
     void SetPlayerCharacterOnWantedPosition(APlayerController* NewPlayer);
 
+    UFUNCTION()
+    void ShouldGameStart();
+    int32 currentconnectPlayer = 0;
+
 protected:
 
     virtual void BeginPlay() override;
