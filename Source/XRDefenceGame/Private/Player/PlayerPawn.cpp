@@ -7,6 +7,8 @@
 #include "Character/Deffence/MyXR_CharacterDeffenceBattle.h"
 #include "Interface/HandInteractInterface.h"
 #include "Managet/XRDefenceGameInstance.h"
+#include "Mode/XRGamePlayMode.h"
+#include "Kismet/GameplayStatics.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -96,4 +98,30 @@ void APlayerPawn::UpdateUserLeftHandUI_Implementation(float GoldAmount, float Ma
 
     SetUIGestureCoolTime(GesturePercent);
 
+}
+
+void APlayerPawn::BeginPlay()
+{
+    Super::BeginPlay();
+
+    SetPawnTransformForGameStart();
+
+    GameModeCallPositionReady();
+}
+
+void APlayerPawn::GameModeCallPositionReady_Implementation()
+{
+    if (HasAuthority())
+    {
+        AXRGamePlayMode* GameMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+        if (GameMode)
+        {
+            GameMode->PlayerPositionSetReady();
+        }
+
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test GameModeCallPositionReady")));
+        }
+    }
 }

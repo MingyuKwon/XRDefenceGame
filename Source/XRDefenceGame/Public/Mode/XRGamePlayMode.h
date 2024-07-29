@@ -104,7 +104,7 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     FTimerHandle GameStartTimer;
 
     UFUNCTION()
-    void SetPlayerCharacterOnWantedPosition(APlayerController* NewPlayer);
+    void PlayerPositionSetReady();
 
     UFUNCTION()
     void ShouldGameStart();

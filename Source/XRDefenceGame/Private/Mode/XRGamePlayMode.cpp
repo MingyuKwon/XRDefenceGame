@@ -50,31 +50,17 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-	FTimerHandle TimerHandle;
-	FTimerDelegate TimerDelegate;
-
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor:: Red, FString::Printf(TEXT("Multi Test XRGameMode PostLogin Test")));
 		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
 	}
-
-	TimerDelegate.BindUFunction(this, FName("SetPlayerCharacterOnWantedPosition"), NewPlayer);
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 3.0f, false);
-
-
-
 }
 
-void AXRGamePlayMode::SetPlayerCharacterOnWantedPosition(APlayerController* NewPlayer)
+void AXRGamePlayMode::PlayerPositionSetReady()
 {
-	APlayerPawn* PlayerPawn = Cast<APlayerPawn>(NewPlayer->GetPawn());
-	if (PlayerPawn)
-	{
-		PlayerPawn->SetPawnTransformForGameStart();
-		currentconnectPlayer++;
-		ShouldGameStart();
-	}
+	currentconnectPlayer++;
+	ShouldGameStart();
 }
 
 void AXRGamePlayMode::ShouldGameStart()

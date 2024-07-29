@@ -76,5 +76,10 @@ public:
 	UFUNCTION()
 	inline FVector GetRightHandPosition() { SetRightHandPosition(); return RightHandPosition; }
 
+protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable)
+	void GameModeCallPositionReady();
 
 };
