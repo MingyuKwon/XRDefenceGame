@@ -109,7 +109,7 @@ void APlayerPawn::BeginPlay()
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test BeginPlay()")));
     }
 
-    SetPawnTransformForGameStart();
+    //SetPawnTransformForGameStart();
     ServerGameModeCallPositionReady();
 }
 
