@@ -76,4 +76,5 @@ public:
 	UFUNCTION()
 	inline FVector GetRightHandPosition() { SetRightHandPosition(); return RightHandPosition; }
 
+
 };

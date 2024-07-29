@@ -37,9 +37,17 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
 
-	TimerDelegate.BindUFunction(this, FName("SetPlayerCharacterOnWantedPosition"), NewPlayer);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor:: Red, FString::Printf(TEXT("Multi Test XRGameMode PostLogin Test")));
+		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
+	}
 
+	TimerDelegate.BindUFunction(this, FName("SetPlayerCharacterOnWantedPosition"), NewPlayer);
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
+
+
+
 }
 
 void AXRGamePlayMode::SetPlayerCharacterOnWantedPosition(APlayerController* NewPlayer)
