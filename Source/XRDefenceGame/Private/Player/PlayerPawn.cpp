@@ -106,7 +106,12 @@ void APlayerPawn::BeginPlay()
 
     SetPawnTransformForGameStart();
 
-    GameModeCallPositionReady();
+    FTimerHandle GameModeCallHandle;
+
+    GetWorld()->GetTimerManager().SetTimer(GameModeCallHandle, [this]() {
+
+        GameModeCallPositionReady();
+        }, 1.0f, false);
 }
 
 void APlayerPawn::GameModeCallPositionReady_Implementation()
