@@ -445,14 +445,21 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 	if (HasAuthority())
 	{
-
+		Multi_InteractableEffectStart();
 	}
 	else
 	{
-
+		Server_InteractableEffectStart();
 	}
+}
 
+void AXR_Character::Server_InteractableEffectStart_Implementation()
+{
+	Multi_InteractableEffectStart();
+}
 
+void AXR_Character::Multi_InteractableEffectStart_Implementation()
+{
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
 
 	bHightLighting = true;
@@ -460,10 +467,9 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	SetPropertyUIVisible(true);
 
 	ChangeMaterialState(EMaterialState::EMS_HandHighLight, true);
-		
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
-	CharacterMesh->SetRelativeScale3D(NewScale);
 
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount;
+	CharacterMesh->SetRelativeScale3D(NewScale);
 }
 
 
@@ -474,23 +480,30 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 	if (HasAuthority())
 	{
-
+		Multi_InteractableEffectEnd();
 	}
 	else
 	{
-
+		Server_InteractableEffectEnd();
 	}
 
+}
+
+void AXR_Character::Server_InteractableEffectEnd_Implementation()
+{
+	Multi_InteractableEffectEnd();
+}
+
+void AXR_Character::Multi_InteractableEffectEnd_Implementation()
+{
 	bHightLighting = false;
 
 	SetPropertyUIVisible(false);
 
-	ChangeMaterialState(EMaterialState::EMS_HandHighLight,false);
+	ChangeMaterialState(EMaterialState::EMS_HandHighLight, false);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount;
 	CharacterMesh->SetRelativeScale3D(NewScale);
-
-
 }
 
 void AXR_Character::InteractStart_Implementation()
@@ -507,13 +520,22 @@ void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 {
 	if (HasAuthority())
 	{
-
+		Multi_SetInteractPosition(GrabPosition);
 	}
 	else
 	{
-
+		Server_SetInteractPosition(GrabPosition);
 	}
 
+}
+
+void AXR_Character::Server_SetInteractPosition_Implementation(FVector GrabPosition)
+{
+	Multi_SetInteractPosition(GrabPosition);
+}
+
+void AXR_Character::Multi_SetInteractPosition_Implementation(FVector GrabPosition)
+{
 	SetActorLocation(GrabPosition);
 }
 
@@ -521,13 +543,21 @@ void AXR_Character::GrabStart_Implementation ()
 {
 	if (HasAuthority())
 	{
-
+		Multi_GrabStart();
 	}
 	else
 	{
-
+		Server_GrabStart();
 	}
+}
 
+void AXR_Character::Server_GrabStart_Implementation()
+{
+	Multi_GrabStart();
+}
+
+void AXR_Character::Multi_GrabStart_Implementation()
+{
 	FromPaletteToCharacter->SetVisibility(true);
 	FromCharacterToRing->SetVisibility(true);
 	bPalletteBeamAvailable = true;
@@ -543,13 +573,21 @@ void AXR_Character::GrabEnd_Implementation()
 {
 	if (HasAuthority())
 	{
-
+		Multi_GrabEnd();
 	}
 	else
 	{
-
+		Server_GrabEnd();
 	}
+}
 
+void AXR_Character::Server_GrabEnd_Implementation()
+{
+	Multi_GrabEnd();
+}
+
+void AXR_Character::Multi_GrabEnd_Implementation()
+{
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 	bPalletteBeamAvailable = false;
@@ -575,8 +613,6 @@ void AXR_Character::GrabEnd_Implementation()
 	{
 		SetInteractPosition_Implementation(PalletteBeamEndPosition);
 	}
-
-
 }
 
 void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter)
@@ -735,25 +771,6 @@ void AXR_Character::DamageTimerFunction()
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
 }
 
-void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
-{
-	if (HasAuthority())
-	{
-
-	}
-	else
-	{
-
-	}
-
-	if (bOnBoard) return;
-	if (bDisableInteractable == flag) return;
-
-	bDisableInteractable = flag;
-
-	SetTrashEffect(bDisableInteractable);
-}
-
 void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 {
 	GetCharacterMesh();
@@ -864,7 +881,30 @@ float AXR_Character::GetCost_Implementation()
 
 void AXR_Character::SetDisableHighLight_Implementation(bool bDisable)
 {
-	SetbDisableInteractable(bDisable);
+	if (HasAuthority())
+	{
+		SetbDisableInteractable(bDisable);
+	}
+	else
+	{
+		ServerSetbDisableInteractable(bDisable);
+	}
+
+}
+
+void AXR_Character::ServerSetbDisableInteractable_Implementation(bool flag)
+{
+	SetbDisableInteractable(flag);
+}
+
+void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
+{
+	if (bOnBoard) return;
+	if (bDisableInteractable == flag) return;
+
+	bDisableInteractable = flag;
+
+	SetTrashEffect(bDisableInteractable);
 }
 
 bool AXR_Character::GetDisableHighLight_Implementation()

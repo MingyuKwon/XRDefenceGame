@@ -89,14 +89,39 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void InteractableEffectStart_Implementation() override;
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectStart();
+
 	virtual void InteractableEffectEnd_Implementation() override;
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectEnd();
+
 	virtual void InteractStart_Implementation() override;
 	virtual void InteractEnd_Implementation() override;
+
 	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetInteractPosition(FVector GrabPosition);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetInteractPosition(FVector GrabPosition);
 
 	
 	virtual void GrabStart_Implementation() override;
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabStart();
+
 	virtual void GrabEnd_Implementation() override;
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabEnd();
+
 	virtual bool IsOnBoard_Implementation() override;
 
 	virtual float GetCost_Implementation() override;
@@ -148,6 +173,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	virtual void SetbDisableInteractable(bool flag);
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void ServerSetbDisableInteractable(bool flag);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetTrashEffect(bool flag, bool onlyNiagara = false);
@@ -163,6 +190,7 @@ public:
 
 
 protected:
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	UFUNCTION(BlueprintCallable)
