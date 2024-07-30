@@ -395,6 +395,8 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 }
 
 
+// 여기부터 서버 통신을 위해 따로 만들어 둬야 한다
+
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
