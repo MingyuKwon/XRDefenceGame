@@ -16,7 +16,7 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
-	if (!IsLocalController()) return;
+	if (!IsLocalPlayerController()) return;
 
 	if (!GetPlayerPawn()) return;
 
@@ -277,6 +277,11 @@ void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
 
 	if (!GetPlayerPawn()) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test UpdateCurrentRightPose")));
+	}
+
 	currentRightPose = inputPose;
 	playerPawn->PoseRightAction(currentRightPose);
 
@@ -300,6 +305,12 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 	if (!IsLocalController()) return;
 
 	if (currentRightGesture == EGesture::None) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ShouldRightGestureRelease")));
+	}
+
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
 	{
@@ -344,6 +355,11 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(3, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test UpdateCurrentRightGesture")));
+	}
 
 
 	if (inputGesture == EGesture::Scissors_Thumb )
@@ -393,6 +409,11 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(4, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractRightOverlapStart")));
+	}
+
     if (currentRightInteractInterface)
     {
         IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
@@ -411,6 +432,11 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 {
 	if (!IsLocalController()) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(5, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractRightOverlapEnd")));
+	}
+
 	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -424,6 +450,11 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 	if (!IsLocalController()) return;
 
 	if (currentRightInteractInterface != handInteractInterface) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(6, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ReleaseRightInteract")));
+	}
 
 	if (currentRightInteractInterface)
 	{
@@ -444,6 +475,11 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(7, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractLeftOverlapStart")));
+	}
+
     if (currentLeftInteractInterface)
     {
         IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
@@ -463,6 +499,11 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 {
 	if (!IsLocalController()) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(8, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractLeftOverlapEnd")));
+
+	}
 	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -477,6 +518,11 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 	if (!IsLocalController()) return;
 
 	if (currentLeftInteractInterface != handInteractInterface) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(9, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ReleaseLeftInteract")));
+	}
 
 	if (currentLeftInteractInterface)
 	{
@@ -494,6 +540,11 @@ void APlayer_Controller::LeftGrabStart()
 
 	if (bLeftGrabbing) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(10, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test LeftGrabStart")));
+	}
+
 	if (IsLeftGrabable())
 	{
 		IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
@@ -508,6 +559,11 @@ void APlayer_Controller::LeftGrabEnd()
 	if (!IsLocalController()) return;
 
 	if (!bLeftGrabbing) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(11, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test LeftGrabEnd")));
+	}
 
 	if (IsLeftGrabable())
 	{
@@ -525,6 +581,11 @@ void APlayer_Controller::RightGrabStart()
 
 	if (bRightGrabbing) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(12, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabStart")));
+	}
+
 	if (IsRightGrabable())
 	{
 		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
@@ -539,6 +600,11 @@ void APlayer_Controller::RightGrabEnd()
 	if (!IsLocalController()) return;
 
 	if (!bRightGrabbing) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(13, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabEnd")));
+	}
 
 	if (IsRightGrabable())
 	{
