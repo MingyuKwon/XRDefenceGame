@@ -449,6 +449,10 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	}
 	else
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server Call InteractableEffectStart_Implementation")));
+		}
 		Server_InteractableEffectStart();
 	}
 }
