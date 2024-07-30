@@ -108,11 +108,15 @@ void APlayerPawn::BeginPlay()
 
     if (GEngine)
     {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test BeginPlay()")));
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test BeginPlay()")));
     }
 
-    SetPawnTransformForGameStart();
-    ServerGameModeCallPositionReady();
+    if (GetController() && GetController()->IsLocalPlayerController())
+    {
+        SetPawnTransformForGameStart();
+        ServerGameModeCallPositionReady();
+    }
+
 }
 
 void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
