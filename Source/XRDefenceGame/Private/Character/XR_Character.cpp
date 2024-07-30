@@ -455,11 +455,21 @@ void AXR_Character::InteractableEffectStart_Implementation()
 
 void AXR_Character::Server_InteractableEffectStart_Implementation()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(50, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation")));
+	}
+
 	Multi_InteractableEffectStart();
 }
 
 void AXR_Character::Multi_InteractableEffectStart_Implementation()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(51, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_InteractableEffectStart_Implementation")));
+	}
+
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
 
 	bHightLighting = true;
@@ -491,11 +501,21 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 void AXR_Character::Server_InteractableEffectEnd_Implementation()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectEnd_Implementation")));
+
+	}
 	Multi_InteractableEffectEnd();
 }
 
 void AXR_Character::Multi_InteractableEffectEnd_Implementation()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(53, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_InteractableEffectEnd_Implementation")));
+
+	}
 	bHightLighting = false;
 
 	SetPropertyUIVisible(false);
@@ -531,11 +551,24 @@ void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 
 void AXR_Character::Server_SetInteractPosition_Implementation(FVector GrabPosition)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(54, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_SetInteractPosition_Implementation")));
+
+
+	}
 	Multi_SetInteractPosition(GrabPosition);
 }
 
 void AXR_Character::Multi_SetInteractPosition_Implementation(FVector GrabPosition)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(55, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_SetInteractPosition_Implementation")));
+
+
+	}
+
 	SetActorLocation(GrabPosition);
 }
 
@@ -553,11 +586,20 @@ void AXR_Character::GrabStart_Implementation ()
 
 void AXR_Character::Server_GrabStart_Implementation()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(56, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_GrabStart_Implementation")));
+	}
 	Multi_GrabStart();
 }
 
 void AXR_Character::Multi_GrabStart_Implementation()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(58, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_GrabStart_Implementation")));
+	}
+
 	FromPaletteToCharacter->SetVisibility(true);
 	FromCharacterToRing->SetVisibility(true);
 	bPalletteBeamAvailable = true;
