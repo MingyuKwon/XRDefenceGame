@@ -443,7 +443,14 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	if (!GetCharacterMesh()) return;
 	if (bHightLighting) return;
 
-	if (!HasAuthority()) return;
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
@@ -465,7 +472,14 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 	if (!GetCharacterMesh()) return;
 	if (!bHightLighting) return;
 
-	if (!HasAuthority()) return;
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 	bHightLighting = false;
 
@@ -491,14 +505,28 @@ void AXR_Character::InteractEnd_Implementation()
 
 void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 {
-	if (!HasAuthority()) return;
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 	SetActorLocation(GrabPosition);
 }
 
 void AXR_Character::GrabStart_Implementation ()
 {
-	if (!HasAuthority()) return;
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 	FromPaletteToCharacter->SetVisibility(true);
 	FromCharacterToRing->SetVisibility(true);
@@ -513,7 +541,14 @@ void AXR_Character::GrabStart_Implementation ()
 
 void AXR_Character::GrabEnd_Implementation()
 {
-	if (!HasAuthority()) return;
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
@@ -702,7 +737,14 @@ void AXR_Character::DamageTimerFunction()
 
 void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
 {
-	if (!HasAuthority()) return;
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 	if (bOnBoard) return;
 	if (bDisableInteractable == flag) return;
@@ -1131,7 +1173,14 @@ void AXR_Character::ChangeMaterialEMS_Damage()
 
 void AXR_Character::ChangeMaterialEMS_HandHighLight()
 {
-	if (!HasAuthority()) UE_LOG(LogTemp, Display, TEXT("SetTrashEffect_Implementation in Client             bDisableInteractable %s"), bDisableInteractable ? *FString("True") : *FString("False"));
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
 
 	if (bDisableInteractable)
 	{

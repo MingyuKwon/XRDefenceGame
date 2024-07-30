@@ -277,11 +277,6 @@ void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
 
 	if (!GetPlayerPawn()) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(1, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test UpdateCurrentRightPose")));
-	}
-
 	currentRightPose = inputPose;
 	playerPawn->PoseRightAction(currentRightPose);
 
