@@ -122,6 +122,7 @@ void APlayerPawn::BeginPlay()
 void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
 {
     if (HasAuthority())
+
     {
         if (GEngine)
         {
