@@ -554,8 +554,6 @@ void AMyXR_CharacterDeffenceBattle::FireBullet_Implementation(bool isDouble)
 
     if (MuzzleSocket && TempChar)
     {
-        if (!HasAuthority()) UE_LOG(LogTemp, Display, TEXT("FireBullet_Implementation in Clinet"));
-
         FTransform MuzzleTransform = MuzzleSocket->GetSocketTransform(GunMesh);
 
         if (bRangeAttack)

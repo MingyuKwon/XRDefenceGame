@@ -163,35 +163,39 @@ public:
 
 
 protected:
+	UFUNCTION(Server, Reliable)
+	void TestTick();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+
+
+	UFUNCTION(Server, Reliable)
 	virtual void Server_InteractableEffectStart();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multi_InteractableEffectStart();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION(Server, Reliable)
 	virtual void Server_InteractableEffectEnd();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION( NetMulticast, Reliable)
 	virtual void Multi_InteractableEffectEnd();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION( Server, Reliable)
 	virtual void Server_SetInteractPosition(FVector GrabPosition);
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION( NetMulticast, Reliable)
 	virtual void Multi_SetInteractPosition(FVector GrabPosition);
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION( Server, Reliable)
 	virtual void Server_GrabStart();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION( NetMulticast, Reliable)
 	virtual void Multi_GrabStart();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION( Server, Reliable)
 	virtual void Server_GrabEnd();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION( NetMulticast, Reliable)
 	virtual void Multi_GrabEnd();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION( Server, Reliable)
 	virtual void Server_SetbDisableInteractable(bool flag);
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION( NetMulticast, Reliable)
 	virtual void Multi_SetbDisableInteractable(bool flag);
 
 

@@ -149,6 +149,7 @@ void AXR_Character::BeginPlay()
 	BuffRing->Deactivate();
 	SpeedBuffNiagara->Deactivate();
 
+
 	if (SpeedBuffNiagara)
 	{
 		FNiagaraSystemInstanceControllerPtr SystemInstanceController = SpeedBuffNiagara->GetSystemInstanceController();
@@ -157,6 +158,18 @@ void AXR_Character::BeginPlay()
 			SystemInstanceController->SetForceSolo(true);
 		}
 	}
+
+	FTimerHandle TestTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TestTimerHandle, [this]() {
+		if (!HasAuthority()) {
+			if(IsLocallyControlled())
+			{
+				TestTick();
+
+			}
+		}
+			
+		}, 2.f, true);
 
 	if (HasAuthority())
 	{
@@ -168,6 +181,16 @@ void AXR_Character::BeginPlay()
 		}
 	}
 
+}
+
+void AXR_Character::TestTick_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Blue, FString::Printf(TEXT("                                                                 TestTick_Implementation")));
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("                                 %s TestTick_Implementation"), *GetName());
 }
 
 
@@ -449,10 +472,6 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	}
 	else
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server Call InteractableEffectStart_Implementation")));
-		}
 		Server_InteractableEffectStart();
 	}
 }
