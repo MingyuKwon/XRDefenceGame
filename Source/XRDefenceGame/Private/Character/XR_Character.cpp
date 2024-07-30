@@ -883,21 +883,21 @@ void AXR_Character::SetDisableHighLight_Implementation(bool bDisable)
 {
 	if (HasAuthority())
 	{
-		SetbDisableInteractable(bDisable);
+		Multi_SetbDisableInteractable(bDisable);
 	}
 	else
 	{
-		ServerSetbDisableInteractable(bDisable);
+		Server_SetbDisableInteractable(bDisable);
 	}
 
 }
 
-void AXR_Character::ServerSetbDisableInteractable_Implementation(bool flag)
+void AXR_Character::Server_SetbDisableInteractable_Implementation(bool flag)
 {
-	SetbDisableInteractable(flag);
+	Multi_SetbDisableInteractable(flag);
 }
 
-void AXR_Character::SetbDisableInteractable_Implementation(bool flag)
+void AXR_Character::Multi_SetbDisableInteractable_Implementation(bool flag)
 {
 	if (bOnBoard) return;
 	if (bDisableInteractable == flag) return;

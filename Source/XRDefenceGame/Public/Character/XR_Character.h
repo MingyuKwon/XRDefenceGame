@@ -89,46 +89,24 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void InteractableEffectStart_Implementation() override;
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_InteractableEffectStart();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_InteractableEffectStart();
 
 	virtual void InteractableEffectEnd_Implementation() override;
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_InteractableEffectEnd();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_InteractableEffectEnd();
 
 	virtual void InteractStart_Implementation() override;
 	virtual void InteractEnd_Implementation() override;
 
 	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_SetInteractPosition(FVector GrabPosition);
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_SetInteractPosition(FVector GrabPosition);
 
-	
 	virtual void GrabStart_Implementation() override;
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_GrabStart();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_GrabStart();
 
 	virtual void GrabEnd_Implementation() override;
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_GrabEnd();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_GrabEnd();
+
+	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
 
 	virtual bool IsOnBoard_Implementation() override;
-
 	virtual float GetCost_Implementation() override;
-	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
 	virtual bool GetDisableHighLight_Implementation() override;
 
-	
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
@@ -171,11 +149,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotoionWarpingTransform();
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void SetbDisableInteractable(bool flag);
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void ServerSetbDisableInteractable(bool flag);
-
 	UFUNCTION(BlueprintCallable)
 	virtual void SetTrashEffect(bool flag, bool onlyNiagara = false);
 
@@ -190,6 +163,38 @@ public:
 
 
 protected:
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectStart();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectEnd();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetInteractPosition(FVector GrabPosition);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetInteractPosition(FVector GrabPosition);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabStart();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabEnd();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetbDisableInteractable(bool flag);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetbDisableInteractable(bool flag);
+
+
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
