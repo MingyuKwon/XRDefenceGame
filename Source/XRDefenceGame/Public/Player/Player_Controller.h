@@ -153,6 +153,16 @@ private:
 	void GrabEnd(int32 NetWorkID);
 	void TryGrabEnd(int32 NetWorkID);
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetInteractPosition(int32 NetWorkID, FVector Position);
+	void SetInteractPosition(int32 NetWorkID, FVector Position);
+	void TrySetInteractPosition(int32 NetWorkID, FVector Position);
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetDisableHighLight(int32 NetWorkID, bool bDiable);
+	void SetDisableHighLight(int32 NetWorkID, bool bDiable);
+	void TrySetDisableHighLight(int32 NetWorkID, bool bDiable);
+
 
 	class APlayerPawn* playerPawn = nullptr;
 	class APlayer_State* playerState = nullptr;

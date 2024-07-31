@@ -25,7 +25,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 	{
 		if (IsRightGrabable())
 		{
-			IHandInteractInterface::Execute_SetInteractPosition(currentRightInteractInterface.GetObject(), playerPawn->GetRightHandPosition());
+			TrySetInteractPosition(currentRightInteractInterface->GetNetId_Implementation(), playerPawn->GetRightHandPosition());
 		}
 	}
 
@@ -33,7 +33,8 @@ void APlayer_Controller::Tick(float DeltaTime)
 	{
 		if (IsLeftGrabable())
 		{
-			IHandInteractInterface::Execute_SetInteractPosition(currentLeftInteractInterface.GetObject(), playerPawn->GetLeftHandPosition());
+			TrySetInteractPosition(currentLeftInteractInterface->GetNetId_Implementation(), playerPawn->GetRightHandPosition());
+
 		}
 	}
 }
@@ -413,7 +414,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
     if (handInteractInterface)
     {
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
 		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
     }
 
@@ -450,7 +451,7 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 
 	if (currentRightInteractInterface)
 	{
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), false);
 		TryInteractableEffectEnd(currentRightInteractInterface->GetNetId_Implementation());
 
 	}
@@ -481,7 +482,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     if (handInteractInterface)
     {
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
 		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
 
 	}
@@ -520,7 +521,7 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 
 	if (currentLeftInteractInterface)
 	{
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), false);
 		TryInteractableEffectEnd(currentLeftInteractInterface->GetNetId_Implementation());
 
 	}
@@ -717,6 +718,72 @@ void APlayer_Controller::TryGrabEnd(int32 NetWorkID)
 	else
 	{
 		Server_GrabEnd(NetWorkID);
+
+	}
+}
+
+void APlayer_Controller::Server_SetInteractPosition_Implementation(int32 NetWorkID, FVector Position)
+{
+	if (!HasAuthority()) return;
+
+	SetInteractPosition(NetWorkID, Position);
+
+}
+
+void APlayer_Controller::SetInteractPosition(int32 NetWorkID, FVector Position)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->SetInteractPosition_Implementation(Position);
+		}
+	}
+}
+
+void APlayer_Controller::TrySetInteractPosition(int32 NetWorkID, FVector Position)
+{
+	if (HasAuthority())
+	{
+		SetInteractPosition(NetWorkID, Position);
+	}
+	else
+	{
+		Server_SetInteractPosition(NetWorkID, Position);
+
+	}
+}
+
+void APlayer_Controller::Server_SetDisableHighLight(int32 NetWorkID, bool bDiable)
+{
+	if (!HasAuthority()) return;
+
+	SetDisableHighLight(NetWorkID, bDiable);
+
+}
+
+void APlayer_Controller::SetDisableHighLight(int32 NetWorkID, bool bDiable)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->SetDisableHighLight_Implementation(bDiable);
+		}
+	}
+}
+
+void APlayer_Controller::TrySetDisableHighLight(int32 NetWorkID, bool bDiable)
+{
+	if (HasAuthority())
+	{
+		SetDisableHighLight(NetWorkID, bDiable);
+	}
+	else
+	{
+		Server_SetDisableHighLight(NetWorkID, bDiable);
 
 	}
 }
