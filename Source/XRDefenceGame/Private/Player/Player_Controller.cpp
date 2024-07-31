@@ -661,6 +661,11 @@ void APlayer_Controller::Server_GrabStart_Implementation(int32 NetWorkID)
 {
 	if (!HasAuthority()) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(201, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 3")));
+	}
+
 	GrabStart(NetWorkID);
 
 }
@@ -679,12 +684,21 @@ void APlayer_Controller::GrabStart(int32 NetWorkID)
 
 void APlayer_Controller::TryGrabStart(int32 NetWorkID)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(200, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 1")));
+	}
 	if (HasAuthority())
 	{
 		GrabStart(NetWorkID);
 	}
 	else
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(201, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 2")));
+		}
+
 		Server_GrabStart(NetWorkID);
 
 	}
