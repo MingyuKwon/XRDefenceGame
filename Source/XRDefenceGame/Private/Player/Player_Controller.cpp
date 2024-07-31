@@ -420,10 +420,19 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-        //IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+        
+		if (HasAuthority())
+		{
+			IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
 
-		AXR_Character* handInteractInterface_Character = Cast<AXR_Character>(handInteractInterface.GetObject());
-		handInteractInterface_Character->Server_InteractableEffectStart();
+		}
+		else
+		{
+			AXR_Character* handInteractInterface_Character = Cast<AXR_Character>(handInteractInterface.GetObject());
+			handInteractInterface_Character->Server_InteractableEffectStart();
+
+		}
+
 
     }
 
