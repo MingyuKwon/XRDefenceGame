@@ -21,6 +21,12 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (!GetPlayerPawn()) return;
 
+
+	if (!HasAuthority())
+	{
+		Server_InteractableEffectStart(-1);
+	}
+
 	if (bRightGrabbing)
 	{
 		if (IsRightGrabable())
