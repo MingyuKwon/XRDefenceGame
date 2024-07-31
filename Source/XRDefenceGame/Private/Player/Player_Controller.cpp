@@ -755,7 +755,7 @@ void APlayer_Controller::TrySetInteractPosition(int32 NetWorkID, FVector Positio
 	}
 }
 
-void APlayer_Controller::Server_SetDisableHighLight(int32 NetWorkID, bool bDiable)
+void APlayer_Controller::Server_SetDisableHighLight_Implementation(int32 NetWorkID, bool bDiable)
 {
 	if (!HasAuthority()) return;
 
