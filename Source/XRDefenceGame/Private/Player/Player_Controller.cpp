@@ -22,6 +22,11 @@ void APlayer_Controller::Tick(float DeltaTime)
 	if (!GetPlayerPawn()) return;
 
 
+	if (!HasAuthority())
+	{
+		Server_InteractableEffectStart(-1);
+	}
+
 	if (bRightGrabbing)
 	{
 		if (IsRightGrabable())
@@ -612,6 +617,8 @@ void APlayer_Controller::RightGrabEnd()
 
 void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 NetWorkID)
 {
+	if (!HasAuthority()) return;
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 1")));
@@ -621,7 +628,7 @@ void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 Net
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 2")));
+			GEngine->AddOnScreenDebugMessage(101, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 2")));
 		}
 
 		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
