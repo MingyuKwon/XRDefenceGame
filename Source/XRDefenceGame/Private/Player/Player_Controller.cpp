@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Mode/XRGamePlayMode.h"
 #include "Net/UnrealNetwork.h"
+#include "Character/XR_Character.h"
 
 APlayer_Controller::APlayer_Controller()
 {
@@ -16,13 +17,15 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
+	if (!IsLocalPlayerController()) return;
+
 	if (!GetPlayerPawn()) return;
 
 	if (bRightGrabbing)
 	{
 		if (IsRightGrabable())
 		{
-			IHandInteractInterface::Execute_SetInteractPosition(currentRightInteractInterface.GetObject(), playerPawn->GetRightHandPosition());
+			TrySetInteractPosition(currentRightInteractInterface->GetNetId_Implementation(), playerPawn->GetRightHandPosition());
 		}
 	}
 
@@ -30,7 +33,8 @@ void APlayer_Controller::Tick(float DeltaTime)
 	{
 		if (IsLeftGrabable())
 		{
-			IHandInteractInterface::Execute_SetInteractPosition(currentLeftInteractInterface.GetObject(), playerPawn->GetLeftHandPosition());
+			TrySetInteractPosition(currentLeftInteractInterface->GetNetId_Implementation(), playerPawn->GetRightHandPosition());
+
 		}
 	}
 }
@@ -112,34 +116,22 @@ void APlayer_Controller::GestureCoolTimeTick()
 	UpdateUserHandUI();
 }
 
-void APlayer_Controller::UpdateUserHandUI()
+void APlayer_Controller::UpdateUserHandUI_Implementation()
 {
 	if (!GetPlayerPawn()) return;
 	if (!GetPlayer_State()) return;
 
-	playerPawn->SetUIGoldAmount(playerState->GetGold(), playerState->GetMaxGold());
-
-	playerPawn->SetUIPurpleHealth(purpleNexusHealth);
-	playerPawn->SetUIOrnageHealth(orangeNexusHealth);
-	playerPawn->SetUBlueHealth(blueNexusHealth);
-	playerPawn->SetUIHealth(purpleNexusHealth + orangeNexusHealth + blueNexusHealth);
-
-	playerPawn->SetUITime(curerntLeftTime);
-
-	playerPawn->SetUIGestureCoolTime(1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit);
-	
+	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
+		curerntLeftTime, 
+		purpleNexusHealth + orangeNexusHealth + blueNexusHealth, 
+		orangeNexusHealth, blueNexusHealth, purpleNexusHealth,
+		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
+		);
 }
 
 void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
 {
-	if (HasAuthority())
-	{
-		controllerObjectType = objectType;
-	}
-	else
-	{
-		ServerSetControllerObjectType(objectType);
-	}
+	controllerObjectType = objectType;
 }
 
 void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
@@ -179,14 +171,15 @@ void APlayer_Controller::BeginPlay()
 
 	if (HasAuthority())
 	{
-		SetControllerObjectType(EObjectType::EOT_Deffence);
+		if (IsLocalController())
+		{
+			SetControllerObjectType(EObjectType::EOT_Deffence);
+		}
+		else
+		{
+			SetControllerObjectType(EObjectType::EOT_Offence);
+		}
 	}
-	else
-	{
-		SetControllerObjectType(EObjectType::EOT_Offence);
-	}
-
-
 }
 
 void APlayer_Controller::OnGameStart()
@@ -258,16 +251,11 @@ void APlayer_Controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 }
 
-void APlayer_Controller::ServerSetControllerObjectType_Implementation(EObjectType NewObjectType)
-{
-	FString name = GetName();
-	controllerObjectType = NewObjectType;
-
-}
 
 
 void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 {
+	if (!IsLocalController()) return;
 	if (!GetPlayerPawn()) return;
 
 	currentLeftPose = inputPose;
@@ -287,6 +275,8 @@ void APlayer_Controller::UpdateCurrentLeftPose(Pose inputPose)
 
 void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
 {
+	if (!IsLocalController()) return;
+
 	if (!GetPlayerPawn()) return;
 
 	currentRightPose = inputPose;
@@ -309,7 +299,15 @@ void APlayer_Controller::UpdateCurrentRightPose(Pose inputPose)
 
 void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 {
+	if (!IsLocalController()) return;
+
 	if (currentRightGesture == EGesture::None) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ShouldRightGestureRelease")));
+	}
+
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
 	{
@@ -348,10 +346,15 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 
 }
 
+
 void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 {
+	if (!IsLocalController()) return;
+
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
+
+
 
 
 	if (inputGesture == EGesture::Scissors_Thumb )
@@ -392,23 +395,27 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 }
 
 
+/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (bRightGrabbing) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
 
+
     if (currentRightInteractInterface)
     {
-        IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
+		TryInteractableEffectEnd(currentRightInteractInterface->GetNetId_Implementation());
     }
 
     if (handInteractInterface)
     {
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-
-        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
     }
 
     currentRightInteractInterface = handInteractInterface;
@@ -416,6 +423,13 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
 void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(5, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractRightOverlapEnd")));
+	}
+
 	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -426,12 +440,20 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 
 void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (currentRightInteractInterface != handInteractInterface) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(6, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ReleaseRightInteract")));
+	}
 
 	if (currentRightInteractInterface)
 	{
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
-		IHandInteractInterface::Execute_InteractableEffectEnd(currentRightInteractInterface.GetObject());
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), false);
+		TryInteractableEffectEnd(currentRightInteractInterface->GetNetId_Implementation());
+
 	}
 
 	currentRightInteractInterface = nullptr;
@@ -440,28 +462,43 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 
 void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (bLeftGrabbing) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(7, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractLeftOverlapStart")));
+	}
+
     if (currentLeftInteractInterface)
     {
-        IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
+		TryInteractableEffectEnd(currentLeftInteractInterface->GetNetId_Implementation());
+
     }
 
     if (handInteractInterface)
     {
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
 
-        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
-    }
+	}
 
     currentLeftInteractInterface = handInteractInterface;
 }
 
 void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(8, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractLeftOverlapEnd")));
+
+	}
 	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -473,12 +510,20 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 
 void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
+	if (!IsLocalController()) return;
+
 	if (currentLeftInteractInterface != handInteractInterface) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(9, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ReleaseLeftInteract")));
+	}
 
 	if (currentLeftInteractInterface)
 	{
-		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), false);
-		IHandInteractInterface::Execute_InteractableEffectEnd(currentLeftInteractInterface.GetObject());
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), false);
+		TryInteractableEffectEnd(currentLeftInteractInterface->GetNetId_Implementation());
+
 	}
 
 	currentLeftInteractInterface = nullptr;
@@ -487,11 +532,18 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 
 void APlayer_Controller::LeftGrabStart()
 {
+	if (!IsLocalController()) return;
+
 	if (bLeftGrabbing) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(10, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test LeftGrabStart")));
+	}
 
 	if (IsLeftGrabable())
 	{
-		IHandInteractInterface::Execute_GrabStart(currentLeftInteractInterface.GetObject());
+		TryGrabStart(currentLeftInteractInterface->GetNetId_Implementation());
 	}
 
 	bLeftGrabbing = true;
@@ -500,11 +552,18 @@ void APlayer_Controller::LeftGrabStart()
 
 void APlayer_Controller::LeftGrabEnd()
 {
+	if (!IsLocalController()) return;
+
 	if (!bLeftGrabbing) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(11, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test LeftGrabEnd")));
+	}
 
 	if (IsLeftGrabable())
 	{
-		IHandInteractInterface::Execute_GrabEnd(currentLeftInteractInterface.GetObject());
+		TryGrabEnd(currentLeftInteractInterface->GetNetId_Implementation());
 		ReleaseLeftInteract(currentLeftInteractInterface);
 	}
 
@@ -514,13 +573,19 @@ void APlayer_Controller::LeftGrabEnd()
 
 void APlayer_Controller::RightGrabStart()
 {
+	if (!IsLocalController()) return;
+
 	if (bRightGrabbing) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabStart")));
+	}
 
 	if (IsRightGrabable())
 	{
-		IHandInteractInterface::Execute_GrabStart(currentRightInteractInterface.GetObject());
+		TryGrabStart(currentRightInteractInterface->GetNetId_Implementation());
 	}
-
 
 	bRightGrabbing = true;
 
@@ -528,15 +593,247 @@ void APlayer_Controller::RightGrabStart()
 
 void APlayer_Controller::RightGrabEnd()
 {
+	if (!IsLocalController()) return;
+
 	if (!bRightGrabbing) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(13, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabEnd")));
+	}
 
 	if (IsRightGrabable())
 	{
-		IHandInteractInterface::Execute_GrabEnd(currentRightInteractInterface.GetObject());
+		TryGrabEnd(currentRightInteractInterface->GetNetId_Implementation());
 		ReleaseRightInteract(currentRightInteractInterface);
+
+
 	}
 
 	bRightGrabbing = false;
 
+}
+
+void APlayer_Controller::TryInteractableEffectStart(int32 NetWorkID)
+{
+	if (HasAuthority())
+	{
+		InteractableEffectStart(NetWorkID);
+	}
+	else
+	{
+		Server_InteractableEffectStart(NetWorkID);
+
+	}
+}
+
+void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 NetWorkID)
+{
+	if (!HasAuthority()) return;
+
+	InteractableEffectStart(NetWorkID);
+}
+
+void APlayer_Controller::InteractableEffectStart(int32 NetWorkID)
+{
+	if (XRGamePlayMode)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(101, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 2")));
+		}
+
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(102, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 3")));
+			}
+			Target_inServer->InteractableEffectStart_Implementation();
+		}
+	}
+}
+
+
+
+void APlayer_Controller::Server_GrabStart_Implementation(int32 NetWorkID)
+{
+	if (!HasAuthority()) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 3")));
+	}
+
+	GrabStart(NetWorkID);
+
+}
+
+void APlayer_Controller::GrabStart(int32 NetWorkID)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->GrabStart_Implementation();
+		}
+	}
+}
+
+void APlayer_Controller::TryGrabStart(int32 NetWorkID)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 1")));
+	}
+	if (HasAuthority())
+	{
+		GrabStart(NetWorkID);
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 2")));
+		}
+
+		Server_GrabStart(NetWorkID);
+
+	}
+}
+
+void APlayer_Controller::Server_GrabEnd_Implementation(int32 NetWorkID)
+{
+	if (!HasAuthority()) return;
+
+	GrabEnd(NetWorkID);
+}
+
+void APlayer_Controller::GrabEnd(int32 NetWorkID)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->GrabEnd_Implementation();
+		}
+	}
+}
+
+void APlayer_Controller::TryGrabEnd(int32 NetWorkID)
+{
+	if (HasAuthority())
+	{
+		GrabEnd(NetWorkID);
+	}
+	else
+	{
+		Server_GrabEnd(NetWorkID);
+
+	}
+}
+
+void APlayer_Controller::Server_SetInteractPosition_Implementation(int32 NetWorkID, FVector Position)
+{
+	if (!HasAuthority()) return;
+
+	SetInteractPosition(NetWorkID, Position);
+
+}
+
+void APlayer_Controller::SetInteractPosition(int32 NetWorkID, FVector Position)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->SetInteractPosition_Implementation(Position);
+		}
+	}
+}
+
+void APlayer_Controller::TrySetInteractPosition(int32 NetWorkID, FVector Position)
+{
+	if (HasAuthority())
+	{
+		SetInteractPosition(NetWorkID, Position);
+	}
+	else
+	{
+		Server_SetInteractPosition(NetWorkID, Position);
+
+	}
+}
+
+void APlayer_Controller::Server_SetDisableHighLight_Implementation(int32 NetWorkID, bool bDiable)
+{
+	if (!HasAuthority()) return;
+
+	SetDisableHighLight(NetWorkID, bDiable);
+
+}
+
+void APlayer_Controller::SetDisableHighLight(int32 NetWorkID, bool bDiable)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->SetDisableHighLight_Implementation(bDiable);
+		}
+	}
+}
+
+void APlayer_Controller::TrySetDisableHighLight(int32 NetWorkID, bool bDiable)
+{
+	if (HasAuthority())
+	{
+		SetDisableHighLight(NetWorkID, bDiable);
+	}
+	else
+	{
+		Server_SetDisableHighLight(NetWorkID, bDiable);
+
+	}
+}
+
+
+void APlayer_Controller::Server_InteractableEffecEnd_Implementation(int32 NetWorkID)
+{
+	if (!HasAuthority()) return;
+
+	InteractableEffectEnd(NetWorkID);
+
+}
+
+void APlayer_Controller::InteractableEffectEnd(int32 NetWorkID)
+{
+	if (XRGamePlayMode)
+	{
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			Target_inServer->InteractableEffectEnd_Implementation();
+		}
+	}
+}
+
+
+void APlayer_Controller::TryInteractableEffectEnd(int32 NetWorkID)
+{
+	if (HasAuthority())
+	{
+		InteractableEffectEnd(NetWorkID);
+	}
+	else
+	{
+		Server_InteractableEffecEnd(NetWorkID);
+
+	}
 }
 

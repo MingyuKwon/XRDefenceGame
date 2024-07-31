@@ -6,6 +6,9 @@
 #include "Character/Offence/MyXR_CharacterOffenceBattle.h"
 #include "Character/Deffence/MyXR_CharacterDeffenceBattle.h"
 #include "Interface/HandInteractInterface.h"
+#include "Managet/XRDefenceGameInstance.h"
+#include "Mode/XRGamePlayMode.h"
+#include "Kismet/GameplayStatics.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -14,15 +17,23 @@ APlayerPawn::APlayerPawn()
 
 }
 
-void APlayerPawn::SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation)
+void APlayerPawn::SetPawnTransformForGameStart()
 {
+    if (GetController() == nullptr) return;
 
-    // Location Relative Set
+    if (!(GetController()->IsLocalController())) return;
+
+    UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
+    if (GI == nullptr) return;
+
+    FVector MapSpawnLocation = GI->PlayerGamePlayLocation;
+    FRotator MapSpawnRotation = GI->PlayerGamePlayRotation;
+
+
 	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;
 	FVector ShouldMovetoLocation = GetActorLocation() + ReverseLocation;
 	SetActorLocation(ShouldMovetoLocation);
 
-    // Rotation Relative Set
     FRotator ReverseRotation = MapSpawnRotation * -1;
     FVector RotatedVector = ReverseRotation.RotateVector(GetActorLocation());
     SetActorLocation(RotatedVector);
@@ -76,3 +87,53 @@ TArray<AXR_Character*> APlayerPawn::GetRangeCharacters(FVector impactPoint, floa
 
 }
 
+void APlayerPawn::UpdateUserLeftHandUI_Implementation(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent)
+{
+    SetUIGoldAmount(GoldAmount, MaxGoldAmount);
+
+    SetUIPurpleHealth(PurpleHealthAmount);
+    SetUIOrnageHealth(OrangeHealthAmount);
+    SetUBlueHealth(BlueHealthAmount);
+    SetUIHealth(TotalHealthAmount);
+
+    SetUITime(TimeSecond);
+
+    SetUIGestureCoolTime(GesturePercent);
+
+}
+
+void APlayerPawn::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test BeginPlay()")));
+    }
+
+    if (GetController() && GetController()->IsLocalPlayerController())
+    {
+        SetPawnTransformForGameStart();
+        ServerGameModeCallPositionReady();
+    }
+
+}
+
+void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
+{
+    if (HasAuthority())
+    {
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test GameModeCallPositionReady")));
+        }
+
+        AXRGamePlayMode* GameMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
+        if (GameMode)
+        {
+            GameMode->PlayerPositionSetReady();
+        }
+
+
+    }
+}

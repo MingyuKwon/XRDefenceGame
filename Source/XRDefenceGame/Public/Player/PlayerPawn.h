@@ -29,7 +29,7 @@ public:
 	void ReleaseGestureRight(EGesture currentGesture);
 
 	UFUNCTION(BlueprintCallable)
-	void SetPawnTransformForGameStart(FVector MapSpawnLocation, FRotator MapSpawnRotation);
+	void SetPawnTransformForGameStart();
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AXR_Character*> GetRangeCharacters(FVector impactPoint, float radius, EObjectType objectype);
@@ -45,6 +45,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetRightHandPosition();
 
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount);
@@ -72,5 +75,12 @@ public:
 	inline FVector GetLeftHandPosition() { SetLeftHandPosition(); return LeftHandPosition; }
 	UFUNCTION()
 	inline FVector GetRightHandPosition() { SetRightHandPosition(); return RightHandPosition; }
+
+protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerGameModeCallPositionReady();
+
 
 };

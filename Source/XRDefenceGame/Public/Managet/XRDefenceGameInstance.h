@@ -21,4 +21,11 @@ public:
 
 	class UAudioSubsystem* GetAudioManagerSubsystem();
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
+	FVector PlayerGamePlayLocation;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
+	FRotator PlayerGamePlayRotation;
+
+
 };

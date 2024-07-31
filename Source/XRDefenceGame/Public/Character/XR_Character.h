@@ -86,24 +86,63 @@ class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractI
 public:
 	AXR_Character();
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Network")
+	int32 ActorNetID = -1;
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void InteractableEffectStart_Implementation() override;
+
 	virtual void InteractableEffectEnd_Implementation() override;
+
 	virtual void InteractStart_Implementation() override;
 	virtual void InteractEnd_Implementation() override;
+
 	virtual void SetInteractPosition_Implementation(FVector GrabPosition) override;
 
-	
 	virtual void GrabStart_Implementation() override;
-	virtual void GrabEnd_Implementation() override;
-	virtual bool IsOnBoard_Implementation() override;
 
-	virtual float GetCost_Implementation() override;
+	virtual void GrabEnd_Implementation() override;
+
 	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
+
+	virtual bool IsOnBoard_Implementation() override;
+	virtual float GetCost_Implementation() override;
+	virtual int32 GetNetId_Implementation() override;
 	virtual bool GetDisableHighLight_Implementation() override;
 
-	
+
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectStart();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectEnd();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetInteractPosition(FVector GrabPosition);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetInteractPosition(FVector GrabPosition);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabStart();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabEnd();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetbDisableInteractable(bool flag);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetbDisableInteractable(bool flag);
+
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
@@ -147,9 +186,6 @@ public:
 	void UpdateMotoionWarpingTransform();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void SetbDisableInteractable(bool flag);
-
-	UFUNCTION(BlueprintCallable)
 	virtual void SetTrashEffect(bool flag, bool onlyNiagara = false);
 
 	UFUNCTION(BlueprintCallable)
@@ -163,6 +199,7 @@ public:
 
 
 protected:
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	UFUNCTION(BlueprintCallable)
@@ -397,7 +434,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HighLight Parameter")
 	UMaterialInstance* DisableHighlightMaterial;
 
-	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter")
+	UPROPERTY(VisibleAnywhere, Category = "Debug Parameter", Replicated)
 	bool bDisableInteractable = false;
 
 
@@ -490,12 +527,13 @@ protected:
 	UPROPERTY(Replicated)
 	bool bBehaviorAvailable = false;
 
+	UPROPERTY(Replicated)
 	bool bNowStun = false;
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void MoveSpeedUp(bool bEffectOn);
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void MoveSpeedDown(bool bEffectOn);
 
 private:

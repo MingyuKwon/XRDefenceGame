@@ -23,6 +23,7 @@
 #include "Managet/XRDefenceGameInstance.h"
 #include "Battle/CostShowChip.h"
 #include "Net/UnrealNetwork.h"
+#include "NiagaraSystemInstanceController.h"
 
 AXR_Character::AXR_Character()
 {
@@ -148,6 +149,42 @@ void AXR_Character::BeginPlay()
 	BuffRing->Deactivate();
 	SpeedBuffNiagara->Deactivate();
 
+	if (HealRing)
+	{
+		FNiagaraSystemInstanceControllerPtr SystemInstanceController = HealRing->GetSystemInstanceController();
+		if (SystemInstanceController)
+		{
+			SystemInstanceController->SetForceSolo(true);
+		}
+	}
+
+	if (BuffRing)
+	{
+		FNiagaraSystemInstanceControllerPtr SystemInstanceController = BuffRing->GetSystemInstanceController();
+		if (SystemInstanceController)
+		{
+			SystemInstanceController->SetForceSolo(true);
+		}
+	}
+
+	if (SpeedBuffNiagara)
+	{
+		FNiagaraSystemInstanceControllerPtr SystemInstanceController = SpeedBuffNiagara->GetSystemInstanceController();
+		if (SystemInstanceController)
+		{
+			SystemInstanceController->SetForceSolo(true);
+		}
+	}
+
+
+	if (HasAuthority())
+	{
+		ActorNetID = GetUniqueID();
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->AddActorToMap(ActorNetID, this);
+		}
+	}
 
 	if (HasAuthority())
 	{
@@ -160,6 +197,7 @@ void AXR_Character::BeginPlay()
 	}
 
 }
+
 
 void AXR_Character::PossessedBy(AController* NewController)
 {
@@ -397,6 +435,8 @@ void AXR_Character::SetRingProperty()
 
 }
 
+
+
 FVector AXR_Character::GetRingPosition()
 {
 	 return FloorRingMesh->GetComponentLocation(); 
@@ -431,6 +471,37 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	if (!GetCharacterMesh()) return;
 	if (bHightLighting) return;
 
+	if (HasAuthority())
+	{
+		Multi_InteractableEffectStart();
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server Call InteractableEffectStart_Implementation")));
+		}
+		Server_InteractableEffectStart();
+	}
+}
+
+void AXR_Character::Server_InteractableEffectStart_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(50, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation")));
+	}
+
+	Multi_InteractableEffectStart();
+}
+
+void AXR_Character::Multi_InteractableEffectStart_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(51, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_InteractableEffectStart_Implementation")));
+	}
+
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
 
 	bHightLighting = true;
@@ -438,10 +509,9 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	SetPropertyUIVisible(true);
 
 	ChangeMaterialState(EMaterialState::EMS_HandHighLight, true);
-		
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount; 
-	CharacterMesh->SetRelativeScale3D(NewScale);
 
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() * rescaleAmount;
+	CharacterMesh->SetRelativeScale3D(NewScale);
 }
 
 
@@ -450,16 +520,42 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 	if (!GetCharacterMesh()) return;
 	if (!bHightLighting) return;
 
+	if (HasAuthority())
+	{
+		Multi_InteractableEffectEnd();
+	}
+	else
+	{
+		Server_InteractableEffectEnd();
+	}
+
+}
+
+void AXR_Character::Server_InteractableEffectEnd_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectEnd_Implementation")));
+
+	}
+	Multi_InteractableEffectEnd();
+}
+
+void AXR_Character::Multi_InteractableEffectEnd_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(53, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_InteractableEffectEnd_Implementation")));
+
+	}
 	bHightLighting = false;
 
 	SetPropertyUIVisible(false);
 
-	ChangeMaterialState(EMaterialState::EMS_HandHighLight,false);
+	ChangeMaterialState(EMaterialState::EMS_HandHighLight, false);
 
-	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount; 
+	FVector NewScale = CharacterMesh->GetRelativeScale3D() / rescaleAmount;
 	CharacterMesh->SetRelativeScale3D(NewScale);
-
-
 }
 
 void AXR_Character::InteractStart_Implementation()
@@ -474,11 +570,75 @@ void AXR_Character::InteractEnd_Implementation()
 
 void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 {
+	if (HasAuthority())
+	{
+		Multi_SetInteractPosition(GrabPosition);
+	}
+	else
+	{
+		Server_SetInteractPosition(GrabPosition);
+	}
+
+}
+
+void AXR_Character::Server_SetInteractPosition_Implementation(FVector GrabPosition)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(54, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_SetInteractPosition_Implementation")));
+
+
+	}
+	Multi_SetInteractPosition(GrabPosition);
+}
+
+void AXR_Character::Multi_SetInteractPosition_Implementation(FVector GrabPosition)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(55, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_SetInteractPosition_Implementation")));
+
+
+	}
+
 	SetActorLocation(GrabPosition);
 }
 
-void AXR_Character::GrabStart_Implementation()
+void AXR_Character::GrabStart_Implementation ()
 {
+	if (HasAuthority())
+	{
+		SetReplicateMovement(false);
+		Multi_GrabStart();
+	}
+	else
+	{
+		Server_GrabStart();
+	}
+}
+
+void AXR_Character::Server_GrabStart_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(56, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_GrabStart_Implementation")));
+	}
+
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
+	}
+
+	Multi_GrabStart();
+}
+
+void AXR_Character::Multi_GrabStart_Implementation()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(58, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_GrabStart_Implementation")));
+	}
+
 	FromPaletteToCharacter->SetVisibility(true);
 	FromCharacterToRing->SetVisibility(true);
 	bPalletteBeamAvailable = true;
@@ -486,17 +646,40 @@ void AXR_Character::GrabStart_Implementation()
 	PalletteBeamEndPosition = GetActorLocation();
 
 	FromPaletteToCharacter->SetVectorParameter("User.BeamEnd", PalletteBeamEndPosition - FVector(0.0f, 0.0f, 3.f));
-	XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
+
 
 }
 
 void AXR_Character::GrabEnd_Implementation()
 {
+	if (HasAuthority())
+	{
+
+		SetReplicateMovement(true);
+		Multi_GrabEnd();
+	}
+	else
+	{
+		Server_GrabEnd();
+	}
+}
+
+void AXR_Character::Server_GrabEnd_Implementation()
+{
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->TriggerOnObjectGrabEvent(false, ObjectType);
+
+	}
+
+	Multi_GrabEnd();
+}
+
+void AXR_Character::Multi_GrabEnd_Implementation()
+{
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 	bPalletteBeamAvailable = false;
-
-	XRGamePlayMode->TriggerOnObjectGrabEvent(false, ObjectType);
 
 	if (bOnBoard) return;
 
@@ -517,8 +700,6 @@ void AXR_Character::GrabEnd_Implementation()
 	{
 		SetInteractPosition_Implementation(PalletteBeamEndPosition);
 	}
-
-
 }
 
 void AXR_Character::SetPalletteCharacterOnBoard(bool isOnBoard, AXR_Character* beneathBuffableCharacter)
@@ -618,15 +799,23 @@ void AXR_Character::Death(bool bDieInTrash)
 		CharacterMovementComponent->MaxWalkSpeed = 0.f;
 		FloorRingMesh->SetbTickReject(true);
 
-		if (bDieInTrash)
-		{
-			XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
-		}
-		else
-		{
-			XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
 
+		ActorNetID = GetUniqueID();
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->RemoveActorFromMap(ActorNetID);
+
+			if (bDieInTrash)
+			{
+				XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
+			}
+			else
+			{
+				XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+			}
 		}
+
+		
 
 		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
@@ -644,7 +833,11 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, bOnBoard);
 	DOREPLIFETIME(AXR_Character, TargetCharacter);
 	DOREPLIFETIME(AXR_Character, TargetCharacter2);
+	DOREPLIFETIME(AXR_Character, bNowStun);
+	DOREPLIFETIME(AXR_Character, bDisableInteractable);
+	DOREPLIFETIME(AXR_Character, ActorNetID);
 }
+
 
 
 void AXR_Character::DestroyMyself()
@@ -674,18 +867,10 @@ void AXR_Character::DamageTimerFunction()
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
 }
 
-void AXR_Character::SetbDisableInteractable(bool flag)
-{
-	if (bOnBoard) return;
-	if (bDisableInteractable == flag) return;
-
-	bDisableInteractable = flag;
-
-	SetTrashEffect(bDisableInteractable);
-}
-
 void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 {
+	GetCharacterMesh();
+
 	if (flag)
 	{
 		FromCharacterToRing->SetVariableLinearColor(FName("LineColor"), FLinearColor::Red);
@@ -706,6 +891,7 @@ void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
 
 		if (HighlightMaterial && CharacterMesh->GetMaterial(0) == DisableHighlightMaterial)
 		{
+
 			if (!onlyNiagara)
 			{
 				CharacterMesh->SetMaterial(0, HighlightMaterial);
@@ -789,9 +975,37 @@ float AXR_Character::GetCost_Implementation()
 	return CharacterProperty.Cost;
 }
 
+int32 AXR_Character::GetNetId_Implementation()
+{
+	return ActorNetID;
+}
+
 void AXR_Character::SetDisableHighLight_Implementation(bool bDisable)
 {
-	SetbDisableInteractable(bDisable);
+	if (HasAuthority())
+	{
+		Multi_SetbDisableInteractable(bDisable);
+	}
+	else
+	{
+		Server_SetbDisableInteractable(bDisable);
+	}
+
+}
+
+void AXR_Character::Server_SetbDisableInteractable_Implementation(bool flag)
+{
+	Multi_SetbDisableInteractable(flag);
+}
+
+void AXR_Character::Multi_SetbDisableInteractable_Implementation(bool flag)
+{
+	if (bOnBoard) return;
+	if (bDisableInteractable == flag) return;
+
+	bDisableInteractable = flag;
+
+	SetTrashEffect(bDisableInteractable);
 }
 
 bool AXR_Character::GetDisableHighLight_Implementation()
@@ -942,7 +1156,7 @@ void AXR_Character::TriggerMoveFast()
 		, 2.0f, false);
 }
 
-void AXR_Character::MoveSpeedUp(bool bEffectOn)
+void AXR_Character::MoveSpeedUp_Implementation(bool bEffectOn)
 {
 	if (bEffectOn)
 	{
@@ -954,7 +1168,7 @@ void AXR_Character::MoveSpeedUp(bool bEffectOn)
 	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
 }
 
-void AXR_Character::MoveSpeedDown(bool bEffectOn)
+void AXR_Character::MoveSpeedDown_Implementation(bool bEffectOn)
 {
 	if (bEffectOn)
 	{
@@ -1100,8 +1314,18 @@ void AXR_Character::ChangeMaterialEMS_Damage()
 
 void AXR_Character::ChangeMaterialEMS_HandHighLight()
 {
+	if (HasAuthority())
+	{
+
+	}
+	else
+	{
+
+	}
+
 	if (bDisableInteractable)
 	{
+
 		if (DisableHighlightMaterial)
 		{
 			CharacterMesh->SetMaterial(0, DisableHighlightMaterial);

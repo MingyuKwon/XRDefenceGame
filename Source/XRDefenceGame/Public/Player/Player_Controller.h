@@ -50,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void UpdateUserHandUI();
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -58,6 +58,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetControllerObjectType(EObjectType objectType);
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
 	EObjectType controllerObjectType;
@@ -85,8 +86,6 @@ public:
 	// Server
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerSetControllerObjectType(EObjectType NewObjectType);
 
 
 private:
@@ -134,6 +133,37 @@ private:
 	void LeftGrabEnd();
 	void RightGrabEnd();
 
+	UFUNCTION(Server, Reliable)
+	void Server_InteractableEffectStart(int32 NetWorkID);
+	void InteractableEffectStart(int32 NetWorkID);
+	void TryInteractableEffectStart(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_InteractableEffecEnd(int32 NetWorkID);
+	void InteractableEffectEnd(int32 NetWorkID);
+	void TryInteractableEffectEnd(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_GrabStart(int32 NetWorkID);
+	void GrabStart(int32 NetWorkID);
+	void TryGrabStart(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_GrabEnd(int32 NetWorkID);
+	void GrabEnd(int32 NetWorkID);
+	void TryGrabEnd(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetInteractPosition(int32 NetWorkID, FVector Position);
+	void SetInteractPosition(int32 NetWorkID, FVector Position);
+	void TrySetInteractPosition(int32 NetWorkID, FVector Position);
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetDisableHighLight(int32 NetWorkID, bool bDiable);
+	void SetDisableHighLight(int32 NetWorkID, bool bDiable);
+	void TrySetDisableHighLight(int32 NetWorkID, bool bDiable);
+
+
 	class APlayerPawn* playerPawn = nullptr;
 	class APlayer_State* playerState = nullptr;
 
@@ -163,8 +193,8 @@ private:
 
 
 	FTimerHandle GestureCoolTimeTimeHandle;
-	int32 GestureCoolTime = 10;
-	int32 GestureCoolTimeUnit = 10;
+	int32 GestureCoolTime = 5;
+	int32 GestureCoolTimeUnit = 5;
 
 public:
 

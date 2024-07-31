@@ -48,6 +48,10 @@
 		{
 			"Name": "OnlineSubsystemSteam",
 			"Enabled": true
+		},
+		{
+			"Name": "MultiplayerSession",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
