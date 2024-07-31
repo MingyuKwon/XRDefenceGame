@@ -406,10 +406,6 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(4, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractRightOverlapStart")));
-	}
 
     if (currentRightInteractInterface)
     {
@@ -419,7 +415,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+		Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
     }
 
     currentRightInteractInterface = handInteractInterface;
@@ -485,9 +481,8 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-
-        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
-    }
+		Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+	}
 
     currentLeftInteractInterface = handInteractInterface;
 }
@@ -617,6 +612,27 @@ void APlayer_Controller::RightGrabEnd()
 
 void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 NetWorkID)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 1")));
+	}
 
+	if (XRGamePlayMode)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 2")));
+		}
+
+		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
+		if (Target_inServer)
+		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(102, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 3")));
+			}
+			Target_inServer->InteractableEffectStart_Implementation();
+		}
+	}
 }
 

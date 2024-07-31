@@ -108,7 +108,9 @@ public:
 
 	virtual bool IsOnBoard_Implementation() override;
 	virtual float GetCost_Implementation() override;
+	virtual int32 GetNetId_Implementation() override;
 	virtual bool GetDisableHighLight_Implementation() override;
+
 
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)

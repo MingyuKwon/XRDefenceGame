@@ -944,6 +944,11 @@ float AXR_Character::GetCost_Implementation()
 	return CharacterProperty.Cost;
 }
 
+int32 AXR_Character::GetNetId_Implementation()
+{
+	return ActorNetID;
+}
+
 void AXR_Character::SetDisableHighLight_Implementation(bool bDisable)
 {
 	if (HasAuthority())
