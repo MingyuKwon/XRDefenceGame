@@ -735,13 +735,13 @@ void AXR_Character::UpdateMotoionWarpingTransform()
 	}
 }
 
-void AXR_Character::TriggerHealEffect()
+void AXR_Character::TriggerHealEffect_Implementation()
 {
 	HealRing->Deactivate();
 	HealRing->Activate(true);
 }
 
-void AXR_Character::TriggerBuffEffect()
+void AXR_Character::TriggerBuffEffect_Implementation()
 {
 	BuffRing->Deactivate();
 	BuffRing->Activate(true);

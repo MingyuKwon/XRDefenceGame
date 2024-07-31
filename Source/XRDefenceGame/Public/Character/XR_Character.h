@@ -401,10 +401,10 @@ protected:
 
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(NetMulticast, Reliable)
 	void TriggerHealEffect();
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void TriggerBuffEffect();
 
 
