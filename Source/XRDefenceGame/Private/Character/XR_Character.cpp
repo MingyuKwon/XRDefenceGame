@@ -149,6 +149,24 @@ void AXR_Character::BeginPlay()
 	BuffRing->Deactivate();
 	SpeedBuffNiagara->Deactivate();
 
+	if (HealRing)
+	{
+		FNiagaraSystemInstanceControllerPtr SystemInstanceController = HealRing->GetSystemInstanceController();
+		if (SystemInstanceController)
+		{
+			SystemInstanceController->SetForceSolo(true);
+		}
+	}
+
+	if (BuffRing)
+	{
+		FNiagaraSystemInstanceControllerPtr SystemInstanceController = BuffRing->GetSystemInstanceController();
+		if (SystemInstanceController)
+		{
+			SystemInstanceController->SetForceSolo(true);
+		}
+	}
+
 	if (SpeedBuffNiagara)
 	{
 		FNiagaraSystemInstanceControllerPtr SystemInstanceController = SpeedBuffNiagara->GetSystemInstanceController();
@@ -590,6 +608,7 @@ void AXR_Character::GrabStart_Implementation ()
 {
 	if (HasAuthority())
 	{
+		SetReplicateMovement(false);
 		Multi_GrabStart();
 	}
 	else
@@ -635,6 +654,7 @@ void AXR_Character::GrabEnd_Implementation()
 {
 	if (HasAuthority())
 	{
+		SetReplicateMovement(true);
 		Multi_GrabEnd();
 	}
 	else
