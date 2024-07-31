@@ -18,29 +18,15 @@ void AMyXR_CharacterOffenceBuff::BehaviorAvailableTimerFunction()
 	if (bOnBoard)
 	{
 		ApplyBuffInRange();
-		GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &AMyXR_CharacterOffenceBuff::BuffTimerFunction, BuffDelay, false);
+		GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &AMyXR_CharacterOffenceBuff::ApplyBuffInRange, BuffDelay, true);
 	}
-}
-
-void AMyXR_CharacterOffenceBuff::BuffTimerFunction()
-{
-	ApplyBuffInRange();
-	GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &AMyXR_CharacterOffenceBuff::BuffTimerFunction, BuffDelay, false);
 }
 
 void AMyXR_CharacterOffenceBuff::ApplyBuffInRange()
 {
-	if (BuffRangeNiagara)
-	{
-		UNiagaraComponent* NG = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BuffRangeNiagara, GetRingPosition(), FRotator::ZeroRotator, FVector(1.0f), true);
+	SpawnBuffRange();
 
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundBuffRange, GetActorLocation(), 0.4f);
-
-		if (NG)
-		{
-			NG->SetVariableFloat(FName("Radius"), BuffRadius);
-		}
-	}
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundBuffRange, GetActorLocation(), 0.4f);
 
 	TArray<AXR_Character*> NearbyCharacters = FindBuffableCharacter();
 
@@ -57,6 +43,18 @@ void AMyXR_CharacterOffenceBuff::ApplyBuffInRange()
 		{
 			xrChar->AttackBuff(BuffAmount);
 
+		}
+	}
+}
+
+void AMyXR_CharacterOffenceBuff::SpawnBuffRange_Implementation()
+{
+	if (BuffRangeNiagara)
+	{
+		UNiagaraComponent* NG = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BuffRangeNiagara, GetRingPosition(), FRotator::ZeroRotator, FVector(1.0f), true);
+		if (NG)
+		{
+			NG->SetVariableFloat(FName("Radius"), BuffRadius);
 		}
 	}
 }

@@ -21,13 +21,15 @@ protected:
 	virtual void BehaviorAvailableTimerFunction() override;
 
 	UFUNCTION()
-	virtual void BuffTimerFunction();
-
-	UFUNCTION()
 	virtual void ApplyBuffInRange();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SpawnBuffRange();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
 	class UNiagaraSystem* BuffRangeNiagara;
+
+
 
 
 	FTimerHandle BuffTimerHandle;

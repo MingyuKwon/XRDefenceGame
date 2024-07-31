@@ -39,16 +39,16 @@ void AWallNexus::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void AWallNexus::InitializeCharacter()
-{
     DefaultNexusMesh1 = Cast<UMaterialInstance>(NexusMesh1->GetMaterial(0));
     DefaultNexusMesh2 = Cast<UMaterialInstance>(NexusMesh2->GetMaterial(0));
     DefaultNexusMesh3 = Cast<UMaterialInstance>(NexusMesh3->GetMaterial(0));
     DefaultNexusMesh4 = Cast<UMaterialInstance>(NexusMesh4->GetMaterial(0));
     DefaultNexusMesh5 = Cast<UMaterialInstance>(NexusMesh5->GetMaterial(0));
 
+}
+
+void AWallNexus::InitializeCharacter()
+{
     Super::InitializeCharacter();
 
 }
