@@ -654,6 +654,7 @@ void AXR_Character::GrabEnd_Implementation()
 {
 	if (HasAuthority())
 	{
+
 		SetReplicateMovement(true);
 		Multi_GrabEnd();
 	}
