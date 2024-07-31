@@ -604,6 +604,12 @@ void AXR_Character::Server_GrabStart_Implementation()
 	{
 		GEngine->AddOnScreenDebugMessage(56, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_GrabStart_Implementation")));
 	}
+
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
+	}
+
 	Multi_GrabStart();
 }
 
@@ -621,7 +627,7 @@ void AXR_Character::Multi_GrabStart_Implementation()
 	PalletteBeamEndPosition = GetActorLocation();
 
 	FromPaletteToCharacter->SetVectorParameter("User.BeamEnd", PalletteBeamEndPosition - FVector(0.0f, 0.0f, 3.f));
-	XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
+
 
 }
 
@@ -639,6 +645,12 @@ void AXR_Character::GrabEnd_Implementation()
 
 void AXR_Character::Server_GrabEnd_Implementation()
 {
+	if (XRGamePlayMode)
+	{
+		XRGamePlayMode->TriggerOnObjectGrabEvent(false, ObjectType);
+
+	}
+
 	Multi_GrabEnd();
 }
 
@@ -647,8 +659,6 @@ void AXR_Character::Multi_GrabEnd_Implementation()
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 	bPalletteBeamAvailable = false;
-
-	XRGamePlayMode->TriggerOnObjectGrabEvent(false, ObjectType);
 
 	if (bOnBoard) return;
 
