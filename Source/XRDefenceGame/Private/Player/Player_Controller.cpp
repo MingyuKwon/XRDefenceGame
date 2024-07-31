@@ -21,12 +21,6 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (!GetPlayerPawn()) return;
 
-
-	if (!HasAuthority())
-	{
-		Server_InteractableEffectStart(-1);
-	}
-
 	if (bRightGrabbing)
 	{
 		if (IsRightGrabable())
@@ -420,7 +414,15 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-		Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+		if (HasAuthority())
+		{
+			InteractableEffectStart(handInteractInterface->GetNetId_Implementation());
+		}
+		else
+		{
+			Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+
+		}
     }
 
     currentRightInteractInterface = handInteractInterface;
@@ -486,7 +488,15 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-		Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+		if (HasAuthority())
+		{
+			InteractableEffectStart(handInteractInterface->GetNetId_Implementation());
+		}
+		else
+		{
+			Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+
+		}
 	}
 
     currentLeftInteractInterface = handInteractInterface;
@@ -615,15 +625,8 @@ void APlayer_Controller::RightGrabEnd()
 
 }
 
-void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 NetWorkID)
+void APlayer_Controller::InteractableEffectStart(int32 NetWorkID)
 {
-	if (!HasAuthority()) return;
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 1")));
-	}
-
 	if (XRGamePlayMode)
 	{
 		if (GEngine)
@@ -641,5 +644,17 @@ void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 Net
 			Target_inServer->InteractableEffectStart_Implementation();
 		}
 	}
+}
+
+void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 NetWorkID)
+{
+	if (!HasAuthority()) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(100, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 1")));
+	}
+
+	InteractableEffectStart(NetWorkID);
 }
 

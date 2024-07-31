@@ -135,6 +135,7 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void Server_InteractableEffectStart(int32 NetWorkID);
+	void InteractableEffectStart(int32 NetWorkID);
 
 	class APlayerPawn* playerPawn = nullptr;
 	class APlayer_State* playerState = nullptr;
