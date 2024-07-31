@@ -158,6 +158,16 @@ void AXR_Character::BeginPlay()
 		}
 	}
 
+
+	if (HasAuthority())
+	{
+		ActorNetID = GetUniqueID();
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->AddActorToMap(ActorNetID, this);
+		}
+	}
+
 	if (HasAuthority())
 	{
 		InitializeCharacter();
@@ -758,15 +768,23 @@ void AXR_Character::Death(bool bDieInTrash)
 		CharacterMovementComponent->MaxWalkSpeed = 0.f;
 		FloorRingMesh->SetbTickReject(true);
 
-		if (bDieInTrash)
-		{
-			XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
-		}
-		else
-		{
-			XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
 
+		ActorNetID = GetUniqueID();
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->RemoveActorFromMap(ActorNetID);
+
+			if (bDieInTrash)
+			{
+				XRGamePlayMode->OnCostEvent.Broadcast(ObjectType, 2);
+			}
+			else
+			{
+				XRGamePlayMode->OnChrarcterDieEvent.Broadcast(this);
+			}
 		}
+
+		
 
 		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
@@ -786,6 +804,7 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, TargetCharacter2);
 	DOREPLIFETIME(AXR_Character, bNowStun);
 	DOREPLIFETIME(AXR_Character, bDisableInteractable);
+	DOREPLIFETIME(AXR_Character, ActorNetID);
 }
 
 

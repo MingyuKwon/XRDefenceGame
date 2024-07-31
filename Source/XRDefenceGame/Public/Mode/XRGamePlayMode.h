@@ -29,6 +29,13 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
  public:
 
+     TMap<int32, AXR_Character*> ActorMap;
+     void AddActorToMap(int32 ActorNetID, AXR_Character* Actor);
+     void RemoveActorFromMap(int32 ActorNetID);
+     AXR_Character* FindActorInMap(int32 ActorNetID) const;
+
+
+
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnCustomEvent OnObjectGrabEvent;
 

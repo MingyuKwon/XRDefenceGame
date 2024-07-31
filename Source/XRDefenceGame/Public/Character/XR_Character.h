@@ -86,6 +86,9 @@ class XRDEFENCEGAME_API AXR_Character : public ACharacter, public IHandInteractI
 public:
 	AXR_Character();
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Network")
+	int32 ActorNetID = -1;
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void InteractableEffectStart_Implementation() override;

@@ -9,6 +9,25 @@
 #include "Player/PlayerPawn.h"
 #include "Managet/XRDefenceGameInstance.h"
 
+void AXRGamePlayMode::AddActorToMap(int32 ActorNetID, AXR_Character* Actor)
+{
+	if (Actor && !ActorMap.Contains(ActorNetID))
+	{
+		ActorMap.Add(ActorNetID, Actor);
+	}
+}
+
+void AXRGamePlayMode::RemoveActorFromMap(int32 ActorNetID)
+{
+	ActorMap.Remove(ActorNetID);
+}
+
+AXR_Character* AXRGamePlayMode::FindActorInMap(int32 ActorNetID) const
+{
+	AXR_Character* const* FoundActor = ActorMap.Find(ActorNetID);
+	return FoundActor ? *FoundActor : nullptr;
+}
+
 
 void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVector SpawnLocatoin, FRotator SpawnRotation)
 {

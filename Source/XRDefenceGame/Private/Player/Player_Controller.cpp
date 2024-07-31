@@ -21,6 +21,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 
 	if (!GetPlayerPawn()) return;
 
+
 	if (bRightGrabbing)
 	{
 		if (IsRightGrabable())
@@ -345,6 +346,7 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 
 }
 
+
 void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 {
 	if (!IsLocalController()) return;
@@ -352,10 +354,7 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(3, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test UpdateCurrentRightGesture")));
-	}
+
 
 
 	if (inputGesture == EGesture::Scissors_Thumb )
@@ -420,20 +419,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-        
-		if (HasAuthority())
-		{
-			IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
-
-		}
-		else
-		{
-			AXR_Character* handInteractInterface_Character = Cast<AXR_Character>(handInteractInterface.GetObject());
-			handInteractInterface_Character->Server_InteractableEffectStart();
-
-		}
-
-
+        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
     }
 
     currentRightInteractInterface = handInteractInterface;
@@ -626,6 +612,11 @@ void APlayer_Controller::RightGrabEnd()
 	}
 
 	bRightGrabbing = false;
+
+}
+
+void APlayer_Controller::Server_InteractableEffectStart_Implementation(int32 NetWorkID)
+{
 
 }
 
