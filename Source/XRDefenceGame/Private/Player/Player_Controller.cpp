@@ -579,7 +579,7 @@ void APlayer_Controller::RightGrabStart()
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(12, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabStart")));
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabStart")));
 	}
 
 	if (IsRightGrabable())
@@ -663,7 +663,7 @@ void APlayer_Controller::Server_GrabStart_Implementation(int32 NetWorkID)
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(201, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 3")));
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 3")));
 	}
 
 	GrabStart(NetWorkID);
@@ -686,7 +686,7 @@ void APlayer_Controller::TryGrabStart(int32 NetWorkID)
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(200, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 1")));
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 1")));
 	}
 	if (HasAuthority())
 	{
@@ -696,7 +696,7 @@ void APlayer_Controller::TryGrabStart(int32 NetWorkID)
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(201, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 2")));
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 2")));
 		}
 
 		Server_GrabStart(NetWorkID);
