@@ -108,6 +108,37 @@ public:
 	virtual bool GetDisableHighLight_Implementation() override;
 
 
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectStart();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_InteractableEffectEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_InteractableEffectEnd();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetInteractPosition(FVector GrabPosition);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetInteractPosition(FVector GrabPosition);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabStart();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabStart();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_GrabEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_GrabEnd();
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_SetbDisableInteractable(bool flag);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	virtual void Multi_SetbDisableInteractable(bool flag);
+
+
 	UFUNCTION(BlueprintCallable)
 	virtual void NonPalletteSpawnInitalize(FCharacterValueTransmitForm inheritform);
 
@@ -163,38 +194,6 @@ public:
 
 
 protected:
-
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_InteractableEffectStart();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_InteractableEffectStart();
-
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_InteractableEffectEnd();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_InteractableEffectEnd();
-
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_SetInteractPosition(FVector GrabPosition);
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_SetInteractPosition(FVector GrabPosition);
-
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_GrabStart();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_GrabStart();
-
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_GrabEnd();
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_GrabEnd();
-
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	virtual void Server_SetbDisableInteractable(bool flag);
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void Multi_SetbDisableInteractable(bool flag);
-
-
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 

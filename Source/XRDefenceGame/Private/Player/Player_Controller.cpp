@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Mode/XRGamePlayMode.h"
 #include "Net/UnrealNetwork.h"
+#include "Character/XR_Character.h"
 
 APlayer_Controller::APlayer_Controller()
 {
@@ -395,6 +396,8 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 }
 
 
+/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
@@ -417,7 +420,11 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
     if (handInteractInterface)
     {
 		IHandInteractInterface::Execute_SetDisableHighLight(handInteractInterface.GetObject(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-        IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+        //IHandInteractInterface::Execute_InteractableEffectStart(handInteractInterface.GetObject());
+
+		AXR_Character* handInteractInterface_Character = Cast<AXR_Character>(handInteractInterface.GetObject());
+		handInteractInterface_Character->Server_InteractableEffectStart();
+
     }
 
     currentRightInteractInterface = handInteractInterface;
