@@ -136,6 +136,23 @@ private:
 	UFUNCTION(Server, Reliable)
 	void Server_InteractableEffectStart(int32 NetWorkID);
 	void InteractableEffectStart(int32 NetWorkID);
+	void TryInteractableEffectStart(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_InteractableEffecEnd(int32 NetWorkID);
+	void InteractableEffectEnd(int32 NetWorkID);
+	void TryInteractableEffectEnd(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_GrabStart(int32 NetWorkID);
+	void GrabStart(int32 NetWorkID);
+	void TryGrabStart(int32 NetWorkID);
+
+	UFUNCTION(Server, Reliable)
+	void Server_GrabEnd(int32 NetWorkID);
+	void GrabEnd(int32 NetWorkID);
+	void TryGrabEnd(int32 NetWorkID);
+
 
 	class APlayerPawn* playerPawn = nullptr;
 	class APlayer_State* playerState = nullptr;
