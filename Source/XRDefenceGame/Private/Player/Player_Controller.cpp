@@ -426,7 +426,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 		}
 		else
 		{
-			Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+			Server_InteractableEffectStart(handInteractInterface->GetNetId_Implementation());
 
 		}
     }
@@ -500,7 +500,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 		}
 		else
 		{
-			Server_InteractableEffectStart_Implementation(handInteractInterface->GetNetId_Implementation());
+			Server_InteractableEffectStart(handInteractInterface->GetNetId_Implementation());
 
 		}
 	}
