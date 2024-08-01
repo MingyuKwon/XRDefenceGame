@@ -477,30 +477,18 @@ void AXR_Character::InteractableEffectStart_Implementation()
 	}
 	else
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server Call InteractableEffectStart_Implementation")));
-		}
 		Server_InteractableEffectStart();
 	}
 }
 
 void AXR_Character::Server_InteractableEffectStart_Implementation()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(50, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation")));
-	}
 
 	Multi_InteractableEffectStart();
 }
 
 void AXR_Character::Multi_InteractableEffectStart_Implementation()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(51, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_InteractableEffectStart_Implementation")));
-	}
 
 	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
 
@@ -533,21 +521,11 @@ void AXR_Character::InteractableEffectEnd_Implementation()
 
 void AXR_Character::Server_InteractableEffectEnd_Implementation()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(52, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectEnd_Implementation")));
-
-	}
 	Multi_InteractableEffectEnd();
 }
 
 void AXR_Character::Multi_InteractableEffectEnd_Implementation()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(53, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_InteractableEffectEnd_Implementation")));
-
-	}
 	bHightLighting = false;
 
 	SetPropertyUIVisible(false);
@@ -583,24 +561,11 @@ void AXR_Character::SetInteractPosition_Implementation(FVector GrabPosition)
 
 void AXR_Character::Server_SetInteractPosition_Implementation(FVector GrabPosition)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(54, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_SetInteractPosition_Implementation")));
-
-
-	}
 	Multi_SetInteractPosition(GrabPosition);
 }
 
 void AXR_Character::Multi_SetInteractPosition_Implementation(FVector GrabPosition)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(55, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_SetInteractPosition_Implementation")));
-
-
-	}
-
 	SetActorLocation(GrabPosition);
 }
 
@@ -619,25 +584,18 @@ void AXR_Character::GrabStart_Implementation ()
 
 void AXR_Character::Server_GrabStart_Implementation()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(56, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Server_GrabStart_Implementation")));
-	}
-
-	if (XRGamePlayMode)
-	{
-		XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
-	}
-
 	Multi_GrabStart();
 }
 
 void AXR_Character::Multi_GrabStart_Implementation()
 {
-	if (GEngine)
+	if (XRGamePlayMode)
 	{
-		GEngine->AddOnScreenDebugMessage(58, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test Multi_GrabStart_Implementation")));
+		XRGamePlayMode->TriggerOnObjectGrabEvent(true, ObjectType);
+
 	}
+
+
 
 	FromPaletteToCharacter->SetVisibility(true);
 	FromCharacterToRing->SetVisibility(true);
@@ -664,19 +622,25 @@ void AXR_Character::GrabEnd_Implementation()
 	}
 }
 
+EObjectType AXR_Character::GetInteractObjectType_Implementation()
+{
+	return GetObjectType();
+}
+
 void AXR_Character::Server_GrabEnd_Implementation()
 {
+	Multi_GrabEnd();
+}
+
+void AXR_Character::Multi_GrabEnd_Implementation()
+{
+
 	if (XRGamePlayMode)
 	{
 		XRGamePlayMode->TriggerOnObjectGrabEvent(false, ObjectType);
 
 	}
 
-	Multi_GrabEnd();
-}
-
-void AXR_Character::Multi_GrabEnd_Implementation()
-{
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 	bPalletteBeamAvailable = false;
@@ -735,13 +699,13 @@ void AXR_Character::UpdateMotoionWarpingTransform()
 	}
 }
 
-void AXR_Character::TriggerHealEffect()
+void AXR_Character::TriggerHealEffect_Implementation()
 {
 	HealRing->Deactivate();
 	HealRing->Activate(true);
 }
 
-void AXR_Character::TriggerBuffEffect()
+void AXR_Character::TriggerBuffEffect_Implementation()
 {
 	BuffRing->Deactivate();
 	BuffRing->Activate(true);
@@ -836,6 +800,9 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, bNowStun);
 	DOREPLIFETIME(AXR_Character, bDisableInteractable);
 	DOREPLIFETIME(AXR_Character, ActorNetID);
+	DOREPLIFETIME(AXR_Character, ObjectType);
+
+
 }
 
 

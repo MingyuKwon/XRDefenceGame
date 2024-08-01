@@ -10,7 +10,7 @@ void APlayer_State::SetGold(float NewGold)
 
 }
 
-float APlayer_State::GetGold() const
+float APlayer_State::GetGold()
 {
 	return CurrentGold;
 }
@@ -29,7 +29,7 @@ void APlayer_State::UpgradeMaxGold(bool bIncrease)
 	CurrentGold = FMath::Clamp(CurrentGold, -100.f, MaxGold);
 }
 
-float APlayer_State::GetMaxGold() const
+float APlayer_State::GetMaxGold()
 {
 	return MaxGold;
 }

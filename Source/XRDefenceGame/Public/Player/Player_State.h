@@ -19,13 +19,13 @@ public:
 	void SetGold(float NewGold);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
-	float GetGold() const;
+	float GetGold() ;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void UpgradeMaxGold(bool bIncrease);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
-	float GetMaxGold() const;
+	float GetMaxGold();
 
 
 protected:

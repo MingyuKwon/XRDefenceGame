@@ -85,8 +85,12 @@ public:
 
 	// Server
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 
-
+	FTimerHandle GestureCoolTimeTimeHandle;
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
+	int32 GestureCoolTime = 5;
+	int32 GestureCoolTimeUnit = 5;
 
 private:
 
@@ -132,6 +136,9 @@ private:
 	void RightGrabStart();
 	void LeftGrabEnd();
 	void RightGrabEnd();
+
+
+	bool IsInteractActorMine(TScriptInterface<IHandInteractInterface> interact);
 
 	UFUNCTION(Server, Reliable)
 	void Server_InteractableEffectStart(int32 NetWorkID);
@@ -191,11 +198,6 @@ private:
 	void StartDefaultTimeTick();
 	bool CanAffordCost(float Cost);
 
-
-	FTimerHandle GestureCoolTimeTimeHandle;
-	int32 GestureCoolTime = 5;
-	int32 GestureCoolTimeUnit = 5;
-
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -204,7 +206,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsGestureWorkable() { return GestureCoolTime == 0; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetGestureCoolTime() { GestureCoolTime = GestureCoolTimeUnit; }
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void SetGestureCoolTime();
 
 };

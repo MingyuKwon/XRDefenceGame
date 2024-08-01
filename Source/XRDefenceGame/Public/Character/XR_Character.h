@@ -104,6 +104,9 @@ public:
 
 	virtual void GrabEnd_Implementation() override;
 
+	virtual EObjectType GetInteractObjectType_Implementation() override;
+
+
 	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
 
 	virtual bool IsOnBoard_Implementation() override;
@@ -370,7 +373,7 @@ protected:
 	virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm);
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter", Replicated)
 	EObjectType ObjectType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
@@ -401,10 +404,10 @@ protected:
 
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(NetMulticast, Reliable)
 	void TriggerHealEffect();
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void TriggerBuffEffect();
 
 
