@@ -487,6 +487,16 @@ void AMyXR_CharacterDeffenceBattle::SetTrashEffect(bool flag, bool onlyNiagara)
     }
 }
 
+void AMyXR_CharacterDeffenceBattle::UpdateCharacterPropertyUI()
+{
+    if (CharacterPropertyUI)
+    {
+        CharacterPropertyUI->SetHealthPercentMulticast(CharacterProperty.currentHealth / CharacterProperty.MaxHealth);
+        CharacterPropertyUI->SetDamageCountMulticast(DamageUpgradeCount);
+        CharacterPropertyUI->SetUtilCountMulticast(RangeUpgradeCount);
+    }
+}
+
 void AMyXR_CharacterDeffenceBattle::OtherCharacterSpawnCallBack(FVector spawnLocation)
 {
     Super::OtherCharacterSpawnCallBack(spawnLocation);

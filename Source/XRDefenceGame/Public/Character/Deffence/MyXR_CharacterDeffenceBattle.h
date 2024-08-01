@@ -41,6 +41,10 @@ public:
 
 
 protected:
+
+    virtual void UpdateCharacterPropertyUI();
+
+
     virtual void OtherCharacterSpawnCallBack(FVector spawnLocation) override;
 
     virtual void BeginPlay() override;
