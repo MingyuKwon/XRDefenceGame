@@ -373,7 +373,7 @@ protected:
 	virtual void PackCharacterValueTransmitForm(FCharacterValueTransmitForm& outForm);
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter", Replicated)
 	EObjectType ObjectType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")

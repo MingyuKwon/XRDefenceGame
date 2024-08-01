@@ -800,6 +800,9 @@ void AXR_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AXR_Character, bNowStun);
 	DOREPLIFETIME(AXR_Character, bDisableInteractable);
 	DOREPLIFETIME(AXR_Character, ActorNetID);
+	DOREPLIFETIME(AXR_Character, ObjectType);
+
+
 }
 
 

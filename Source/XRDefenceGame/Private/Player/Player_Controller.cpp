@@ -594,7 +594,7 @@ bool APlayer_Controller::IsInteractActorMine(TScriptInterface<IHandInteractInter
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test IsInteractActorMine             controller : %s , target : %s"), controllerObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence") , TargetObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence")));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test IsInteractActorMine             controller : %s , target : %s"), controllerObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence") , TargetObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence")));
 
 	}
 
