@@ -33,7 +33,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 	{
 		if (IsLeftGrabable())
 		{
-			TrySetInteractPosition(currentLeftInteractInterface->GetNetId_Implementation(), playerPawn->GetRightHandPosition());
+			TrySetInteractPosition(currentLeftInteractInterface->GetNetId_Implementation(), playerPawn->GetLeftHandPosition());
 
 		}
 	}
@@ -403,7 +403,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
 
-	if (!IsInteractActorMine(currentRightInteractInterface)) return;
+	if (!IsInteractActorMine(handInteractInterface)) return;
 
 
     if (currentRightInteractInterface)
@@ -458,7 +458,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
 
-	if (!IsInteractActorMine(currentLeftInteractInterface)) return;
+	if (!IsInteractActorMine(handInteractInterface)) return;
 
     if (currentLeftInteractInterface)
     {
@@ -590,6 +590,12 @@ bool APlayer_Controller::IsInteractActorMine(TScriptInterface<IHandInteractInter
 	if (TargetObjectType == EObjectType::EOT_DeffenceGold)
 	{
 		TargetObjectType = EObjectType::EOT_Deffence;
+	}
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test IsInteractActorMine             controller : %s , target : %s"), controllerObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence") , TargetObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence")));
+
 	}
 
 	return TargetObjectType == controllerObjectType;
