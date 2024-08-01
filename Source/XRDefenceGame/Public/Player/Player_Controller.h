@@ -85,7 +85,12 @@ public:
 
 	// Server
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 
+	FTimerHandle GestureCoolTimeTimeHandle;
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
+	int32 GestureCoolTime = 5;
+	int32 GestureCoolTimeUnit = 5;
 
 private:
 
@@ -192,11 +197,6 @@ private:
 	FTimerHandle DefaultGoldTimerHandle;
 	void StartDefaultTimeTick();
 	bool CanAffordCost(float Cost);
-
-
-	FTimerHandle GestureCoolTimeTimeHandle;
-	int32 GestureCoolTime = 5;
-	int32 GestureCoolTimeUnit = 5;
 
 public:
 

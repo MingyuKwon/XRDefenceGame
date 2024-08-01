@@ -248,7 +248,8 @@ void APlayer_Controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayer_Controller, controllerObjectType);
-
+	DOREPLIFETIME(APlayer_Controller, GestureCoolTime);
+	
 }
 
 
