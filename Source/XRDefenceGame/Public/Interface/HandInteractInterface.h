@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "XRDefenceEnums.h"
 #include "HandInteractInterface.generated.h"
 
 UINTERFACE(MinimalAPI, Blueprintable)
@@ -49,6 +50,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	int32 GetNetId();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	EObjectType GetInteractObjectType();
 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")

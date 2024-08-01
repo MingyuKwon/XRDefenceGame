@@ -132,6 +132,9 @@ private:
 	void LeftGrabEnd();
 	void RightGrabEnd();
 
+
+	bool IsInteractActorMine(TScriptInterface<IHandInteractInterface> interact);
+
 	UFUNCTION(Server, Reliable)
 	void Server_InteractableEffectStart(int32 NetWorkID);
 	void InteractableEffectStart(int32 NetWorkID);

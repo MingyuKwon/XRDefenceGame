@@ -104,6 +104,9 @@ public:
 
 	virtual void GrabEnd_Implementation() override;
 
+	virtual EObjectType GetInteractObjectType_Implementation() override;
+
+
 	virtual void SetDisableHighLight_Implementation(bool bDisable) override;
 
 	virtual bool IsOnBoard_Implementation() override;

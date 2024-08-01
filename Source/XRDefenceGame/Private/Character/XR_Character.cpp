@@ -622,6 +622,11 @@ void AXR_Character::GrabEnd_Implementation()
 	}
 }
 
+EObjectType AXR_Character::GetInteractObjectType_Implementation()
+{
+	return GetObjectType();
+}
+
 void AXR_Character::Server_GrabEnd_Implementation()
 {
 	Multi_GrabEnd();

@@ -403,6 +403,8 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
 
+	if (!IsInteractActorMine(currentRightInteractInterface)) return;
+
 
     if (currentRightInteractInterface)
     {
@@ -456,6 +458,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
 
+	if (!IsInteractActorMine(currentLeftInteractInterface)) return;
 
     if (currentLeftInteractInterface)
     {
@@ -513,6 +516,7 @@ void APlayer_Controller::LeftGrabStart()
 
 	if (IsLeftGrabable())
 	{
+
 		TryGrabStart(currentLeftInteractInterface->GetNetId_Implementation());
 	}
 
@@ -570,6 +574,25 @@ void APlayer_Controller::RightGrabEnd()
 
 	bRightGrabbing = false;
 
+}
+
+bool APlayer_Controller::IsInteractActorMine(TScriptInterface<IHandInteractInterface> interact)
+{
+	if (interact == nullptr) return false;
+
+	EObjectType TargetObjectType = interact->GetInteractObjectType_Implementation();
+
+	if (TargetObjectType == EObjectType::EOT_OffenceGold)
+	{
+		TargetObjectType = EObjectType::EOT_Offence;
+	}
+
+	if (TargetObjectType == EObjectType::EOT_DeffenceGold)
+	{
+		TargetObjectType = EObjectType::EOT_Deffence;
+	}
+
+	return TargetObjectType == controllerObjectType;
 }
 
 void APlayer_Controller::TryInteractableEffectStart(int32 NetWorkID)
