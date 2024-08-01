@@ -356,25 +356,12 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 	if (!GetPlayerPawn()) return;
 	if(inputGesture == EGesture::None) return;
 
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test UpdateCurrentRightGesture IN")));
-	}
-
-
-
 	if (inputGesture == EGesture::Scissors_Thumb )
 	{
 		if (bcanFire) {
 			playerPawn->GestureRightAction(inputGesture);
 			bcanFire = false;
 			GetWorld()->GetTimerManager().ClearTimer(CanFireTimerHandle);
-		}
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test UpdateCurrentRightGesture Scissors_Thumb")));
 		}
 			
 		return;
@@ -388,11 +375,6 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 			GetWorld()->GetTimerManager().ClearTimer(CanSpeedBuffTimerHandle);
 		}
 
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Multi Test UpdateCurrentRightGesture Thumb_Rock")));
-		}
-
 		return;
 	}
 
@@ -401,21 +383,12 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Black, FString::Printf(TEXT("Multi Test UpdateCurrentRightGesture Rock_Scissors")));
-		}
 
 		bcanFire = true;
 	}
 
 	if (currentRightGesture == EGesture::Rock_Thumb)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Multi Test UpdateCurrentRightGesture Rock_Thumb")));
-
-		}
 		bcanSpeedBuff = true;
 	}
 
