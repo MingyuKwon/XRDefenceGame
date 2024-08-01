@@ -303,10 +303,6 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 
 	if (currentRightGesture == EGesture::None) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ShouldRightGestureRelease")));
-	}
 
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
@@ -378,6 +374,7 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 		return;
 	}
 
+
 	currentRightGesture = inputGesture;
 
 	if (currentRightGesture == EGesture::Rock_Scissors)
@@ -425,11 +422,6 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 {
 	if (!IsLocalController()) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(5, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractRightOverlapEnd")));
-	}
-
 	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -443,11 +435,6 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 	if (!IsLocalController()) return;
 
 	if (currentRightInteractInterface != handInteractInterface) return;
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(6, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ReleaseRightInteract")));
-	}
 
 	if (currentRightInteractInterface)
 	{
@@ -469,10 +456,6 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(7, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractLeftOverlapStart")));
-	}
 
     if (currentLeftInteractInterface)
     {
@@ -494,11 +477,6 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 {
 	if (!IsLocalController()) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(8, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test HandInteractLeftOverlapEnd")));
-
-	}
 	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
@@ -514,10 +492,6 @@ void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInter
 
 	if (currentLeftInteractInterface != handInteractInterface) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(9, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test ReleaseLeftInteract")));
-	}
 
 	if (currentLeftInteractInterface)
 	{
@@ -536,10 +510,6 @@ void APlayer_Controller::LeftGrabStart()
 
 	if (bLeftGrabbing) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(10, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test LeftGrabStart")));
-	}
 
 	if (IsLeftGrabable())
 	{
@@ -556,10 +526,6 @@ void APlayer_Controller::LeftGrabEnd()
 
 	if (!bLeftGrabbing) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(11, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test LeftGrabEnd")));
-	}
 
 	if (IsLeftGrabable())
 	{
@@ -577,10 +543,6 @@ void APlayer_Controller::RightGrabStart()
 
 	if (bRightGrabbing) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabStart")));
-	}
 
 	if (IsRightGrabable())
 	{
@@ -597,10 +559,6 @@ void APlayer_Controller::RightGrabEnd()
 
 	if (!bRightGrabbing) return;
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(13, 0.1f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test RightGrabEnd")));
-	}
 
 	if (IsRightGrabable())
 	{
@@ -638,18 +596,10 @@ void APlayer_Controller::InteractableEffectStart(int32 NetWorkID)
 {
 	if (XRGamePlayMode)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(101, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 2")));
-		}
 
 		AXR_Character* Target_inServer = XRGamePlayMode->FindActorInMap(NetWorkID);
 		if (Target_inServer)
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(102, 1.f, FColor::Yellow, FString::Printf(TEXT("                                                                 Multi Test Server_InteractableEffectStart_Implementation 3")));
-			}
 			Target_inServer->InteractableEffectStart_Implementation();
 		}
 	}
@@ -660,11 +610,6 @@ void APlayer_Controller::InteractableEffectStart(int32 NetWorkID)
 void APlayer_Controller::Server_GrabStart_Implementation(int32 NetWorkID)
 {
 	if (!HasAuthority()) return;
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 3")));
-	}
 
 	GrabStart(NetWorkID);
 
@@ -684,20 +629,12 @@ void APlayer_Controller::GrabStart(int32 NetWorkID)
 
 void APlayer_Controller::TryGrabStart(int32 NetWorkID)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 1")));
-	}
 	if (HasAuthority())
 	{
 		GrabStart(NetWorkID);
 	}
 	else
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("                                                                 Multi Test TryGrabStart 2")));
-		}
 
 		Server_GrabStart(NetWorkID);
 

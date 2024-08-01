@@ -106,11 +106,6 @@ void APlayerPawn::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test BeginPlay()")));
-    }
-
     if (GetController() && GetController()->IsLocalPlayerController())
     {
         SetPawnTransformForGameStart();

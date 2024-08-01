@@ -87,7 +87,6 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 
-
 private:
 
 	// This will be saved in GameMode
