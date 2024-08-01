@@ -206,7 +206,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsGestureWorkable() { return GestureCoolTime == 0; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetGestureCoolTime() { GestureCoolTime = GestureCoolTimeUnit; }
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void SetGestureCoolTime();
 
 };

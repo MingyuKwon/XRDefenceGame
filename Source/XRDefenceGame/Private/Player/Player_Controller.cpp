@@ -108,6 +108,11 @@ bool APlayer_Controller::CanAffordCost(float Cost)
 	return Cost <= playerState->GetGold();
 }
 
+void APlayer_Controller::SetGestureCoolTime_Implementation()
+{
+	 GestureCoolTime = GestureCoolTimeUnit; 
+}
+
 void APlayer_Controller::GestureCoolTimeTick()
 {
 	if (GestureCoolTime <= 0) return;
