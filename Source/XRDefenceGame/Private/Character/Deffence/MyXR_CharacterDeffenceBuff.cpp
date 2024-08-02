@@ -120,7 +120,10 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunctionServer(bool isOnBoard, bo
 void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
 {
     Death(false);
-    IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter, CharacterType);
+    if(BeneathBuffableCharacter)
+    {
+        IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter, CharacterType);
+    }
 }
 
 void AMyXR_CharacterDeffenceBuff::OnHealTimerTick()

@@ -127,7 +127,11 @@ void UFloorRingSMC::CheckBuffable(bool bBuffable, FHitResult& FloortraceResult)
 				IBuffableInterface::Execute_BuffableEffectEnd(Cast<UObject>(BuffableCharacter));
 			}
 			BuffableCharacter = NewBuffableCharacter;
-			IBuffableInterface::Execute_BuffableEffectStart(Cast<UObject>(BuffableCharacter));
+
+			if (BuffableCharacter)
+			{
+				IBuffableInterface::Execute_BuffableEffectStart(Cast<UObject>(BuffableCharacter));
+			}
 		}
 
 	}
