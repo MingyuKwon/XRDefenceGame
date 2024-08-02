@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
 #include "Character/Deffence/XR_CharacterDeffence.h"
+#include "Character/Offence/XR_CharacterOffence.h"
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "Component/NotHitSelf_PMC.h"
@@ -16,6 +17,7 @@
 #include "NiagaraComponent.h"
 #include "Managet/XRDefenceGameInstance.h"
 #include "Managet/AudioSubsystem.h"
+#include "Player/Player_Controller.h"
 
 
 // Sets default values
@@ -109,7 +111,30 @@ void AProjectile::Explode()
 
     TArray<AActor*> IgnoreActor;
 
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
+
+
+    APlayer_Controller* localController = Cast<APlayer_Controller>(GetWorld()->GetFirstLocalPlayerFromController());
+    bool flag = true;
+
+    if (localController)
+    {
+        if (localController->controllerObjectType == EObjectType::EOT_Offence)
+        {
+            flag = false;
+        }
+    }
+
+
+    if (flag)
+    {
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
+    }
+    else
+    {
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterOffence::StaticClass(), IgnoreActor);
+
+    }
+
 
 
     UXRDefenceGameInstance* GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());
