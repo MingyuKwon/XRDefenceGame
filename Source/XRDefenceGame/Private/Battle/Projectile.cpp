@@ -19,7 +19,6 @@
 #include "Managet/AudioSubsystem.h"
 #include "Player/Player_Controller.h"
 
-
 // Sets default values
 AProjectile::AProjectile()
 {
@@ -82,6 +81,12 @@ void AProjectile::SetDamage(float Damage)
     BulletDamage = Damage;
 }
 
+void AProjectile::SetobjectType(EObjectType inputobjectType)
+{
+    objectType = inputobjectType;
+}
+
+
 void AProjectile::ExplodeEffect_Implementation()
 {
     if (HitImpactParticle)
@@ -111,21 +116,7 @@ void AProjectile::Explode()
 
     TArray<AActor*> IgnoreActor;
 
-
-
-    APlayer_Controller* localController = Cast<APlayer_Controller>(GetWorld()->GetFirstLocalPlayerFromController());
-    bool flag = true;
-
-    if (localController)
-    {
-        if (localController->controllerObjectType == EObjectType::EOT_Offence)
-        {
-            flag = false;
-        }
-    }
-
-
-    if (flag)
+    if (objectType == EObjectType::EOT_Deffence)
     {
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
     }
