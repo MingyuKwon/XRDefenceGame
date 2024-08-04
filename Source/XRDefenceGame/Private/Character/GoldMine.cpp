@@ -97,7 +97,7 @@ void AGoldMine::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedByHand
 	Super::OnBoardCalledFunctionServer(isOnBoard, isSpawnedByHand);
 
 	BroadCastGoldMineOnBoard(true);
-	GetWorld()->GetTimerManager().SetTimer(GoldMineTimerHandler, this, &AGoldMine::BroadCastGoldMineTick, 1.0f, true);
+	GetWorld()->GetTimerManager().SetTimer(GoldMineTimerHandler, this, &AGoldMine::BroadCastGoldMineTick, 3.0f, true);
 	TimeCount = 0.f;
 }
 
