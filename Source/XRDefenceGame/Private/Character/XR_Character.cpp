@@ -379,7 +379,7 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 
 			if (XRGamePlayMode)
 			{
-				CharacterProperty.Cost = XRGamePlayMode->OffenceGoldCount * 10;
+				CharacterProperty.Cost = XRGamePlayMode->OffenceGoldCount * 20 - 10;
 			}
 		}
 		else if (objectType == EObjectType::EOT_Deffence)
@@ -388,7 +388,7 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 
 			if (XRGamePlayMode)
 			{
-				CharacterProperty.Cost = XRGamePlayMode->DefenceGoldCount * 10;
+				CharacterProperty.Cost = XRGamePlayMode->DefenceGoldCount * 20 - 10;
 			}
 		}
 
@@ -515,7 +515,7 @@ void AXR_Character::Server_InteractableEffectStart_Implementation()
 void AXR_Character::Multi_InteractableEffectStart_Implementation()
 {
 
-	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f);
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundHighLight, GetActorLocation(), 1.0f, true);
 
 	bHightLighting = true;
 
@@ -1173,18 +1173,48 @@ void AXR_Character::MoveSpeedDown_Implementation(bool bEffectOn)
 }
 
 
-void AXR_Character::PlaySoundViaManager_Implementation(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
+void AXR_Character::PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale, bool bLocal)
+{
+	if (bLocal)
+	{
+		PlaySound(soundType, Sound, Location, VolumeScale);
+	}
+	else
+	{
+		if (HasAuthority())
+		{
+			Multi_PlaySound(soundType, Sound, Location, VolumeScale);
+		}
+		else
+		{
+			Server_PlaySound(soundType, Sound, Location, VolumeScale);
+		}
+	}
+
+
+}
+
+void AXR_Character::Multi_PlaySound_Implementation(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
+{
+	PlaySound(soundType, Sound, Location, VolumeScale);
+}
+
+void AXR_Character::Server_PlaySound_Implementation(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
+{
+	Multi_PlaySound(soundType, Sound, Location, VolumeScale);
+}
+
+void AXR_Character::PlaySound(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale)
 {
 	if (GameInstance)
 	{
 		AudioManager = (AudioManager == nullptr) ? GameInstance->GetAudioManagerSubsystem() : AudioManager;
 		if (AudioManager)
 		{
-			AudioManager->PlaySound(soundType, Sound, Location, (SoundHighLight == Sound) ? VolumeScale :(VolumeScale * OwnVolumeScale));
+			AudioManager->PlaySound(soundType, Sound, Location, (SoundHighLight == Sound) ? VolumeScale : (VolumeScale * OwnVolumeScale));
 		}
 	}
 }
-
 
 void AXR_Character::ChangeMaterialState_Implementation(EMaterialState materialState, bool bLock)
 {
