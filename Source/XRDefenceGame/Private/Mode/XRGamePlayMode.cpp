@@ -131,6 +131,18 @@ void AXRGamePlayMode::TriggerOnNexusDamageEventEvent(ENexusType nexusType, float
 	}
 }
 
+void AXRGamePlayMode::AddGoldCount(EObjectType objectType)
+{
+	if (objectType == EObjectType::EOT_Deffence)
+	{
+		DefenceGoldCount++;
+	}
+	else if (objectType == EObjectType::EOT_Offence)
+	{
+		OffenceGoldCount++;
+	}
+}
+
 void AXRGamePlayMode::GameTimerCallBack()
 {
 	if (GameTimerSecond <= 0) return;

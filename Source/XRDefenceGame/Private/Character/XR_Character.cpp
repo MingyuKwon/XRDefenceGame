@@ -267,11 +267,12 @@ void AXR_Character::SetOnBoardAuto()
 
 void AXR_Character::SpawnCostShowUI()
 {
+	if (CostShowUI != nullptr) return;
+
 	if (costShowUIClass)
 	{
 		FVector SpawnLocation = GetActorLocation() - GetActorForwardVector() * 4;
 		FRotator SpawnRotation = GetActorRotation();
-
 
 		if (GetMesh())
 		{
@@ -370,10 +371,33 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 		if (objectType == EObjectType::EOT_Offence)
 		{
 			ObjectType = EObjectType::EOT_OffenceGold;
+
+			if (XRGamePlayMode)
+			{
+				CharacterProperty.Cost = XRGamePlayMode->OffenceGoldCount * 10 + 10;
+			}
 		}
 		else if (objectType == EObjectType::EOT_Deffence)
 		{
 			ObjectType = EObjectType::EOT_DeffenceGold;
+
+			if (XRGamePlayMode)
+			{
+				CharacterProperty.Cost = XRGamePlayMode->DefenceGoldCount * 10 + 10;
+			}
+		}
+
+		if (CostShowUI == nullptr)
+		{
+			UE_LOG(LogTemp, Display, TEXT("CheckNeutralToConvert Change in 1"));
+
+			SpawnCostShowUI();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Display, TEXT("CheckNeutralToConvert Change in 2"));
+
+			CostShowUI->SetGoldCostCountMulti(CharacterProperty.Cost);
 		}
 	}
 	else

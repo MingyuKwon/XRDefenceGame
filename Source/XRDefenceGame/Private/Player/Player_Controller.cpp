@@ -146,6 +146,10 @@ void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool 
 	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
 	{
 		playerState->UpgradeMaxGold(!bRemove);
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->AddGoldCount(objectType);
+		}
 	}
 	else
 	{

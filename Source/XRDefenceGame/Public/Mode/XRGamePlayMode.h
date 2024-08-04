@@ -101,8 +101,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     float purpleNexusHealth = 1000.f;
     float blueNexusHealth = 1000.f;
 
-    
-
+    int32 OffenceGoldCount = 0;
+    int32 DefenceGoldCount = 0;
+    void AddGoldCount(EObjectType objectType);
+   
     FTimerHandle GameTimerHandle;
 
     UFUNCTION()
