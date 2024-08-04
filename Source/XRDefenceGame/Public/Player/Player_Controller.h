@@ -193,6 +193,7 @@ private:
 	UFUNCTION()
 	virtual void OnGameTimerShow(float leftSecond);
 
+	bool isGamePlaying();
 
 	FTimerHandle DefaultGoldTimerHandle;
 	void StartDefaultTimeTick();

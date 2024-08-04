@@ -368,13 +368,18 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 
 	if (CharacterType == ECharacterType::ECT_Gold)
 	{
+		if (XRGamePlayMode)
+		{
+			XRGamePlayMode->AddGoldCount(objectType);
+		}
+
 		if (objectType == EObjectType::EOT_Offence)
 		{
 			ObjectType = EObjectType::EOT_OffenceGold;
 
 			if (XRGamePlayMode)
 			{
-				CharacterProperty.Cost = XRGamePlayMode->OffenceGoldCount * 10 + 10;
+				CharacterProperty.Cost = XRGamePlayMode->OffenceGoldCount * 10;
 			}
 		}
 		else if (objectType == EObjectType::EOT_Deffence)
@@ -383,20 +388,16 @@ void AXR_Character::CheckNeutralToConvert(EObjectType objectType)
 
 			if (XRGamePlayMode)
 			{
-				CharacterProperty.Cost = XRGamePlayMode->DefenceGoldCount * 10 + 10;
+				CharacterProperty.Cost = XRGamePlayMode->DefenceGoldCount * 10;
 			}
 		}
 
 		if (CostShowUI == nullptr)
 		{
-			UE_LOG(LogTemp, Display, TEXT("CheckNeutralToConvert Change in 1"));
-
 			SpawnCostShowUI();
 		}
 		else
 		{
-			UE_LOG(LogTemp, Display, TEXT("CheckNeutralToConvert Change in 2"));
-
 			CostShowUI->SetGoldCostCountMulti(CharacterProperty.Cost);
 		}
 	}

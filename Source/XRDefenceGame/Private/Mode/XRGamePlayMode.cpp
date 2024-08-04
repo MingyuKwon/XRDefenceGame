@@ -36,12 +36,6 @@ void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVe
 
 void AXRGamePlayMode::TriggerOnGameStartEvent()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test TriggerOnGameStartEvent")));
-		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
-
-	}
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
 
@@ -56,9 +50,8 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 
 		OnGameStart.Broadcast();
 		GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AXRGamePlayMode::GameTimerCallBack, 1.0f, true);
-
+		bGamePlaying = true;
 		}, 5.0f, false);
-
 
 }
 
@@ -66,7 +59,7 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 {
 	OnGameEnd.Broadcast();
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
-
+	bGamePlaying = false;
 }
 
 
@@ -141,6 +134,10 @@ void AXRGamePlayMode::AddGoldCount(EObjectType objectType)
 	{
 		OffenceGoldCount++;
 	}
+
+
+	UE_LOG(LogTemp, Display, TEXT("OffenceGoldCount   : %d         DefenceGoldCount : %d  "), OffenceGoldCount,  DefenceGoldCount);
+
 }
 
 void AXRGamePlayMode::GameTimerCallBack()

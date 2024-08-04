@@ -146,10 +146,6 @@ void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool 
 	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
 	{
 		playerState->UpgradeMaxGold(!bRemove);
-		if (XRGamePlayMode)
-		{
-			XRGamePlayMode->AddGoldCount(objectType);
-		}
 	}
 	else
 	{
@@ -206,6 +202,14 @@ void APlayer_Controller::OnGameTimerShow(float leftSecond)
 {
 	curerntLeftTime = leftSecond;
 	UpdateUserHandUI();
+}
+
+bool APlayer_Controller::isGamePlaying()
+{
+	if (XRGamePlayMode == nullptr) return false;
+
+	return XRGamePlayMode->bGamePlaying;
+
 }
 
 bool APlayer_Controller::GetPlayerPawn()
@@ -406,8 +410,8 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
-
 	if (bRightGrabbing) return;
+	if (!isGamePlaying()) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
@@ -461,8 +465,8 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
-
 	if (bLeftGrabbing) return;
+	if (!isGamePlaying()) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
@@ -521,6 +525,7 @@ void APlayer_Controller::LeftGrabStart()
 	if (!IsLocalController()) return;
 
 	if (bLeftGrabbing) return;
+	if (!isGamePlaying()) return;
 
 
 	if (IsLeftGrabable())
@@ -536,7 +541,7 @@ void APlayer_Controller::LeftGrabStart()
 void APlayer_Controller::LeftGrabEnd()
 {
 	if (!IsLocalController()) return;
-
+	if (!isGamePlaying()) return;
 	if (!bLeftGrabbing) return;
 
 
@@ -555,6 +560,7 @@ void APlayer_Controller::RightGrabStart()
 	if (!IsLocalController()) return;
 
 	if (bRightGrabbing) return;
+	if (!isGamePlaying()) return;
 
 
 	if (IsRightGrabable())
@@ -571,6 +577,7 @@ void APlayer_Controller::RightGrabEnd()
 	if (!IsLocalController()) return;
 
 	if (!bRightGrabbing) return;
+	if (!isGamePlaying()) return;
 
 
 	if (IsRightGrabable())

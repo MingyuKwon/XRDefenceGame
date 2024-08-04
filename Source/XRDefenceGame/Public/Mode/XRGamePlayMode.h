@@ -34,7 +34,7 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
      void RemoveActorFromMap(int32 ActorNetID);
      AXR_Character* FindActorInMap(int32 ActorNetID) const;
 
-
+     bool bGamePlaying = false;
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnCustomEvent OnObjectGrabEvent;
