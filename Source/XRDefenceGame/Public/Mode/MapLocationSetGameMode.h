@@ -36,7 +36,10 @@ public:
     void TriggerOnMapSpawnEvent();
 
     UFUNCTION(BlueprintCallable, Category = "Travel")
-    void MoveToLobby(bool bServerTravel);
+    void MoveToLobby();
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bOpenLevelServer = true;
 
 protected:
 

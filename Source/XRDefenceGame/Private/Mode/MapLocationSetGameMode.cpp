@@ -24,11 +24,9 @@ void AMapLocationSetGameMode::TriggerOnMapSpawnEvent()
 	OnMapSpawnEvent.Broadcast();
 }
 
-void AMapLocationSetGameMode::MoveToLobby(bool bServerTravel)
+void AMapLocationSetGameMode::MoveToLobby()
 {
-    UE_LOG(LogTemp, Display, TEXT("Multi Test MoveToLobby Trigger %s"), bServerTravel ? *FString("True") : *FString("false"));
-
-    if (bServerTravel)
+    if (bOpenLevelServer)
     {
         CreateSessionThroughSubSystem();
     }
