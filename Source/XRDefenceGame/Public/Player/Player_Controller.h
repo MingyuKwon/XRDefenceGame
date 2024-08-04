@@ -86,6 +86,9 @@ public:
 	// Server
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
+	bool bGamePlaying = false;
+
 
 	FTimerHandle GestureCoolTimeTimeHandle;
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
@@ -192,8 +195,6 @@ private:
 
 	UFUNCTION()
 	virtual void OnGameTimerShow(float leftSecond);
-
-	bool isGamePlaying();
 
 	FTimerHandle DefaultGoldTimerHandle;
 	void StartDefaultTimeTick();

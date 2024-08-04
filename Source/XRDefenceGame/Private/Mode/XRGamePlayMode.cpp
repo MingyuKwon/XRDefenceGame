@@ -50,7 +50,6 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 
 		OnGameStart.Broadcast();
 		GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AXRGamePlayMode::GameTimerCallBack, 1.0f, true);
-		bGamePlaying = true;
 		}, 5.0f, false);
 
 }
@@ -59,7 +58,6 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 {
 	OnGameEnd.Broadcast();
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
-	bGamePlaying = false;
 }
 
 
