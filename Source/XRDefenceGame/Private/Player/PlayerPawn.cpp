@@ -9,6 +9,7 @@
 #include "Managet/XRDefenceGameInstance.h"
 #include "Mode/XRGamePlayMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/Player_Controller.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -26,20 +27,26 @@ void APlayerPawn::SetPawnTransformForGameStart()
     UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
     if (GI == nullptr) return;
 
-    FVector MapSpawnLocation = GI->PlayerGamePlayLocation;
-    FRotator MapSpawnRotation = GI->PlayerGamePlayRotation;
+    APlayer_Controller* playercontroller = Cast<APlayer_Controller>(GetController());
 
+    if (playercontroller)
+    {
+        if (playercontroller->controllerObjectType == EObjectType::EOT_Offence)
+        {
+            SetActorLocation(GI->OffencePlayerGamePlayLocation);
+            SetActorRotation(GI->OffencePlayerGamePlayRotation);
+            UE_LOG(LogTemp, Warning, TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Offence"));
 
-	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;
-	FVector ShouldMovetoLocation = GetActorLocation() + ReverseLocation;
-	SetActorLocation(ShouldMovetoLocation);
+        }
+        else if (playercontroller->controllerObjectType == EObjectType::EOT_Deffence)
+        {
+            SetActorLocation(GI->DefencePlayerGamePlayLocation);
+            SetActorRotation(GI->DefencePlayerGamePlayRotation);
+            UE_LOG(LogTemp, Warning, TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Deffence"));
 
-    FRotator ReverseRotation = MapSpawnRotation * -1;
-    FVector RotatedVector = ReverseRotation.RotateVector(GetActorLocation());
-    SetActorLocation(RotatedVector);
+        }
+    }
 
-    FRotator NewRotation = GetActorRotation() + ReverseRotation;
-    SetActorRotation(NewRotation);
 }
 
 TArray<AXR_Character*> APlayerPawn::GetRangeCharacters(FVector impactPoint, float radius, EObjectType objectype)
