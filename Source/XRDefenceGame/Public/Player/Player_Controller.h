@@ -56,7 +56,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetControllerObjectType(EObjectType objectType);
 
 

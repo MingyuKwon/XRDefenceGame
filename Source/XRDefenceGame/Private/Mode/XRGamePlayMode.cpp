@@ -185,6 +185,8 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 
 	if (HasAuthority())
 	{
+		XRGameInstace = (XRGameInstace == nullptr) ? Cast<UXRDefenceGameInstance>(GetGameInstance()) : XRGameInstace;
+
 		if (PlayerController->IsLocalController())
 		{
 			if (XRGameInstace)

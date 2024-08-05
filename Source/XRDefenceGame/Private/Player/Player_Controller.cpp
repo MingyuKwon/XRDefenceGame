@@ -134,7 +134,7 @@ void APlayer_Controller::UpdateUserHandUI_Implementation()
 		);
 }
 
-void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
+void APlayer_Controller::SetControllerObjectType_Implementation(EObjectType objectType)
 {
 	controllerObjectType = objectType;
 }
