@@ -28,7 +28,7 @@ void APlayer_Controller::Tick(float DeltaTime)
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Red, FString::Printf(TEXT("Servercontroller conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
+			GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Red, FString::Printf(TEXT("Client conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
 		}
 	}
 

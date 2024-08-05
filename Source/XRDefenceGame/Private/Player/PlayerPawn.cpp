@@ -121,8 +121,23 @@ void APlayerPawn::BeginPlay()
 
     if (GetController() && GetController()->IsLocalPlayerController())
     {
-        SetPawnTransformForGameStart();
-        ServerGameModeCallPositionReady();
+        if (HasAuthority())
+        {
+            SetPawnTransformForGameStart();
+            ServerGameModeCallPositionReady();
+        }
+        else
+        {
+            FTimerHandle SetPositionHandle;
+            GetWorld()->GetTimerManager().SetTimer(SetPositionHandle, [this]() {
+
+                SetPawnTransformForGameStart();
+                ServerGameModeCallPositionReady();
+                }, 1.f, false);
+        }
+
+
+
     }
 
 }
