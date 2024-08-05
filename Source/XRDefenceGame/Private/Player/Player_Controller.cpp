@@ -17,6 +17,22 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
+	if (IsLocalPlayerController())
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage( 1 , 0.1f, FColor::Red, FString::Printf(TEXT("Servercontroller conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
+		}
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Red, FString::Printf(TEXT("Servercontroller conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
+		}
+	}
+
+
 	if (!IsLocalPlayerController()) return;
 
 	if (!GetPlayerPawn()) return;
