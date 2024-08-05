@@ -8,6 +8,29 @@
 #include "Player/Player_Controller.h"
 #include "Player/PlayerPawn.h"
 #include "Managet/XRDefenceGameInstance.h"
+#include "MultiplayerSession/Public/MultiplayerSessionsSubsystem.h"
+#include <Online/OnlineSessionNames.h>
+#include "MultiplayerSessionsSubsystem.h"
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
+
+void AXRGamePlayMode::InitializeOnlineSubSystem()
+{
+	UGameInstance* gameInstance = GetGameInstance();
+	if (gameInstance)
+	{
+		MultiplayerSessionsSubsystem = gameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
+	}
+}
+
+void AXRGamePlayMode::DestroyServerSession()
+{
+	if (MultiplayerSessionsSubsystem)
+	{
+		MultiplayerSessionsSubsystem->DestroySession();
+	}
+}
+
 
 void AXRGamePlayMode::AddActorToMap(int32 ActorNetID, AXR_Character* Actor)
 {

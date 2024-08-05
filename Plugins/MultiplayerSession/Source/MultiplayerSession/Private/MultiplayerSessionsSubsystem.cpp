@@ -50,7 +50,6 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	LastSessionSettings->BuildUniqueId = 1;
 
 
-	// 로그로 설정 값들을 출력
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Creating session with settings:\nLAN Match: %s\nNumPublicConnections: %d\nMatchType: %s"),
@@ -90,7 +89,6 @@ void UMultiplayerSessionsSubsystem::FindSession(int32 MaxSearchResult)
 	LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
 	LastSessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
-	// 로그로 설정 값들을 출력
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Finding sessions with settings:\nLAN Query: %s\nMaxSearchResults: %d"),

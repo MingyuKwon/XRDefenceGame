@@ -117,6 +117,15 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     void ShouldGameStart();
     int32 currentconnectPlayer = 0;
 
+
+
+    class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
+    void InitializeOnlineSubSystem();
+
+    UFUNCTION(BlueprintCallable, Category = "Session")
+    void DestroyServerSession();
+
+
 protected:
 
     virtual void BeginPlay() override;
