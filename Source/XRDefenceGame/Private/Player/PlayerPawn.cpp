@@ -117,6 +117,8 @@ void APlayerPawn::BeginPlay()
 {
     Super::BeginPlay();
 
+    if (bDefaultPawn) return;
+
     if (GetController() && GetController()->IsLocalPlayerController())
     {
         SetPawnTransformForGameStart();

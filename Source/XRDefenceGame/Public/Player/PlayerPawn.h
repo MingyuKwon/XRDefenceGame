@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<AXR_Character*> GetRangeCharacters(FVector impactPoint, float radius, EObjectType objectype);
 
+	UPROPERTY(EditAnywhere)
+	bool bDefaultPawn = true;
+
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector LeftHandPosition;

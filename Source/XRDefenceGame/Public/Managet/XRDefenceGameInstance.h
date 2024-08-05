@@ -32,7 +32,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
 	FVector DefencePlayerGamePlayLocation = FVector(80.f, 0.f, 40.f);
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
-	FRotator DefencePlayerGamePlayRotation = FRotator(0.f, 180.f, 0.f);;
+	FRotator DefencePlayerGamePlayRotation = FRotator(0.f, 180.f, 0.f);
 
+	
+	EObjectType ServerObjectType = EObjectType::EOT_Deffence;
+	EObjectType ClientObjectType = EObjectType::EOT_Offence;
+
+	EGameMatchState matchState = EGameMatchState::EGMS_None;
 
 };
