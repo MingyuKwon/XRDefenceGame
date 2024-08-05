@@ -106,6 +106,14 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 {
 	OnGameEnd.Broadcast();
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
+
+	UWorld* world = GetWorld();
+
+	if (world)
+	{
+		UE_LOG(LogTemp, Display, TEXT("ServerTravel"));
+		world->ServerTravel(NewmapName);
+	}
 }
 
 

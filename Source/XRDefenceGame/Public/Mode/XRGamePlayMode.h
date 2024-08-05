@@ -131,6 +131,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UPROPERTY(EditAnywhere)
     FString LobbyMapName;
 
+    UPROPERTY(EditAnywhere)
+    FString NewmapName;
+
+
 
 protected:
 
