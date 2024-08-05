@@ -174,17 +174,6 @@ void APlayer_Controller::BeginPlay()
 		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
 	}
 
-	if (HasAuthority())
-	{
-		if (IsLocalController())
-		{
-			SetControllerObjectType(EObjectType::EOT_Deffence);
-		}
-		else
-		{
-			SetControllerObjectType(EObjectType::EOT_Offence);
-		}
-	}
 }
 
 void APlayer_Controller::OnGameStart()

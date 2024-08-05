@@ -122,10 +122,33 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
+	APlayer_Controller* PlayerController = Cast<APlayer_Controller>(NewPlayer);
+
+	if (PlayerController == nullptr) return;
+
+	if (HasAuthority())
+	{
+		if (PlayerController->IsLocalController())
+		{
+			PlayerController->SetControllerObjectType(EObjectType::EOT_Deffence);
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test Controller Defence")));
+			}
+		}
+		else
+		{
+			PlayerController->SetControllerObjectType(EObjectType::EOT_Offence);
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test Controller Offence")));
+			}
+		}
+	}
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor:: Red, FString::Printf(TEXT("Multi Test XRGameMode PostLogin Test")));
-		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
 	}
 }
 
@@ -134,7 +157,6 @@ void AXRGamePlayMode::PlayerPositionSetReady()
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test PlayerPositionSetReady")));
-		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
 	}
 
 	currentconnectPlayer++;

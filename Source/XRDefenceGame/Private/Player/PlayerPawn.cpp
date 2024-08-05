@@ -35,15 +35,19 @@ void APlayerPawn::SetPawnTransformForGameStart()
         {
             SetActorLocation(GI->OffencePlayerGamePlayLocation);
             SetActorRotation(GI->OffencePlayerGamePlayRotation);
-            UE_LOG(LogTemp, Warning, TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Offence"));
-
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Offence")));
+            }
         }
         else if (playercontroller->controllerObjectType == EObjectType::EOT_Deffence)
         {
             SetActorLocation(GI->DefencePlayerGamePlayLocation);
             SetActorRotation(GI->DefencePlayerGamePlayRotation);
-            UE_LOG(LogTemp, Warning, TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Deffence"));
-
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Deffence")));
+            }
         }
     }
 
