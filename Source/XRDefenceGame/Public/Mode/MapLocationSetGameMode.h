@@ -67,6 +67,7 @@ protected:
     void OnDestroySession(bool bwasSuccessFul);
     void OnStartSession(bool bwasSuccessFul);
 
+    class UXRDefenceGameInstance* XRGameInstace;
 
 
 };

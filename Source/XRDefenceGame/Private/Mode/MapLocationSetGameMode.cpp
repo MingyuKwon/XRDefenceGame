@@ -7,6 +7,7 @@
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 
 void AMapLocationSetGameMode::TriggerOnMapRotateEvent(float RotateAmount)
@@ -41,6 +42,12 @@ void AMapLocationSetGameMode::BeginPlay()
     Super::BeginPlay();
 
     InitializeOnlineSubSystem();
+    XRGameInstace = Cast<UXRDefenceGameInstance>(GetGameInstance());
+    if (XRGameInstace)
+    {
+        XRGameInstace->matchState = EGameMatchState::EGMS_None;
+    }
+
 }
 
 void AMapLocationSetGameMode::PostLogin(APlayerController* NewPlayer)

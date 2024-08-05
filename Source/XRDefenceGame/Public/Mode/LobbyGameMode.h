@@ -19,14 +19,16 @@ protected:
 
 	FTimerHandle LobbyOutCount;
 	void CountDown();
-	int32 timeCount = 10;
+	int32 timeCount = 5;
 
 	int32 playerCount = 0;
 
 	UPROPERTY(EditAnywhere)
 	FString GameMapName;
 
+	class UXRDefenceGameInstance* XRGameInstace;
 
+	virtual void BeginPlay() override;
 
 
 

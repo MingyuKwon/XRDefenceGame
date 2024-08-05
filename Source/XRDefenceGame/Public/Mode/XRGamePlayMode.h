@@ -82,6 +82,8 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);
 
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void MoveToNextGame();
 
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -142,4 +144,9 @@ protected:
 
     virtual void PostLogin(APlayerController* NewPlayer) override;
 
+    class UXRDefenceGameInstance* XRGameInstace;
+
+    void SetGameMatchState(EGameMatchState matchState);
+
+    bool isNowFirstGame();
 };

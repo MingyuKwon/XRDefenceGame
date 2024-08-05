@@ -13,6 +13,7 @@
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 void AXRGamePlayMode::InitializeOnlineSubSystem()
 {
@@ -84,6 +85,16 @@ void AXRGamePlayMode::TriggerOnMapSpawnPawnMoveEvent(EObjectType objectType, FVe
 
 void AXRGamePlayMode::TriggerOnGameStartEvent()
 {
+	if (isNowFirstGame())
+	{
+		SetGameMatchState(EGameMatchState::EGMS_FIrstGameStart);
+	}
+	else
+	{
+		SetGameMatchState(EGameMatchState::EGMS_SecondGameStart);
+	}
+
+
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
 
@@ -96,6 +107,15 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 
 	GetWorld()->GetTimerManager().SetTimer(TriggerOnGameStartEventTimerHandle, [this]() {
 
+		if (isNowFirstGame())
+		{
+			SetGameMatchState(EGameMatchState::EGMS_FIrstGamePlaying);
+		}
+		else
+		{
+			SetGameMatchState(EGameMatchState::EGMS_SecondGamePlaying);
+		}
+
 		OnGameStart.Broadcast();
 		GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AXRGamePlayMode::GameTimerCallBack, 1.0f, true);
 		}, 5.0f, false);
@@ -107,15 +127,52 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 	OnGameEnd.Broadcast();
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
 
-	UWorld* world = GetWorld();
+	if (XRGameInstace == nullptr) return;
 
-	if (world)
+	if (isNowFirstGame())
 	{
-		UE_LOG(LogTemp, Display, TEXT("ServerTravel"));
-		world->ServerTravel(NewmapName);
+		XRGameInstace->matchState = EGameMatchState::EGMS_FIrstGameEnd;
+		MoveToNextGame();
+
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("                          Game Ends")));
+		}
+		XRGameInstace->matchState = EGameMatchState::EGMS_SecondGameEnd;
 	}
 }
 
+void AXRGamePlayMode::MoveToNextGame()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("                          Stage Move in 5Seconds")));
+	}
+
+	FTimerHandle MovetoNextStageHandle;
+	GetWorld()->GetTimerManager().SetTimer(MovetoNextStageHandle, [this]() {
+
+		// Exchange the Role
+		if (XRGameInstace)
+		{
+			EObjectType temp = XRGameInstace->ServerObjectType;
+			XRGameInstace->ServerObjectType = XRGameInstace->ClientObjectType;
+			XRGameInstace->ClientObjectType = temp;
+		}
+
+		SetGameMatchState(EGameMatchState::EGMS_SecondGameWait);
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			world->ServerTravel(NewmapName);
+		}		
+		
+		}, 5.0f, false);
+
+}
 
 
 void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
@@ -130,18 +187,18 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 	{
 		if (PlayerController->IsLocalController())
 		{
-			PlayerController->SetControllerObjectType(EObjectType::EOT_Deffence);
-			if (GEngine)
+			if (XRGameInstace)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test Controller Defence")));
+				PlayerController->SetControllerObjectType(XRGameInstace->ServerObjectType);
+
 			}
 		}
 		else
 		{
-			PlayerController->SetControllerObjectType(EObjectType::EOT_Offence);
-			if (GEngine)
+			if (XRGameInstace)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test Controller Offence")));
+				PlayerController->SetControllerObjectType(XRGameInstace->ClientObjectType);
+
 			}
 		}
 	}
@@ -150,6 +207,31 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor:: Red, FString::Printf(TEXT("Multi Test XRGameMode PostLogin Test")));
 	}
+}
+
+void AXRGamePlayMode::SetGameMatchState(EGameMatchState matchState)
+{
+	if (XRGameInstace)
+	{
+		XRGameInstace->matchState = matchState;
+	}
+}
+
+bool AXRGamePlayMode::isNowFirstGame()
+{
+	EGameMatchState currentState = XRGameInstace->matchState;
+
+	if (currentState >= EGameMatchState::EGMS_SecondGameWait)
+	{
+		return false;
+	}
+	else if (currentState >= EGameMatchState::EGMS_FIrstGameWait)
+	{
+		return true;
+	}
+
+	return false;
+
 }
 
 void AXRGamePlayMode::PlayerPositionSetReady()
@@ -235,11 +317,11 @@ void AXRGamePlayMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	XRGameInstace = Cast<UXRDefenceGameInstance>(GetGameInstance());
+
 	InitializeOnlineSubSystem();
 
 }
-
-
 
 
 void AXRGamePlayMode::TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType)
@@ -247,9 +329,6 @@ void AXRGamePlayMode::TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectTy
 	OnObjectGrabEvent.Broadcast(isGrab, objectType);
 
 }
-
-
-
 
 void AXRGamePlayMode::SpawnActorForUpgrade_Implementation(ECharacterType characterType, FVector position, FRotator rotation, FCharacterValueTransmitForm form)
 {
