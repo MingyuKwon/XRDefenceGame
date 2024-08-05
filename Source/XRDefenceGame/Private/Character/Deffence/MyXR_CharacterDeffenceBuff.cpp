@@ -108,10 +108,10 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunctionServer(bool isOnBoard, bo
 
     if (isOnBoard)
     {
-        GetWorld()->GetTimerManager().SetTimer(LifeTimeTimerHandle, this, &AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction, 2.0f, false);
+        GetWorld()->GetTimerManager().SetTimer(LifeTimeTimerHandle, this, &AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction, 0.5f, false);
         if (CharacterType == ECharacterType::ECT_DefenceH)
         {
-            GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &AMyXR_CharacterDeffenceBuff::OnHealTimerTick, 0.5f, true, 0.0f);
+            GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &AMyXR_CharacterDeffenceBuff::OnHealTimerTick, 0.1f, true, 0.0f);
         }
     }
 
@@ -120,7 +120,10 @@ void AMyXR_CharacterDeffenceBuff::OnBoardCalledFunctionServer(bool isOnBoard, bo
 void AMyXR_CharacterDeffenceBuff::LifeTimeTimerFunction()
 {
     Death(false);
-    IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter, CharacterType);
+    if(BeneathBuffableCharacter)
+    {
+        IBuffableInterface::Execute_BuffApplied(BeneathBuffableCharacter, CharacterType);
+    }
 }
 
 void AMyXR_CharacterDeffenceBuff::OnHealTimerTick()

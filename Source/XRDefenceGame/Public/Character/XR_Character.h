@@ -212,7 +212,16 @@ protected:
 	UAudioSubsystem* AudioManager;
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+	virtual void Multi_PlaySound(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	virtual void Server_PlaySound(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+
+	virtual void PlaySound(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale);
+
+	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale, bool bLocal = false);
+
+
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	float OwnVolumeScale = 1.f;

@@ -36,7 +36,10 @@ public:
     void TriggerOnMapSpawnEvent();
 
     UFUNCTION(BlueprintCallable, Category = "Travel")
-    void MoveToLobby(bool bServerTravel);
+    void MoveToLobby();
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bOpenLevelServer = true;
 
 protected:
 
@@ -60,9 +63,11 @@ protected:
     void OnCreateSession(bool bwasSuccessFul);
     void OnFindSession(const TArray<FOnlineSessionSearchResult>& SessionResult, bool bWasSuccessFul);
     void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+    UFUNCTION()
     void OnDestroySession(bool bwasSuccessFul);
     void OnStartSession(bool bwasSuccessFul);
 
+    class UXRDefenceGameInstance* XRGameInstace;
 
 
 };

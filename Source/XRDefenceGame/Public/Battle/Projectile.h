@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "XRDefenceEnums.h"
 #include "Projectile.generated.h"
 
 UCLASS()
@@ -53,6 +54,8 @@ private:
 	float shotSpeed;
 	float BulletDamage = 0.f;
 
+	EObjectType objectType = EObjectType::EOT_Deffence;
+
 	UPROPERTY(EditAnywhere)
 	float damageRadius = 5.f;
 
@@ -70,5 +73,9 @@ public:
 	void SetTarget(FVector TargetPosition);
 	UFUNCTION(BlueprintCallable)
 	void SetDamage(float Damage);
+
+	UFUNCTION(BlueprintCallable)
+	void SetobjectType(EObjectType inputobjectType);
+
 
 };

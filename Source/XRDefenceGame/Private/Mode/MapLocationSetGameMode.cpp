@@ -7,10 +7,11 @@
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 
 void AMapLocationSetGameMode::TriggerOnMapRotateEvent(float RotateAmount)
-                                                                                                                 {
+{
 	OnMapRotateEvent.Broadcast(RotateAmount);
 }
 
@@ -24,11 +25,9 @@ void AMapLocationSetGameMode::TriggerOnMapSpawnEvent()
 	OnMapSpawnEvent.Broadcast();
 }
 
-void AMapLocationSetGameMode::MoveToLobby(bool bServerTravel)
+void AMapLocationSetGameMode::MoveToLobby()
 {
-    UE_LOG(LogTemp, Display, TEXT("Multi Test MoveToLobby Trigger %s"), bServerTravel ? *FString("True") : *FString("false"));
-
-    if (bServerTravel)
+    if (bOpenLevelServer)
     {
         CreateSessionThroughSubSystem();
     }
@@ -43,6 +42,12 @@ void AMapLocationSetGameMode::BeginPlay()
     Super::BeginPlay();
 
     InitializeOnlineSubSystem();
+    XRGameInstace = Cast<UXRDefenceGameInstance>(GetGameInstance());
+    if (XRGameInstace)
+    {
+        XRGameInstace->matchState = EGameMatchState::EGMS_None;
+    }
+
 }
 
 void AMapLocationSetGameMode::PostLogin(APlayerController* NewPlayer)
@@ -61,6 +66,8 @@ void AMapLocationSetGameMode::InitializeOnlineSubSystem()
 
     if (MultiplayerSessionsSubsystem)
     {
+        MultiplayerSessionsSubsystem->ResetSessionInterface();
+
         MultiplayerSessionsSubsystem->MultiPlayerOnCreateSessionComplete.AddDynamic(this, &ThisClass::OnCreateSession);
         MultiplayerSessionsSubsystem->MultiPlayerOnFindSessionComplete.AddUObject(this, &ThisClass::OnFindSession);
         MultiplayerSessionsSubsystem->MultiPlayerOnJoinSessionComplete.AddUObject(this, &ThisClass::OnJoinSession);
@@ -183,29 +190,11 @@ void AMapLocationSetGameMode::OnJoinSession(EOnJoinSessionCompleteResult::Type R
                     }
                 }
             }
-            else
-            {
-                if (GEngine)
-                {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("OnJoinSession failed: Unable to get resolved connect string"));
-                }
-            }
+
         }
-        else
-        {
-            if (GEngine)
-            {
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("OnJoinSession failed: SessionInterface is not valid"));
-            }
-        }
+
     }
-    else
-    {
-        if (GEngine)
-        {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("OnJoinSession failed: OnlineSubSystem is null"));
-        }
-    }
+
 }
 
 void AMapLocationSetGameMode::OnDestroySession(bool bwasSuccessFul)

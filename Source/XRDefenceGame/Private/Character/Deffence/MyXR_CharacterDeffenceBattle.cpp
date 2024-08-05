@@ -17,6 +17,7 @@
 #include "Battle/Projectile.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/BoxComponent.h"
 
 
 void AMyXR_CharacterDeffenceBattle::Tick(float DeltaTime)
@@ -96,8 +97,10 @@ AMyXR_CharacterDeffenceBattle::AMyXR_CharacterDeffenceBattle()
     EtcMeshComponent5->SetupAttachment(GunMeshComponent);
     EtcMeshComponent5->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-
-    GetMesh()->SetCollisionResponseToChannel(ECC_Buffable, ECollisionResponse::ECR_Block);
+    BuffableBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BuffableBoxComponent"));
+    BuffableBoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    BuffableBoxComponent->SetCollisionResponseToChannel(ECC_Buffable, ECollisionResponse::ECR_Block);
+    BuffableBoxComponent->SetupAttachment(GetMesh());
 
 }
 

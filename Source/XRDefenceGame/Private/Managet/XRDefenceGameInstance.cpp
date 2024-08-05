@@ -15,3 +15,17 @@ UAudioSubsystem* UXRDefenceGameInstance::GetAudioManagerSubsystem()
 	return GetSubsystem<UAudioSubsystem>();
 }
 
+void UXRDefenceGameInstance::SetPlayerTransformData(FVector PlayerGamePlayLocation, FRotator PlayerGamePlayRotation, FVector GameStartLocatoin)
+{
+    FVector ReverseLocation = FVector::ZeroVector - PlayerGamePlayLocation;
+    FRotator ReverseRotation = PlayerGamePlayRotation * -1;
+    FVector RotatedVector = ReverseRotation.RotateVector(GameStartLocatoin + ReverseLocation);
+
+    OffencePlayerGamePlayLocation = RotatedVector;
+    OffencePlayerGamePlayRotation = ReverseRotation;
+
+    DefencePlayerGamePlayLocation = FVector(-RotatedVector.X, -RotatedVector.Y, RotatedVector.Z);
+    DefencePlayerGamePlayRotation = ReverseRotation + FRotator(0, 180, 0);
+
+}
+

@@ -141,6 +141,22 @@ enum class ENexusType : uint8
     ENT_None
 };
 
+UENUM(BlueprintType)
+enum class EGameMatchState : uint8
+{
+    EGMS_None,
+    EGMS_FIrstGameWait,
+    EGMS_FIrstGameStart,
+    EGMS_FIrstGamePlaying,
+    EGMS_FIrstGameEnd,
+    EGMS_SecondGameWait,
+    EGMS_SecondGameStart,
+    EGMS_SecondGamePlaying,
+    EGMS_SecondGameEnd,
+
+    EGMS_Max
+};
+
 
 class XRDEFENCEGAME_API XRDefenceEnums
 {

@@ -34,8 +34,6 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
      void RemoveActorFromMap(int32 ActorNetID);
      AXR_Character* FindActorInMap(int32 ActorNetID) const;
 
-
-
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnCustomEvent OnObjectGrabEvent;
 
@@ -84,6 +82,8 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnObjectGrabEvent(bool isGrab, EObjectType objectType);
 
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void MoveToNextGame();
 
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -101,8 +101,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     float purpleNexusHealth = 1000.f;
     float blueNexusHealth = 1000.f;
 
-    
-
+    int32 OffenceGoldCount = 0;
+    int32 DefenceGoldCount = 0;
+    void AddGoldCount(EObjectType objectType);
+   
     FTimerHandle GameTimerHandle;
 
     UFUNCTION()
@@ -117,10 +119,34 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     void ShouldGameStart();
     int32 currentconnectPlayer = 0;
 
+
+
+    class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
+    void InitializeOnlineSubSystem();
+
+    UFUNCTION(BlueprintCallable, Category = "Session")
+    void DestroyServerSession();
+
+    UFUNCTION()
+    void OnDestroySession(bool bwasSuccessFul);
+
+    UPROPERTY(EditAnywhere)
+    FString LobbyMapName;
+
+    UPROPERTY(EditAnywhere)
+    FString NewmapName;
+
+
+
 protected:
 
     virtual void BeginPlay() override;
 
     virtual void PostLogin(APlayerController* NewPlayer) override;
 
+    class UXRDefenceGameInstance* XRGameInstace;
+
+    void SetGameMatchState(EGameMatchState matchState);
+
+    bool isNowFirstGame();
 };

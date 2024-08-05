@@ -32,6 +32,8 @@ public:
 	void DestroySession();
 	void StartSession();
 
+	void ResetSessionInterface();
+
 	FMultiPlayerOnCreateSessionComplete MultiPlayerOnCreateSessionComplete;
 	FMultiPlayerOnFindSessionComplete MultiPlayerOnFindSessionComplete;
 	FMultiPlayerOnJoinSessionComplete MultiPlayerOnJoinSessionComplete;

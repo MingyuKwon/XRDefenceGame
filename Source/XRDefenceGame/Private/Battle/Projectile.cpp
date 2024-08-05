@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
 #include "Character/Deffence/XR_CharacterDeffence.h"
+#include "Character/Offence/XR_CharacterOffence.h"
 #include "XRDefenceGame/XRDefenceGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "Component/NotHitSelf_PMC.h"
@@ -16,7 +17,7 @@
 #include "NiagaraComponent.h"
 #include "Managet/XRDefenceGameInstance.h"
 #include "Managet/AudioSubsystem.h"
-
+#include "Player/Player_Controller.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -80,6 +81,12 @@ void AProjectile::SetDamage(float Damage)
     BulletDamage = Damage;
 }
 
+void AProjectile::SetobjectType(EObjectType inputobjectType)
+{
+    objectType = inputobjectType;
+}
+
+
 void AProjectile::ExplodeEffect_Implementation()
 {
     if (HitImpactParticle)
@@ -109,7 +116,16 @@ void AProjectile::Explode()
 
     TArray<AActor*> IgnoreActor;
 
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
+    if (objectType == EObjectType::EOT_Deffence)
+    {
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterDeffence::StaticClass(), IgnoreActor);
+    }
+    else
+    {
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXR_CharacterOffence::StaticClass(), IgnoreActor);
+
+    }
+
 
 
     UXRDefenceGameInstance* GameInstance = Cast<UXRDefenceGameInstance>(GetWorld()->GetGameInstance());

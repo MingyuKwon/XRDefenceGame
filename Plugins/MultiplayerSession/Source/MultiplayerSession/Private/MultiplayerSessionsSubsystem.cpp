@@ -47,10 +47,8 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	LastSessionSettings->bUsesPresence = true;
 	LastSessionSettings->bUseLobbiesIfAvailable = true;
 	LastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-	LastSessionSettings->BuildUniqueId = 1;
 
 
-	// 로그로 설정 값들을 출력
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Creating session with settings:\nLAN Match: %s\nNumPublicConnections: %d\nMatchType: %s"),
@@ -90,7 +88,6 @@ void UMultiplayerSessionsSubsystem::FindSession(int32 MaxSearchResult)
 	LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
 	LastSessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
-	// 로그로 설정 값들을 출력
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Finding sessions with settings:\nLAN Query: %s\nMaxSearchResults: %d"),
@@ -170,6 +167,7 @@ void UMultiplayerSessionsSubsystem::DestroySession()
 		MultiPlayerOnDestroySessionComplete.Broadcast(false);
 
 	}
+
 	
 
 }
@@ -248,4 +246,23 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 
 void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bwasSuccessful)
 {
+}
+
+void UMultiplayerSessionsSubsystem::ResetSessionInterface()
+{
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
+		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+		SessionInterface->RemoveNamedSession(NAME_GameSession);
+	}
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("ResetSessionInterface")));
+	}
+
+	SessionInterface = IOnlineSubsystem::Get()->GetSessionInterface();
 }

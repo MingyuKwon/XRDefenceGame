@@ -2,6 +2,8 @@
 
 
 #include "Mode/LobbyGameMode.h"
+#include "Managet/XRDefenceGameInstance.h"
+#include "XRDefenceEnums.h"
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
@@ -44,4 +46,19 @@ void ALobbyGameMode::CountDown()
 			world->ServerTravel(GameMapName);
 		}
 	}
+}
+
+void ALobbyGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	XRGameInstace = Cast<UXRDefenceGameInstance>(GetGameInstance());
+	if (XRGameInstace)
+	{
+		XRGameInstace->matchState = EGameMatchState::EGMS_FIrstGameWait;
+
+		XRGameInstace->ServerObjectType = EObjectType::EOT_Deffence;
+		XRGameInstace->ClientObjectType = EObjectType::EOT_Offence;
+	}
+
 }

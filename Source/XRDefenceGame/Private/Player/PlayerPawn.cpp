@@ -9,6 +9,7 @@
 #include "Managet/XRDefenceGameInstance.h"
 #include "Mode/XRGamePlayMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/Player_Controller.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -26,20 +27,30 @@ void APlayerPawn::SetPawnTransformForGameStart()
     UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
     if (GI == nullptr) return;
 
-    FVector MapSpawnLocation = GI->PlayerGamePlayLocation;
-    FRotator MapSpawnRotation = GI->PlayerGamePlayRotation;
+    APlayer_Controller* playercontroller = Cast<APlayer_Controller>(GetController());
 
+    if (playercontroller)
+    {
+        if (playercontroller->controllerObjectType == EObjectType::EOT_Offence)
+        {
+            SetActorLocation(GI->OffencePlayerGamePlayLocation);
+            SetActorRotation(GI->OffencePlayerGamePlayRotation);
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Offence")));
+            }
+        }
+        else if (playercontroller->controllerObjectType == EObjectType::EOT_Deffence)
+        {
+            SetActorLocation(GI->DefencePlayerGamePlayLocation);
+            SetActorRotation(GI->DefencePlayerGamePlayRotation);
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Deffence")));
+            }
+        }
+    }
 
-	FVector ReverseLocation = FVector::ZeroVector - MapSpawnLocation;
-	FVector ShouldMovetoLocation = GetActorLocation() + ReverseLocation;
-	SetActorLocation(ShouldMovetoLocation);
-
-    FRotator ReverseRotation = MapSpawnRotation * -1;
-    FVector RotatedVector = ReverseRotation.RotateVector(GetActorLocation());
-    SetActorLocation(RotatedVector);
-
-    FRotator NewRotation = GetActorRotation() + ReverseRotation;
-    SetActorRotation(NewRotation);
 }
 
 TArray<AXR_Character*> APlayerPawn::GetRangeCharacters(FVector impactPoint, float radius, EObjectType objectype)
@@ -106,10 +117,24 @@ void APlayerPawn::BeginPlay()
 {
     Super::BeginPlay();
 
+    if (bDefaultPawn) return;
+
     if (GetController() && GetController()->IsLocalPlayerController())
     {
-        SetPawnTransformForGameStart();
-        ServerGameModeCallPositionReady();
+        if (HasAuthority())
+        {
+            SetPawnTransformForGameStart();
+            ServerGameModeCallPositionReady();
+        }
+        else
+        {
+            FTimerHandle SetPositionHandle;
+            GetWorld()->GetTimerManager().SetTimer(SetPositionHandle, [this]() {
+
+                SetPawnTransformForGameStart();
+                ServerGameModeCallPositionReady();
+                }, 0.3f, false);
+        }
     }
 
 }

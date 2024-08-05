@@ -56,7 +56,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetControllerObjectType(EObjectType objectType);
 
 
@@ -86,6 +86,9 @@ public:
 	// Server
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
+	bool bGamePlaying = false;
+
 
 	FTimerHandle GestureCoolTimeTimeHandle;
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, Replicated, Category = "Pawn Parameter")
@@ -192,7 +195,6 @@ private:
 
 	UFUNCTION()
 	virtual void OnGameTimerShow(float leftSecond);
-
 
 	FTimerHandle DefaultGoldTimerHandle;
 	void StartDefaultTimeTick();

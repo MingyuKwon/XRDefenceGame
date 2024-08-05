@@ -17,6 +17,22 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
+	if (IsLocalPlayerController())
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage( 1 , 0.1f, FColor::Red, FString::Printf(TEXT("Servercontroller conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
+		}
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Red, FString::Printf(TEXT("Client conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
+		}
+	}
+
+
 	if (!IsLocalPlayerController()) return;
 
 	if (!GetPlayerPawn()) return;
@@ -134,7 +150,7 @@ void APlayer_Controller::UpdateUserHandUI_Implementation()
 		);
 }
 
-void APlayer_Controller::SetControllerObjectType(EObjectType objectType)
+void APlayer_Controller::SetControllerObjectType_Implementation(EObjectType objectType)
 {
 	controllerObjectType = objectType;
 }
@@ -174,28 +190,21 @@ void APlayer_Controller::BeginPlay()
 		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
 	}
 
-	if (HasAuthority())
-	{
-		if (IsLocalController())
-		{
-			SetControllerObjectType(EObjectType::EOT_Deffence);
-		}
-		else
-		{
-			SetControllerObjectType(EObjectType::EOT_Offence);
-		}
-	}
 }
 
 void APlayer_Controller::OnGameStart()
 {
 	StartDefaultTimeTick();
 
+	FTimerHandle gamePlayingTimer;
+	GetWorld()->GetTimerManager().SetTimer(gamePlayingTimer, [this]() {
+		bGamePlaying = true;
+		}, 1.f, false);
 }
 
 void APlayer_Controller::OnGameEnd()
 {
-
+	bGamePlaying = false;
 }
 
 void APlayer_Controller::OnGameTimerShow(float leftSecond)
@@ -203,6 +212,7 @@ void APlayer_Controller::OnGameTimerShow(float leftSecond)
 	curerntLeftTime = leftSecond;
 	UpdateUserHandUI();
 }
+
 
 bool APlayer_Controller::GetPlayerPawn()
 {
@@ -254,7 +264,8 @@ void APlayer_Controller::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(APlayer_Controller, controllerObjectType);
 	DOREPLIFETIME(APlayer_Controller, GestureCoolTime);
-	
+	DOREPLIFETIME(APlayer_Controller, bGamePlaying);
+
 }
 
 
@@ -402,8 +413,8 @@ void APlayer_Controller::UpdateCurrentRightGesture(EGesture inputGesture)
 void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
-
 	if (bRightGrabbing) return;
+	if (!bGamePlaying) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
     if (currentRightInteractInterface == handInteractInterface) return;
@@ -457,8 +468,8 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
-
 	if (bLeftGrabbing) return;
+	if (!bGamePlaying) return;
 
 	if (currentLeftInteractInterface == handInteractInterface) return;
 	if (currentRightInteractInterface == handInteractInterface) return;
@@ -517,6 +528,7 @@ void APlayer_Controller::LeftGrabStart()
 	if (!IsLocalController()) return;
 
 	if (bLeftGrabbing) return;
+	if (!bGamePlaying) return;
 
 
 	if (IsLeftGrabable())
@@ -532,7 +544,7 @@ void APlayer_Controller::LeftGrabStart()
 void APlayer_Controller::LeftGrabEnd()
 {
 	if (!IsLocalController()) return;
-
+	if (!bGamePlaying) return;
 	if (!bLeftGrabbing) return;
 
 
@@ -551,6 +563,7 @@ void APlayer_Controller::RightGrabStart()
 	if (!IsLocalController()) return;
 
 	if (bRightGrabbing) return;
+	if (!bGamePlaying) return;
 
 
 	if (IsRightGrabable())
@@ -567,6 +580,7 @@ void APlayer_Controller::RightGrabEnd()
 	if (!IsLocalController()) return;
 
 	if (!bRightGrabbing) return;
+	if (!bGamePlaying) return;
 
 
 	if (IsRightGrabable())
