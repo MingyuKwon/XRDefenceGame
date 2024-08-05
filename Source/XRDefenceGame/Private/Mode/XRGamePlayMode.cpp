@@ -21,23 +21,38 @@ void AXRGamePlayMode::InitializeOnlineSubSystem()
 	{
 		MultiplayerSessionsSubsystem = gameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
 	}
+
+	if (MultiplayerSessionsSubsystem)
+	{
+		MultiplayerSessionsSubsystem->MultiPlayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
+	}
 }
 
 void AXRGamePlayMode::DestroyServerSession()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DestroyServerSession")));
-	}
-
 	if (MultiplayerSessionsSubsystem)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DestroySession")));
-
-		}
 		MultiplayerSessionsSubsystem->DestroySession();
+	}
+}
+
+void AXRGamePlayMode::OnDestroySession(bool bwasSuccessFul)
+{
+	if (bwasSuccessFul)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+			{
+				APlayerController* PlayerController = It->Get();
+
+				if (PlayerController)
+				{
+					PlayerController->ClientTravel(LobbyMapName, ETravelType::TRAVEL_Absolute);
+				}
+			}
+		}
 	}
 }
 

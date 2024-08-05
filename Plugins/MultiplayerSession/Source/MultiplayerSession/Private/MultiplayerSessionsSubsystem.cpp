@@ -240,16 +240,28 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 		CreateSession(LastNumPublicConnecations, LastMatchType);
 	}
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("SubSystem DestroySession   bSuccessFul %s"), bwasSuccessful ? *FString("true") : *FString("false")));
-
-	}
-
 	MultiPlayerOnDestroySessionComplete.Broadcast(bwasSuccessful);
 
 }
 
 void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bwasSuccessful)
 {
+}
+
+void UMultiplayerSessionsSubsystem::ResetSessionInterface()
+{
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->ClearOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegateHandle);
+		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+	}
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("ResetSessionInterface")));
+	}
+
+	SessionInterface = IOnlineSubsystem::Get()->GetSessionInterface();
 }

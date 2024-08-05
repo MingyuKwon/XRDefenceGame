@@ -63,6 +63,7 @@ protected:
     void OnCreateSession(bool bwasSuccessFul);
     void OnFindSession(const TArray<FOnlineSessionSearchResult>& SessionResult, bool bWasSuccessFul);
     void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+    UFUNCTION()
     void OnDestroySession(bool bwasSuccessFul);
     void OnStartSession(bool bwasSuccessFul);
 

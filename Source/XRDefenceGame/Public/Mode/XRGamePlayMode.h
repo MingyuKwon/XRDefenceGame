@@ -125,6 +125,12 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Session")
     void DestroyServerSession();
 
+    UFUNCTION()
+    void OnDestroySession(bool bwasSuccessFul);
+
+    UPROPERTY(EditAnywhere)
+    FString LobbyMapName;
+
 
 protected:
 
