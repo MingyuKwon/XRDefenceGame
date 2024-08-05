@@ -256,6 +256,8 @@ void UMultiplayerSessionsSubsystem::ResetSessionInterface()
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
 		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
 		SessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegateHandle);
+		SessionInterface->RemoveNamedSession(NAME_GameSession);
+
 	}
 
 	if (GEngine)
