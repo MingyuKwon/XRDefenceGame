@@ -133,11 +133,8 @@ void APlayerPawn::BeginPlay()
 
                 SetPawnTransformForGameStart();
                 ServerGameModeCallPositionReady();
-                }, 0.5f, false);
+                }, 0.3f, false);
         }
-
-
-
     }
 
 }
