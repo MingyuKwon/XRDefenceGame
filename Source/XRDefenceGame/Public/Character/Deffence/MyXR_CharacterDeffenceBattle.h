@@ -8,6 +8,7 @@
 #include "MyXR_CharacterDeffenceBattle.generated.h"
 
 class UAnimMontage;
+class UBoxComponent;
 /**
  * 
  */
@@ -103,6 +104,10 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* EtcMeshComponent5;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UBoxComponent* BuffableBoxComponent;
+
 
     virtual void DissolveCallBack(float percent) override;
 
