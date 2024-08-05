@@ -47,7 +47,6 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	LastSessionSettings->bUsesPresence = true;
 	LastSessionSettings->bUseLobbiesIfAvailable = true;
 	LastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-	LastSessionSettings->BuildUniqueId = 1;
 
 
 	if (GEngine)
@@ -168,6 +167,7 @@ void UMultiplayerSessionsSubsystem::DestroySession()
 		MultiPlayerOnDestroySessionComplete.Broadcast(false);
 
 	}
+
 	
 
 }
@@ -238,6 +238,12 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 	{
 		bCreateSessionOnDestroy = false;
 		CreateSession(LastNumPublicConnecations, LastMatchType);
+	}
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("SubSystem DestroySession   bSuccessFul %s"), bwasSuccessful ? *FString("true") : *FString("false")));
+
 	}
 
 	MultiPlayerOnDestroySessionComplete.Broadcast(bwasSuccessful);

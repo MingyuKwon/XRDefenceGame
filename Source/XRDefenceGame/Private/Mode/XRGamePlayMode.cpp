@@ -25,8 +25,18 @@ void AXRGamePlayMode::InitializeOnlineSubSystem()
 
 void AXRGamePlayMode::DestroyServerSession()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DestroyServerSession")));
+	}
+
 	if (MultiplayerSessionsSubsystem)
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DestroySession")));
+
+		}
 		MultiplayerSessionsSubsystem->DestroySession();
 	}
 }
@@ -179,6 +189,8 @@ void AXRGamePlayMode::GameTimerCallBack()
 void AXRGamePlayMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitializeOnlineSubSystem();
 
 }
 
