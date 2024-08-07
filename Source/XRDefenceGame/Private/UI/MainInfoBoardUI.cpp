@@ -85,10 +85,35 @@ void UMainInfoBoardUI::WhichPanelToShow(EGameMatchState matchState)
 
 }
 
-void UMainInfoBoardUI::SetGameStart_GameStateText(FString text)
+void UMainInfoBoardUI::SetGameStateText(EGameMatchState matchState, FString text)
 {
-    if (GameStart_GameStateText)
+    switch (matchState)
     {
-        GameStart_GameStateText->SetText(FText::FromString(text));
+    case EGameMatchState::EGMS_FIrstGameWait:
+    case EGameMatchState::EGMS_FIrstGameStart:
+    case EGameMatchState::EGMS_SecondGameWait:
+    case EGameMatchState::EGMS_SecondGameStart:
+        if (GameStart_GameStateText)
+        {
+            GameStart_GameStateText->SetText(FText::FromString(text));
+        }
+        break;
+
+    case EGameMatchState::EGMS_FIrstGameEnd:
+    case EGameMatchState::EGMS_SecondGameEnd:
+        GameStartPanel->SetVisibility(ESlateVisibility::Hidden);
+        GameEndtPanel->SetVisibility(ESlateVisibility::Visible);
+
+        break;
+
+    case EGameMatchState::EGMS_FIrstGamePlaying:
+    case EGameMatchState::EGMS_SecondGamePlaying:
+        GameStartPanel->SetVisibility(ESlateVisibility::Hidden);
+        GameEndtPanel->SetVisibility(ESlateVisibility::Hidden);
+
+        break;
+
     }
+
+
 }

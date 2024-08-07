@@ -36,7 +36,7 @@ public:
 	void SetUIPurpleHealth(float HealthAmount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetgameStart_GameStateText(FString& text);
+	void SetGameStateText(EGameMatchState matchState, const FString& text);
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)

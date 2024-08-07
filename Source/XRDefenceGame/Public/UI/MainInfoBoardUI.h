@@ -40,8 +40,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* GameEndtPanel;
 
-	
-
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_GameStateText;
 
@@ -67,7 +65,7 @@ public:
 	void WhichPanelToShow(EGameMatchState matchState);
 
 	UFUNCTION(BlueprintCallable)
-	void SetGameStart_GameStateText(FString text);
+	void SetGameStateText(EGameMatchState matchState, FString text);
 
 
 };
