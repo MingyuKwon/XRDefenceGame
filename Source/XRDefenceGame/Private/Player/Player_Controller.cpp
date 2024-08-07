@@ -17,22 +17,6 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
-	if (IsLocalPlayerController())
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage( 1 , 0.1f, FColor::Red, FString::Printf(TEXT("Servercontroller conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
-		}
-	}
-	else
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Red, FString::Printf(TEXT("Client conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
-		}
-	}
-
-
 	if (!IsLocalPlayerController()) return;
 
 	if (!GetPlayerPawn()) return;
@@ -353,10 +337,6 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 
 		}
 	}
-
-
-	
-
 }
 
 
@@ -453,6 +433,7 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 	if (!IsLocalController()) return;
 
 	if (currentRightInteractInterface != handInteractInterface) return;
+	if (handInteractInterface == nullptr) return;
 
 	if (currentRightInteractInterface)
 	{
@@ -508,7 +489,7 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
-
+	if (handInteractInterface == nullptr) return;
 	if (currentLeftInteractInterface != handInteractInterface) return;
 
 
@@ -530,10 +511,8 @@ void APlayer_Controller::LeftGrabStart()
 	if (bLeftGrabbing) return;
 	if (!bGamePlaying) return;
 
-
 	if (IsLeftGrabable())
 	{
-
 		TryGrabStart(currentLeftInteractInterface->GetNetId_Implementation());
 	}
 
@@ -609,12 +588,6 @@ bool APlayer_Controller::IsInteractActorMine(TScriptInterface<IHandInteractInter
 	if (TargetObjectType == EObjectType::EOT_DeffenceGold)
 	{
 		TargetObjectType = EObjectType::EOT_Deffence;
-	}
-
-	if (GEngine)
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test IsInteractActorMine             controller : %s , target : %s"), controllerObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence") , TargetObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence")));
-
 	}
 
 	return TargetObjectType == controllerObjectType;
