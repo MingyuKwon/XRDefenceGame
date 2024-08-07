@@ -35,9 +35,27 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIPurpleHealth(float HealthAmount);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetgameStart_GameStateText(FString& text);
+
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void WhichPanelToShow_Multi(EGameMatchState matchState);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void WhichPanelToShow(EGameMatchState matchState);
+
+
+
+
 
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnGameStart();
+	UFUNCTION()
+	void OnGameEnd();
 
 	UFUNCTION(BlueprintCallable)
 	void NexusHealthChange(ENexusType nexusType, float currentHealth);

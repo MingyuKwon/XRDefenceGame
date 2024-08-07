@@ -3,6 +3,7 @@
 
 #include "UI/MainInfoBoardUI.h"
 #include "Components/TextBlock.h"
+#include "Components/CanvasPanel.h"
 
 
 void UMainInfoBoardUI::SetTimeText(float LeftSecond)
@@ -50,5 +51,39 @@ void UMainInfoBoardUI::SetHealthText(float HealthAmount)
     if (HealthText)
     {
         HealthText->SetText(HealthTextValue);
+    }
+}
+
+void UMainInfoBoardUI::WhichPanelToShow(EGameMatchState matchState)
+{
+    switch (matchState)
+    {
+    case EGameMatchState::EGMS_FIrstGameWait :
+    case EGameMatchState::EGMS_FIrstGameStart:
+    case EGameMatchState::EGMS_SecondGameWait:
+    case EGameMatchState::EGMS_SecondGameStart:
+        GameStartPanel->SetVisibility(ESlateVisibility::Visible);
+            break;
+
+    case EGameMatchState::EGMS_FIrstGameEnd:
+    case EGameMatchState::EGMS_SecondGameEnd:
+        GameStartPanel->SetVisibility(ESlateVisibility::Hidden);
+        break;
+
+    case EGameMatchState::EGMS_FIrstGamePlaying:
+    case EGameMatchState::EGMS_SecondGamePlaying:
+        GameStartPanel->SetVisibility(ESlateVisibility::Hidden);
+        break;
+
+    }
+
+
+}
+
+void UMainInfoBoardUI::SetGameStart_GameStateText(FString text)
+{
+    if (GameStart_GameStateText)
+    {
+        GameStart_GameStateText->SetText(FText::FromString(text));
     }
 }

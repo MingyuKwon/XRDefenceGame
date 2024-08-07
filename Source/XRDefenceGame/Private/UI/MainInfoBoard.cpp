@@ -12,16 +12,6 @@ AMainInfoBoard::AMainInfoBoard()
 	bReplicates = true;
 }
 
-void AMainInfoBoard::UpdateUI_Implementation( float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)
-{
-	SetUIPurpleHealth(PurpleHealthAmount);
-	SetUIOrnageHealth(OrangeHealthAmount);
-	SetUBlueHealth(BlueHealthAmount);
-	SetUIHealth(TotalHealthAmount);
-
-	SetUITime(TimeSecond);
-}
-
 void AMainInfoBoard::BeginPlay()
 {
 	Super::BeginPlay();
@@ -31,9 +21,26 @@ void AMainInfoBoard::BeginPlay()
 	{
 		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &ThisClass::OnGameTimerShow);
 		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &ThisClass::NexusHealthChange);
+
+		XRGamePlayMode->OnGameStart.AddDynamic(this, &ThisClass::OnGameStart);
+		XRGamePlayMode->OnGameEnd.AddDynamic(this, &ThisClass::OnGameEnd);
+
 	}
 
-	
+	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameWait);
+
+}
+
+
+void AMainInfoBoard::OnGameStart()
+{
+	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGamePlaying);
+
+}
+
+void AMainInfoBoard::OnGameEnd()
+{
+	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameEnd);
 }
 
 void AMainInfoBoard::NexusHealthChange(ENexusType nexusType, float currentHealth)
@@ -69,3 +76,17 @@ void AMainInfoBoard::Tick(float DeltaTime)
 
 }
 
+void AMainInfoBoard::WhichPanelToShow_Multi_Implementation(EGameMatchState matchState)
+{
+	WhichPanelToShow(matchState);
+}
+
+void AMainInfoBoard::UpdateUI_Implementation(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)
+{
+	SetUIPurpleHealth(PurpleHealthAmount);
+	SetUIOrnageHealth(OrangeHealthAmount);
+	SetUBlueHealth(BlueHealthAmount);
+	SetUIHealth(TotalHealthAmount);
+
+	SetUITime(TimeSecond);
+}

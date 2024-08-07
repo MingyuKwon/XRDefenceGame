@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "XRDefenceEnums.h"
 #include "MainInfoBoardUI.generated.h"
 
 /**
  * 
  */
 class UTextBlock;
-
+class UCanvasPanel;
 
 UCLASS()
 class XRDEFENCEGAME_API UMainInfoBoardUI : public UUserWidget
@@ -33,6 +34,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* HealthText;
 
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* GameStartPanel;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameStart_GameStateText;
+
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -49,4 +56,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetHealthText(float HealthAmount);
+
+
+	UFUNCTION(BlueprintCallable)
+	void WhichPanelToShow(EGameMatchState matchState);
+
+	UFUNCTION(BlueprintCallable)
+	void SetGameStart_GameStateText(FString text);
+
+
 };
