@@ -38,6 +38,11 @@ protected:
 	UCanvasPanel* GameStartPanel;
 
 	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* GameEndtPanel;
+
+	
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_GameStateText;
 
 

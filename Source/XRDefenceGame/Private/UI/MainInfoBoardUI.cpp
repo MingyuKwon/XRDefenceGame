@@ -63,16 +63,21 @@ void UMainInfoBoardUI::WhichPanelToShow(EGameMatchState matchState)
     case EGameMatchState::EGMS_SecondGameWait:
     case EGameMatchState::EGMS_SecondGameStart:
         GameStartPanel->SetVisibility(ESlateVisibility::Visible);
+        GameEndtPanel->SetVisibility(ESlateVisibility::Hidden);
             break;
 
     case EGameMatchState::EGMS_FIrstGameEnd:
     case EGameMatchState::EGMS_SecondGameEnd:
         GameStartPanel->SetVisibility(ESlateVisibility::Hidden);
+        GameEndtPanel->SetVisibility(ESlateVisibility::Visible);
+
         break;
 
     case EGameMatchState::EGMS_FIrstGamePlaying:
     case EGameMatchState::EGMS_SecondGamePlaying:
         GameStartPanel->SetVisibility(ESlateVisibility::Hidden);
+        GameEndtPanel->SetVisibility(ESlateVisibility::Hidden);
+
         break;
 
     }
