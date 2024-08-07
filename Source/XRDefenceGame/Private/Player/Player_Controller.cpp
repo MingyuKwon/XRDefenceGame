@@ -167,11 +167,13 @@ void APlayer_Controller::BeginPlay()
 	{
 		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
 		XRGamePlayMode->OnCostEvent.AddDynamic(this, &APlayer_Controller::GoldCostEventCallBack);
-		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
 
 		XRGamePlayMode->OnGameStart.AddDynamic(this, &APlayer_Controller::OnGameStart);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &APlayer_Controller::OnGameEnd);
+
 		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
+		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
+
 	}
 
 }

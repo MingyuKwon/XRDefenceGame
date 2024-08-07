@@ -102,7 +102,7 @@ private:
 	float purpleNexusHealth = 1000.f;
 	float blueNexusHealth = 1000.f;
 
-	float curerntLeftTime = 300.f;
+	float curerntLeftTime = 240.f;
 
 	UFUNCTION(BlueprintCallable)
 	void GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold);
