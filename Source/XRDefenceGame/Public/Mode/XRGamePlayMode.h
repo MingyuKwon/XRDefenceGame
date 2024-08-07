@@ -95,7 +95,7 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
 
     UPROPERTY(EditDefaultsOnly, Category = "Time")
-    float GameTimerSecond = 300.f;
+    float GameTimerSecond = 240.f;
 
     float orangeNexusHealth = 1000.f;
     float purpleNexusHealth = 1000.f;
