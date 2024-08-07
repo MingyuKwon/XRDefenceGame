@@ -328,7 +328,7 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Scissors);
 			currentRightGesture = EGesture::None;
 
-			GetWorld()->GetTimerManager().SetTimer(CanFireTimerHandle, this, &APlayer_Controller::CannotFire, 0.3f, false);
+			GetWorld()->GetTimerManager().SetTimer(CanFireTimerHandle, this, &APlayer_Controller::CannotFire, 0.5f, false);
 
 		}
 			
@@ -349,7 +349,7 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Thumb);
 			currentRightGesture = EGesture::None;
 
-			GetWorld()->GetTimerManager().SetTimer(CanSpeedBuffTimerHandle, this, &APlayer_Controller::CannotBuff, 0.3f, false);
+			GetWorld()->GetTimerManager().SetTimer(CanSpeedBuffTimerHandle, this, &APlayer_Controller::CannotBuff, 0.5f, false);
 
 		}
 	}
