@@ -50,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable)
 	void UpdateUserHandUI();
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)

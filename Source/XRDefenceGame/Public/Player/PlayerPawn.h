@@ -50,10 +50,10 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float GesturePercent);
+	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float GoldMineCount, float GesturePercent);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount);
+	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount, float GoldMineCount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGestureCoolTime(float percent);

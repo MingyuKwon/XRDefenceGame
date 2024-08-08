@@ -98,12 +98,13 @@ void APlayer_Controller::GestureCoolTimeTick()
 	UpdateUserHandUI();
 }
 
-void APlayer_Controller::UpdateUserHandUI_Implementation()
+void APlayer_Controller::UpdateUserHandUI()
 {
 	if (!GetPlayerPawn()) return;
 	if (!GetPlayer_State()) return;
 
 	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
+		0,
 		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
 		);
 }
