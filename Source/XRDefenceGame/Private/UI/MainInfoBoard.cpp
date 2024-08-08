@@ -26,7 +26,7 @@ void AMainInfoBoard::BeginPlay()
 		XRGamePlayMode->OnGameStart.AddDynamic(this, &ThisClass::OnGameStart);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &ThisClass::OnGameEnd);
 
-		XRGamePlayMode->OnConnectEvenet.AddDynamic(this, &ThisClass::SetConnectState_Multi_toBind);
+		XRGamePlayMode->OnConnectEvenet.AddDynamic(this, &ThisClass::SetConnectState_Multi);
 
 	}
 
@@ -79,10 +79,6 @@ void AMainInfoBoard::Tick(float DeltaTime)
 
 }
 
-void AMainInfoBoard::SetConnectState_Multi_toBind(bool offence, bool defence)
-{
-	SetConnectState_Multi(offence, defence);
-}
 
 void AMainInfoBoard::WhichPanelToShow_Multi_Implementation(EGameMatchState matchState)
 {

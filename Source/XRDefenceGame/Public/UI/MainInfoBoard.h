@@ -46,9 +46,6 @@ public:
 	void WhichPanelToShow(EGameMatchState matchState);
 
 
-	UFUNCTION(BlueprintCallable)
-	void SetConnectState_Multi_toBind(bool offence, bool defence);
-
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetConnectState_Multi(bool offence, bool defence);
 

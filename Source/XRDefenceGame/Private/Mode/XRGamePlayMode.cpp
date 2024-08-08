@@ -192,7 +192,6 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 			if (XRGameInstace)
 			{
 				PlayerController->SetControllerObjectType(XRGameInstace->ServerObjectType);
-				TriggerConnectUIUpdate(XRGameInstace->ServerObjectType);
 			}
 		}
 		else
@@ -200,8 +199,6 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 			if (XRGameInstace)
 			{
 				PlayerController->SetControllerObjectType(XRGameInstace->ClientObjectType);
-				TriggerConnectUIUpdate(XRGameInstace->ClientObjectType);
-
 			}
 		}
 	}
@@ -245,6 +242,15 @@ void AXRGamePlayMode::PlayerPositionSetReady()
 	}
 
 	currentconnectPlayer++;
+
+	if (currentconnectPlayer == 1)
+	{
+		TriggerConnectUIUpdate(XRGameInstace->ServerObjectType);
+	}
+	else if (currentconnectPlayer == 2)
+	{
+		TriggerConnectUIUpdate(XRGameInstace->ClientObjectType);
+	}
 	ShouldGameStart();
 }
 
