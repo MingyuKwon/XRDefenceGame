@@ -5,6 +5,24 @@
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanel.h"
 
+void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
+{
+    if (offence)
+    {
+        GameStart_OffenceConnectText->SetText(FText::FromString(FString("O")));
+    }
+
+    if (defence)
+    {
+        GameStart_DefenceConnectText->SetText(FText::FromString(FString("O")));
+    }
+
+    if (offence && defence)
+    {
+        SetGameStateText(EGameMatchState::EGMS_FIrstGameStart, FString("Get Ready For Match"));
+    }
+
+}
 
 void UMainInfoBoardUI::SetTimeText(float LeftSecond)
 {

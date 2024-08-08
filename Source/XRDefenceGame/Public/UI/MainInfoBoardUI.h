@@ -43,6 +43,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_GameStateText;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameStart_DefenceConnectText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameStart_OffenceConnectText;
+
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -67,5 +73,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetGameStateText(EGameMatchState matchState, FString text);
 
+	UFUNCTION(BlueprintCallable)
+	void SetConnectState(bool offence, bool defence);
 
 };

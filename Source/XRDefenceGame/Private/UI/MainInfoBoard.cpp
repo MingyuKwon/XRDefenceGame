@@ -12,6 +12,7 @@ AMainInfoBoard::AMainInfoBoard()
 	bReplicates = true;
 }
 
+
 void AMainInfoBoard::BeginPlay()
 {
 	Super::BeginPlay();
@@ -24,6 +25,8 @@ void AMainInfoBoard::BeginPlay()
 
 		XRGamePlayMode->OnGameStart.AddDynamic(this, &ThisClass::OnGameStart);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &ThisClass::OnGameEnd);
+
+		XRGamePlayMode->OnConnectEvenet.AddDynamic(this, &ThisClass::SetConnectState_Multi_toBind);
 
 	}
 
@@ -76,9 +79,24 @@ void AMainInfoBoard::Tick(float DeltaTime)
 
 }
 
+void AMainInfoBoard::SetConnectState_Multi_toBind(bool offence, bool defence)
+{
+	SetConnectState_Multi(offence, defence);
+}
+
 void AMainInfoBoard::WhichPanelToShow_Multi_Implementation(EGameMatchState matchState)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("SetConnectState_Multi_Implementation")));
+	}
 	WhichPanelToShow(matchState);
+}
+
+void AMainInfoBoard::SetConnectState_Multi_Implementation(bool offence, bool defence)
+{
+
+	SetConnectState(offence, defence);
 }
 
 void AMainInfoBoard::UpdateUI_Implementation(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)

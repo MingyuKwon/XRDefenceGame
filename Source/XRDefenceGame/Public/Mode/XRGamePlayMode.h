@@ -19,6 +19,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStart);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameTimerTickEvent, float, leftTime);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnConnectEvenet, bool, isOffenceConnect, bool, isDefenceConnect);
+
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnMapSpawnPawnMoveEvent, EObjectType, objectType, FVector, SpawnLocatoin, FRotator, SpawnRotation);
 
 
@@ -60,6 +63,9 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FGameTimerTickEvent OnGameTimerTickEvent;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnConnectEvenet OnConnectEvenet;
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapSpawnPawnMoveEvent OnMapSpawnPawnMoveEvent;
@@ -104,7 +110,12 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     int32 OffenceGoldCount = 0;
     int32 DefenceGoldCount = 0;
     void AddGoldCount(EObjectType objectType);
-   
+
+
+    bool bOffenceConnect = false;
+    bool bDefenceConnect = false;
+    void TriggerConnectUIUpdate(EObjectType objectType);
+
     FTimerHandle GameTimerHandle;
 
     UFUNCTION()

@@ -46,6 +46,15 @@ public:
 	void WhichPanelToShow(EGameMatchState matchState);
 
 
+	UFUNCTION(BlueprintCallable)
+	void SetConnectState_Multi_toBind(bool offence, bool defence);
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetConnectState_Multi(bool offence, bool defence);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetConnectState(bool offence, bool defence);
+
 
 
 
@@ -59,6 +68,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void NexusHealthChange(ENexusType nexusType, float currentHealth);
+
+
 
 	UFUNCTION()
 	virtual void OnGameTimerShow(float leftSecond);
