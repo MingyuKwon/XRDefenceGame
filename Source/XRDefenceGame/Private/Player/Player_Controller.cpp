@@ -82,7 +82,14 @@ void APlayer_Controller::StartDefaultTimeTick()
 
 bool APlayer_Controller::CanAffordCost(float Cost)
 {
-	return Cost <= playerState->GetGold();
+	if (!GetPlayer_State()) return false;
+
+	if (playerState)
+	{
+		return Cost <= playerState->GetGold();
+	}
+
+	return false;
 }
 
 void APlayer_Controller::SetGestureCoolTime_Implementation()
@@ -445,12 +452,15 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     }
 
-    if (handInteractInterface)
-    {
-		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(handInteractInterface->GetCost_Implementation() ));
-		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
-
+	if (handInteractInterface)
+	{
+		int32 NetId = handInteractInterface->GetNetId_Implementation();
+		int32 Cost = handInteractInterface->GetCost_Implementation();
+		bool bCanAfford = CanAffordCost(Cost);
+		TrySetDisableHighLight(NetId, !bCanAfford);
+		TryInteractableEffectStart(NetId);
 	}
+
 
     currentLeftInteractInterface = handInteractInterface;
 }
@@ -459,7 +469,7 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 {
 	if (!IsLocalController()) return;
 
-	if (bLeftGrabbing && !handInteractInterface->IsOnBoard_Implementation())
+	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
 	{
 		return;
 	}
