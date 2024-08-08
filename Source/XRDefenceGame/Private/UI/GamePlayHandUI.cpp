@@ -2,7 +2,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 
-void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount)
+void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount, float GoldMine)
 {
     int32 GoldInt = GoldAmount;
     int32 MaxGoldInt = MaxGoldAmount;
@@ -13,6 +13,13 @@ void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount)
     if (GoldText)
     {
         GoldText->SetText(GoldTextValue);
+    }
+
+    if (currentGoldMineText)
+    {
+        FString GoldMineString = FString::Printf(TEXT("%d"), (int32)GoldMine);
+        FText GoldMineText = FText::FromString(GoldMineString);
+        currentGoldMineText->SetText(GoldMineText);
     }
 }
 
@@ -25,7 +32,7 @@ void UGamePlayHandUI::SetCoolTimeProgressBar(float precent)
 
     if (CoolTimeText)
     {
-        FString GestureCountDown = FString::Printf(TEXT("%d"), (int32)((1- precent) * 5));
+        FString GestureCountDown = FString::Printf(TEXT("%d"), 5 - (int32)(precent * 5));
         FText GestureCountDownText = FText::FromString(GestureCountDown);
 
         CoolTimeText->SetText(GestureCountDownText);

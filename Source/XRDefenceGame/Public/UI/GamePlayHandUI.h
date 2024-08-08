@@ -41,7 +41,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetGoldText(float GoldAmount, float MaxGoldAmount);
+	void SetGoldText(float GoldAmount, float MaxGoldAmount, float GoldMine);
 
 	UFUNCTION(BlueprintCallable)
 	void SetCoolTimeProgressBar(float precent);

@@ -63,7 +63,11 @@ void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cos
 	else if (objectType != controllerObjectType)
 	{
 		return;
+
 	}
+
+	if (!GetPlayer_State()) return;
+
 
 	playerState->SetGold(playerState->GetGold() - cost);
 
@@ -116,16 +120,19 @@ void APlayer_Controller::UpdateUserHandUI()
 		if (controllerObjectType == EObjectType::EOT_Offence)
 		{
 			GoldMineCount = XRGamePlayMode->OffenceGoldCount;
+
+
 		}
 		else if (controllerObjectType == EObjectType::EOT_Deffence)
 		{
 			GoldMineCount = XRGamePlayMode->DefenceGoldCount;
+
 		}
 
 	}
 
 	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
-		GoldMineCount,
+		GoldMineCount - 1,
 		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
 		);
 }
@@ -138,6 +145,8 @@ void APlayer_Controller::SetControllerObjectType_Implementation(EObjectType obje
 void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
 {
 	if (objectType != objectType) return;
+	if (!GetPlayer_State()) return;
+
 
 	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
 	{
