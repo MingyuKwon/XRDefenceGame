@@ -97,19 +97,8 @@ public:
 
 private:
 
-	// This will be saved in GameMode
-	float orangeNexusHealth = 1000.f;
-	float purpleNexusHealth = 1000.f;
-	float blueNexusHealth = 1000.f;
-
-	float curerntLeftTime = 240.f;
-
 	UFUNCTION(BlueprintCallable)
 	void GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold);
-
-	UFUNCTION(BlueprintCallable)
-	void NexusHealthChange(ENexusType nexusType, float currentHealth);
-
 
 	void ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
 	void ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
@@ -192,9 +181,6 @@ private:
 
 	UFUNCTION()
 	virtual void OnGameEnd();
-
-	UFUNCTION()
-	virtual void OnGameTimerShow(float leftSecond);
 
 	FTimerHandle DefaultGoldTimerHandle;
 	void StartDefaultTimeTick();

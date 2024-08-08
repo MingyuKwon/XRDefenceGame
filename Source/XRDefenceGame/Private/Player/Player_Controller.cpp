@@ -70,29 +70,6 @@ void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cos
 	UpdateUserHandUI();
 }
 
-void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHealth)
-{
-	if (!GetPlayerPawn()) return;
-	if (!GetPlayer_State()) return;
-
-	if (nexusType == ENexusType::ENT_NexusPurple)
-	{
-		purpleNexusHealth = currentHealth;
-
-	}
-	else if (nexusType == ENexusType::ENT_NexusOrange)
-	{
-		orangeNexusHealth = currentHealth;
-	}
-	else if (nexusType == ENexusType::ENT_NexusBlue)
-	{
-		blueNexusHealth = currentHealth;
-
-	}
-
-	UpdateUserHandUI();
-
-}
 
 void APlayer_Controller::StartDefaultTimeTick()
 {
@@ -127,9 +104,6 @@ void APlayer_Controller::UpdateUserHandUI_Implementation()
 	if (!GetPlayer_State()) return;
 
 	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
-		curerntLeftTime, 
-		purpleNexusHealth + orangeNexusHealth + blueNexusHealth, 
-		orangeNexusHealth, blueNexusHealth, purpleNexusHealth,
 		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
 		);
 }
@@ -171,9 +145,6 @@ void APlayer_Controller::BeginPlay()
 		XRGamePlayMode->OnGameStart.AddDynamic(this, &APlayer_Controller::OnGameStart);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &APlayer_Controller::OnGameEnd);
 
-		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
-		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
-
 	}
 
 }
@@ -192,13 +163,6 @@ void APlayer_Controller::OnGameEnd()
 {
 	bGamePlaying = false;
 }
-
-void APlayer_Controller::OnGameTimerShow(float leftSecond)
-{
-	curerntLeftTime = leftSecond;
-	UpdateUserHandUI();
-}
-
 
 bool APlayer_Controller::GetPlayerPawn()
 {

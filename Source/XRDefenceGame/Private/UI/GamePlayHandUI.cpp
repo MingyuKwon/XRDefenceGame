@@ -1,24 +1,13 @@
 #include "UI/GamePlayHandUI.h"
 #include "Components/TextBlock.h"
-
-void UGamePlayHandUI::SetTimeText(float LeftSecond)
-{
-    int32 Minutes = FMath::FloorToInt(LeftSecond / 60.0f);
-    int32 Seconds = FMath::FloorToInt(FMath::Fmod(LeftSecond, 60.0f));
-    FString TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
-    FText TimeTextValue = FText::FromString(TimeString);
-    if (TimeText)
-    {
-        TimeText->SetText(TimeTextValue);
-    }
-}
+#include "Components/ProgressBar.h"
 
 void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount)
 {
     int32 GoldInt = GoldAmount;
     int32 MaxGoldInt = MaxGoldAmount;
 
-    FString GoldString = FString::Printf(TEXT("%d \n/ %d"), GoldInt, MaxGoldInt);
+    FString GoldString = FString::Printf(TEXT("%d / %d"), GoldInt, MaxGoldInt);
     FText GoldTextValue = FText::FromString(GoldString);
 
     if (GoldText)
@@ -27,38 +16,20 @@ void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount)
     }
 }
 
-void UGamePlayHandUI::SetBlueHeartText(float HealthAmount)
+void UGamePlayHandUI::SetCoolTimeProgressBar(float precent)
 {
-    FText BlueHeartTextValue = FText::AsNumber(HealthAmount);
-    if (BlueHeartText)
+    if (CoolTimeProgressBar)
     {
-        BlueHeartText->SetText(BlueHeartTextValue);
+        CoolTimeProgressBar->SetPercent(precent);
     }
-}
 
-void UGamePlayHandUI::SetPurpleHeartText(float HealthAmount)
-{
-    FText PurpleHeartTextValue = FText::AsNumber(HealthAmount);
-    if (PurpleHeartText)
+    if (CoolTimeText)
     {
-        PurpleHeartText->SetText(PurpleHeartTextValue);
-    }
-}
+        FString GestureCountDown = FString::Printf(TEXT("%d"), (int32)((1- precent) * 5));
+        FText GestureCountDownText = FText::FromString(GestureCountDown);
 
-void UGamePlayHandUI::SetOrangeHeartText(float HealthAmount)
-{
-    FText OrangeHeartTextValue = FText::AsNumber(HealthAmount);
-    if (OrangeHeartText)
-    {
-        OrangeHeartText->SetText(OrangeHeartTextValue);
+        CoolTimeText->SetText(GestureCountDownText);
     }
-}
 
-void UGamePlayHandUI::SetHealthText(float HealthAmount)
-{
-    FText HealthTextValue = FText::AsNumber(HealthAmount);
-    if (HealthText)
-    {
-        HealthText->SetText(HealthTextValue);
-    }
+
 }

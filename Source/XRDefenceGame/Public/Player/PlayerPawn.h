@@ -50,25 +50,10 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent);
+	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float GesturePercent);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUITime(float TimeSecond);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIHealth(float HealthAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIOrnageHealth(float HealthAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUBlueHealth(float HealthAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIPurpleHealth(float HealthAmount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGestureCoolTime(float percent);

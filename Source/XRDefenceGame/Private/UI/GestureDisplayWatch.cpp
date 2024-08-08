@@ -4,7 +4,3 @@
 #include "UI/GestureDisplayWatch.h"
 #include "Components/ProgressBar.h"
 
-void UGestureDisplayWatch::SetCoolTimeProgressBar(float precent)
-{
-	CoolTimeProgressBar->SetPercent(precent);
-}
