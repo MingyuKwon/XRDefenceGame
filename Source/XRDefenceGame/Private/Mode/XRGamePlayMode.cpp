@@ -202,11 +202,6 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 			}
 		}
 	}
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor:: Red, FString::Printf(TEXT("Multi Test XRGameMode PostLogin Test")));
-	}
 }
 
 void AXRGamePlayMode::SetGameMatchState(EGameMatchState matchState)

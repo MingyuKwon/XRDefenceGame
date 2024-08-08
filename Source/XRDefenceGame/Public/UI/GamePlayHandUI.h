@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "XRDefenceEnums.h"
 #include "GamePlayHandUI.generated.h"
 
 /**
@@ -45,6 +46,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCoolTimeProgressBar(float precent);
 
+	UFUNCTION(BlueprintCallable)
+	void SetOffenceDefenceText(EObjectType objectType);
 
 
 

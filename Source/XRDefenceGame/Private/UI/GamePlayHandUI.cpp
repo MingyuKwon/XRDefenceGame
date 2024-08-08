@@ -33,3 +33,17 @@ void UGamePlayHandUI::SetCoolTimeProgressBar(float precent)
 
 
 }
+
+void UGamePlayHandUI::SetOffenceDefenceText(EObjectType objectType)
+{
+    if (objectType == EObjectType::EOT_Offence)
+    {
+        OffenceDefenceText->SetText(FText::FromString(FString("Offence")));
+    }
+    else if (objectType == EObjectType::EOT_Deffence)
+    {
+        OffenceDefenceText->SetText(FText::FromString(FString("Defence")));
+    }
+
+    
+}

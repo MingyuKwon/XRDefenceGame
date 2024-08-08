@@ -103,8 +103,22 @@ void APlayer_Controller::UpdateUserHandUI()
 	if (!GetPlayerPawn()) return;
 	if (!GetPlayer_State()) return;
 
+	float GoldMineCount = 0;
+	if (XRGamePlayMode)
+	{
+		if (controllerObjectType == EObjectType::EOT_Offence)
+		{
+			GoldMineCount = XRGamePlayMode->OffenceGoldCount;
+		}
+		else if (controllerObjectType == EObjectType::EOT_Deffence)
+		{
+			GoldMineCount = XRGamePlayMode->DefenceGoldCount;
+		}
+
+	}
+
 	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
-		0,
+		GoldMineCount,
 		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
 		);
 }

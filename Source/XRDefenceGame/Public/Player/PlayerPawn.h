@@ -52,11 +52,18 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float GoldMineCount, float GesturePercent);
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetUIOffenceDefence_Multi(EObjectType objectType);
+
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount, float GoldMineCount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGestureCoolTime(float percent);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIOffenceDefence(EObjectType objectType);
 
 
 	UFUNCTION()
@@ -70,5 +77,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerGameModeCallPositionReady();
 
+	class APlayer_Controller* PlayerController;
 
 };
