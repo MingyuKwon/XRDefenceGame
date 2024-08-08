@@ -94,7 +94,7 @@ TArray<AXR_Character*> APlayerPawn::GetRangeCharacters(FVector impactPoint, floa
 
 void APlayerPawn::UpdateUserLeftHandUI_Implementation(float GoldAmount, float MaxGoldAmount, float GoldMineCount, float GesturePercent)
 {
-    SetUIGoldAmount(GoldAmount, MaxGoldAmount, GoldMineCount);
+    SetUIGoldAmount(GoldAmount, MaxGoldAmount, GoldMineCount - 1);
     SetUIGestureCoolTime(GesturePercent);
 
 }

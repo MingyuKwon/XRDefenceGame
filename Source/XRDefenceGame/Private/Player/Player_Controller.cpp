@@ -132,7 +132,7 @@ void APlayer_Controller::UpdateUserHandUI()
 	}
 
 	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
-		GoldMineCount - 1,
+		GoldMineCount,
 		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
 		);
 }
