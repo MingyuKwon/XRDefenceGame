@@ -119,10 +119,11 @@ private:
 	bool bLeftGrabbing = false;
 	bool bRightGrabbing = false;
 
-	inline bool IsRightGrabable() { return currentRightInteractInterface && !IHandInteractInterface::Execute_IsOnBoard(currentRightInteractInterface.GetObject()); }
-	inline bool IsLeftGrabable() { return currentLeftInteractInterface && !IHandInteractInterface::Execute_IsOnBoard(currentLeftInteractInterface.GetObject()); }
-	inline bool IsRightGrabable_CostInclude() { return IsRightGrabable() && !IHandInteractInterface::Execute_GetDisableHighLight(currentRightInteractInterface.GetObject()); }
-	inline bool IsLeftGrabable_CostInclude() { return IsLeftGrabable() && !IHandInteractInterface::Execute_GetDisableHighLight(currentLeftInteractInterface.GetObject()); }
+
+	inline bool IsRightGrabable() { return currentRightInteractInterface && !currentRightInteractInterface->IsOnBoard_Implementation(); }
+	inline bool IsLeftGrabable() { return currentLeftInteractInterface && !currentLeftInteractInterface->IsOnBoard_Implementation(); }
+	inline bool IsRightGrabable_CostInclude() { return IsRightGrabable() && !currentRightInteractInterface->IsOnBoard_Implementation(); }
+	inline bool IsLeftGrabable_CostInclude() { return IsLeftGrabable() && !currentLeftInteractInterface->IsOnBoard_Implementation(); }
 
 	void LeftGrabStart();
 	void RightGrabStart();

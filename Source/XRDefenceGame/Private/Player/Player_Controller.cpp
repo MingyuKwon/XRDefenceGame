@@ -390,7 +390,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
     if (handInteractInterface)
     {
-		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(handInteractInterface->GetCost_Implementation()));
 		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
     }
 
@@ -401,8 +401,9 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 {
 	if (!IsLocalController()) return;
 
-	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
+	if (bRightGrabbing && !handInteractInterface->IsOnBoard_Implementation())
 	{
+		
 		return;
 	}
 
@@ -446,7 +447,7 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     if (handInteractInterface)
     {
-		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(handInteractInterface->GetCost_Implementation() ));
 		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
 
 	}
@@ -458,7 +459,7 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 {
 	if (!IsLocalController()) return;
 
-	if (bLeftGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
+	if (bLeftGrabbing && !handInteractInterface->IsOnBoard_Implementation())
 	{
 		return;
 	}
