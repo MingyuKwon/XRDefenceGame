@@ -27,27 +27,21 @@ void APlayerPawn::SetPawnTransformForGameStart()
     UXRDefenceGameInstance* GI = Cast<UXRDefenceGameInstance>(GetGameInstance());
     if (GI == nullptr) return;
 
-    APlayer_Controller* playercontroller = Cast<APlayer_Controller>(GetController());
+    PlayerController = Cast<APlayer_Controller>(GetController());
 
-    if (playercontroller)
+    if (PlayerController)
     {
-        if (playercontroller->controllerObjectType == EObjectType::EOT_Offence)
+        if (PlayerController->controllerObjectType == EObjectType::EOT_Offence)
         {
             SetActorLocation(GI->OffencePlayerGamePlayLocation);
             SetActorRotation(GI->OffencePlayerGamePlayRotation);
-            if (GEngine)
-            {
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Offence")));
-            }
+
         }
-        else if (playercontroller->controllerObjectType == EObjectType::EOT_Deffence)
+        else if (PlayerController->controllerObjectType == EObjectType::EOT_Deffence)
         {
             SetActorLocation(GI->DefencePlayerGamePlayLocation);
             SetActorRotation(GI->DefencePlayerGamePlayRotation);
-            if (GEngine)
-            {
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("playercontroller->controllerObjectType == EObjectType::EOT_Deffence")));
-            }
+
         }
     }
 
@@ -98,17 +92,9 @@ TArray<AXR_Character*> APlayerPawn::GetRangeCharacters(FVector impactPoint, floa
 
 }
 
-void APlayerPawn::UpdateUserLeftHandUI_Implementation(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent)
+void APlayerPawn::UpdateUserLeftHandUI_Implementation(float GoldAmount, float MaxGoldAmount, float GoldMineCount, float GesturePercent)
 {
-    SetUIGoldAmount(GoldAmount, MaxGoldAmount);
-
-    SetUIPurpleHealth(PurpleHealthAmount);
-    SetUIOrnageHealth(OrangeHealthAmount);
-    SetUBlueHealth(BlueHealthAmount);
-    SetUIHealth(TotalHealthAmount);
-
-    SetUITime(TimeSecond);
-
+    SetUIGoldAmount(GoldAmount, MaxGoldAmount, GoldMineCount - 1);
     SetUIGestureCoolTime(GesturePercent);
 
 }
@@ -118,6 +104,8 @@ void APlayerPawn::BeginPlay()
     Super::BeginPlay();
 
     if (bDefaultPawn) return;
+
+    PlayerController = Cast<APlayer_Controller>(GetController());
 
     if (GetController() && GetController()->IsLocalPlayerController())
     {
@@ -154,6 +142,14 @@ void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
             GameMode->PlayerPositionSetReady();
         }
 
-
+        if (PlayerController)
+        {
+            SetUIOffenceDefence_Multi(PlayerController->controllerObjectType);
+        }
     }
+}
+
+void APlayerPawn::SetUIOffenceDefence_Multi_Implementation(EObjectType objectType)
+{
+    SetUIOffenceDefence(objectType);
 }

@@ -17,11 +17,7 @@ class XRDEFENCEGAME_API UGestureDisplayWatch : public UUserWidget
 	
 protected:
 
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* CoolTimeProgressBar;
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetCoolTimeProgressBar(float precent);
 
 };

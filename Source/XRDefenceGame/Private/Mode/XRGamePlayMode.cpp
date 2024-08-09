@@ -192,7 +192,6 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 			if (XRGameInstace)
 			{
 				PlayerController->SetControllerObjectType(XRGameInstace->ServerObjectType);
-
 			}
 		}
 		else
@@ -200,14 +199,8 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 			if (XRGameInstace)
 			{
 				PlayerController->SetControllerObjectType(XRGameInstace->ClientObjectType);
-
 			}
 		}
-	}
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor:: Red, FString::Printf(TEXT("Multi Test XRGameMode PostLogin Test")));
 	}
 }
 
@@ -244,17 +237,20 @@ void AXRGamePlayMode::PlayerPositionSetReady()
 	}
 
 	currentconnectPlayer++;
+
+	if (currentconnectPlayer == 1)
+	{
+		TriggerConnectUIUpdate(XRGameInstace->ServerObjectType);
+	}
+	else if (currentconnectPlayer == 2)
+	{
+		TriggerConnectUIUpdate(XRGameInstace->ClientObjectType);
+	}
 	ShouldGameStart();
 }
 
 void AXRGamePlayMode::ShouldGameStart()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Multi Test ShouldGameStart")));
-		UE_LOG(LogTemp, Display, TEXT("Multi Test XRGameMode PostLogin Test"));
-	}
-
 	if (currentconnectPlayer >= 2)
 	{
 		TriggerOnGameStartEvent();
@@ -294,10 +290,20 @@ void AXRGamePlayMode::AddGoldCount(EObjectType objectType)
 	{
 		OffenceGoldCount++;
 	}
+}
 
+void AXRGamePlayMode::TriggerConnectUIUpdate(EObjectType objectType)
+{
+	if (objectType == EObjectType::EOT_Offence)
+	{
+		bOffenceConnect = true;
+	}
+	else if (objectType == EObjectType::EOT_Deffence)
+	{
+		bDefenceConnect = true;
+	}
 
-	UE_LOG(LogTemp, Display, TEXT("OffenceGoldCount   : %d         DefenceGoldCount : %d  "), OffenceGoldCount,  DefenceGoldCount);
-
+	OnConnectEvenet.Broadcast(bOffenceConnect, bDefenceConnect);
 }
 
 void AXRGamePlayMode::GameTimerCallBack()

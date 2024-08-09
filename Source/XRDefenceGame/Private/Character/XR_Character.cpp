@@ -956,7 +956,6 @@ void AXR_Character::DissolveCallBackReverseMulti_Implementation(float percent)
 
 
 
-
 bool AXR_Character::IsOnBoard_Implementation()
 {
 	return bOnBoard;

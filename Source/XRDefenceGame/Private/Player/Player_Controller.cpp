@@ -17,22 +17,6 @@ APlayer_Controller::APlayer_Controller()
 
 void APlayer_Controller::Tick(float DeltaTime)
 {
-	if (IsLocalPlayerController())
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage( 1 , 0.1f, FColor::Red, FString::Printf(TEXT("Servercontroller conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
-		}
-	}
-	else
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(2, 0.1f, FColor::Red, FString::Printf(TEXT("Client conttoller object type %s"), controllerObjectType == EObjectType::EOT_Offence ? *FString("Offence") : *FString("Defence")));
-		}
-	}
-
-
 	if (!IsLocalPlayerController()) return;
 
 	if (!GetPlayerPawn()) return;
@@ -79,36 +63,17 @@ void APlayer_Controller::GoldCostEventCallBack(EObjectType objectType, float cos
 	else if (objectType != controllerObjectType)
 	{
 		return;
+
 	}
+
+	if (!GetPlayer_State()) return;
+
 
 	playerState->SetGold(playerState->GetGold() - cost);
 
 	UpdateUserHandUI();
 }
 
-void APlayer_Controller::NexusHealthChange(ENexusType nexusType, float currentHealth)
-{
-	if (!GetPlayerPawn()) return;
-	if (!GetPlayer_State()) return;
-
-	if (nexusType == ENexusType::ENT_NexusPurple)
-	{
-		purpleNexusHealth = currentHealth;
-
-	}
-	else if (nexusType == ENexusType::ENT_NexusOrange)
-	{
-		orangeNexusHealth = currentHealth;
-	}
-	else if (nexusType == ENexusType::ENT_NexusBlue)
-	{
-		blueNexusHealth = currentHealth;
-
-	}
-
-	UpdateUserHandUI();
-
-}
 
 void APlayer_Controller::StartDefaultTimeTick()
 {
@@ -121,7 +86,14 @@ void APlayer_Controller::StartDefaultTimeTick()
 
 bool APlayer_Controller::CanAffordCost(float Cost)
 {
-	return Cost <= playerState->GetGold();
+	if (!GetPlayer_State()) return false;
+
+	if (playerState)
+	{
+		return Cost <= playerState->GetGold();
+	}
+
+	return false;
 }
 
 void APlayer_Controller::SetGestureCoolTime_Implementation()
@@ -137,15 +109,30 @@ void APlayer_Controller::GestureCoolTimeTick()
 	UpdateUserHandUI();
 }
 
-void APlayer_Controller::UpdateUserHandUI_Implementation()
+void APlayer_Controller::UpdateUserHandUI()
 {
 	if (!GetPlayerPawn()) return;
 	if (!GetPlayer_State()) return;
 
+	float GoldMineCount = 0;
+	if (XRGamePlayMode)
+	{
+		if (controllerObjectType == EObjectType::EOT_Offence)
+		{
+			GoldMineCount = XRGamePlayMode->OffenceGoldCount;
+
+
+		}
+		else if (controllerObjectType == EObjectType::EOT_Deffence)
+		{
+			GoldMineCount = XRGamePlayMode->DefenceGoldCount;
+
+		}
+
+	}
+
 	playerPawn->UpdateUserLeftHandUI(playerState->GetGold(), playerState->GetMaxGold(), 
-		curerntLeftTime, 
-		purpleNexusHealth + orangeNexusHealth + blueNexusHealth, 
-		orangeNexusHealth, blueNexusHealth, purpleNexusHealth,
+		GoldMineCount,
 		1 - (float)GestureCoolTime / (float)GestureCoolTimeUnit
 		);
 }
@@ -158,6 +145,8 @@ void APlayer_Controller::SetControllerObjectType_Implementation(EObjectType obje
 void APlayer_Controller::GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold)
 {
 	if (objectType != objectType) return;
+	if (!GetPlayer_State()) return;
+
 
 	if (perSecGold <= 0) // This is when GoldMine is Set on the Board
 	{
@@ -183,11 +172,10 @@ void APlayer_Controller::BeginPlay()
 	{
 		XRGamePlayMode->OnGoldMineBroadCastEvent.AddDynamic(this, &APlayer_Controller::GoldMineBroadCastCallBack);
 		XRGamePlayMode->OnCostEvent.AddDynamic(this, &APlayer_Controller::GoldCostEventCallBack);
-		XRGamePlayMode->OnNexusDamageEvent.AddDynamic(this, &APlayer_Controller::NexusHealthChange);
 
 		XRGamePlayMode->OnGameStart.AddDynamic(this, &APlayer_Controller::OnGameStart);
 		XRGamePlayMode->OnGameEnd.AddDynamic(this, &APlayer_Controller::OnGameEnd);
-		XRGamePlayMode->OnGameTimerTickEvent.AddDynamic(this, &APlayer_Controller::OnGameTimerShow);
+
 	}
 
 }
@@ -206,13 +194,6 @@ void APlayer_Controller::OnGameEnd()
 {
 	bGamePlaying = false;
 }
-
-void APlayer_Controller::OnGameTimerShow(float leftSecond)
-{
-	curerntLeftTime = leftSecond;
-	UpdateUserHandUI();
-}
-
 
 bool APlayer_Controller::GetPlayerPawn()
 {
@@ -328,7 +309,7 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Scissors);
 			currentRightGesture = EGesture::None;
 
-			GetWorld()->GetTimerManager().SetTimer(CanFireTimerHandle, this, &APlayer_Controller::CannotFire, 0.3f, false);
+			GetWorld()->GetTimerManager().SetTimer(CanFireTimerHandle, this, &APlayer_Controller::CannotFire, 0.5f, false);
 
 		}
 			
@@ -349,14 +330,10 @@ void APlayer_Controller::ShouldRightGestureRelease(Pose inputPose)
 			playerPawn->ReleaseGestureRight(EGesture::Rock_Thumb);
 			currentRightGesture = EGesture::None;
 
-			GetWorld()->GetTimerManager().SetTimer(CanSpeedBuffTimerHandle, this, &APlayer_Controller::CannotBuff, 0.3f, false);
+			GetWorld()->GetTimerManager().SetTimer(CanSpeedBuffTimerHandle, this, &APlayer_Controller::CannotBuff, 0.5f, false);
 
 		}
 	}
-
-
-	
-
 }
 
 
@@ -429,7 +406,7 @@ void APlayer_Controller::HandInteractRightOverlapStart(TScriptInterface<IHandInt
 
     if (handInteractInterface)
     {
-		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
+		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(handInteractInterface->GetCost_Implementation()));
 		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
     }
 
@@ -440,8 +417,9 @@ void APlayer_Controller::HandInteractRightOverlapEnd(TScriptInterface<IHandInter
 {
 	if (!IsLocalController()) return;
 
-	if (bRightGrabbing && !IHandInteractInterface::Execute_IsOnBoard(handInteractInterface.GetObject()))
+	if (bRightGrabbing && !handInteractInterface->IsOnBoard_Implementation())
 	{
+		
 		return;
 	}
 
@@ -453,6 +431,7 @@ void APlayer_Controller::ReleaseRightInteract(TScriptInterface<IHandInteractInte
 	if (!IsLocalController()) return;
 
 	if (currentRightInteractInterface != handInteractInterface) return;
+	if (handInteractInterface == nullptr) return;
 
 	if (currentRightInteractInterface)
 	{
@@ -482,12 +461,15 @@ void APlayer_Controller::HandInteractLeftOverlapStart(TScriptInterface<IHandInte
 
     }
 
-    if (handInteractInterface)
-    {
-		TrySetDisableHighLight(handInteractInterface->GetNetId_Implementation(), !CanAffordCost(IHandInteractInterface::Execute_GetCost(handInteractInterface.GetObject())));
-		TryInteractableEffectStart(handInteractInterface->GetNetId_Implementation());
-
+	if (handInteractInterface)
+	{
+		int32 NetId = handInteractInterface->GetNetId_Implementation();
+		int32 Cost = handInteractInterface->GetCost_Implementation();
+		bool bCanAfford = CanAffordCost(Cost);
+		TrySetDisableHighLight(NetId, !bCanAfford);
+		TryInteractableEffectStart(NetId);
 	}
+
 
     currentLeftInteractInterface = handInteractInterface;
 }
@@ -508,7 +490,7 @@ void APlayer_Controller::HandInteractLeftOverlapEnd(TScriptInterface<IHandIntera
 void APlayer_Controller::ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface)
 {
 	if (!IsLocalController()) return;
-
+	if (handInteractInterface == nullptr) return;
 	if (currentLeftInteractInterface != handInteractInterface) return;
 
 
@@ -530,10 +512,8 @@ void APlayer_Controller::LeftGrabStart()
 	if (bLeftGrabbing) return;
 	if (!bGamePlaying) return;
 
-
 	if (IsLeftGrabable())
 	{
-
 		TryGrabStart(currentLeftInteractInterface->GetNetId_Implementation());
 	}
 
@@ -609,12 +589,6 @@ bool APlayer_Controller::IsInteractActorMine(TScriptInterface<IHandInteractInter
 	if (TargetObjectType == EObjectType::EOT_DeffenceGold)
 	{
 		TargetObjectType = EObjectType::EOT_Deffence;
-	}
-
-	if (GEngine)
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test IsInteractActorMine             controller : %s , target : %s"), controllerObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence") , TargetObjectType == EObjectType::EOT_Deffence ? *FString("EOT_Deffence") : *FString("EOT_Offence")));
-
 	}
 
 	return TargetObjectType == controllerObjectType;

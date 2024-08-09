@@ -60,7 +60,7 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 
 	if (nearestNexus == nullptr) return;
 
-	float FromMetoNexusDistance = FVector::Dist2D(this->GetActorLocation(), nearestNexus->GetActorLocation());
+	float FromMetoNexusDistance = FVector::Dist2D(GetActorLocation(), nearestNexus->GetActorLocation());
 
 	TArray<AActor*> AllCharacters;
 
@@ -76,7 +76,9 @@ void AMyXR_CharacterOffenceBattle::FindNearbyEnemy(AXR_Character*& outFirstNear,
 
 			if (IHandInteractInterface::Execute_IsOnBoard(xrChar) && 
 				Cast<AMyXR_CharacterDeffenceBuff>(xrChar) == nullptr && 
-				(FromMetoNexusDistance > FVector::Dist2D(xrChar->GetActorLocation(), nearestNexus->GetActorLocation())) )
+				FromMetoNexusDistance > FVector::Dist2D( xrChar->GetActorLocation(), nearestNexus->GetActorLocation()) &&
+				FromMetoNexusDistance > FVector::Dist2D(xrChar->GetActorLocation(), GetActorLocation())
+				)
 			{
 				NearbyCharacters.Add(xrChar);
 			}

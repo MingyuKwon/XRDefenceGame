@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "XRDefenceEnums.h"
 #include "GamePlayHandUI.generated.h"
 
 /**
  * 
  */
 class UTextBlock;
+class UProgressBar;
 
 UCLASS()
 class XRDEFENCEGAME_API UGamePlayHandUI : public UUserWidget
@@ -17,44 +19,35 @@ class XRDEFENCEGAME_API UGamePlayHandUI : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TimeText;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GoldText;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* BlueHeartText;
+	UTextBlock* currentGoldMineText;
+
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PurpleHeartText;
+	UProgressBar* CoolTimeProgressBar;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* OrangeHeartText;
+	UTextBlock* CoolTimeText;
+
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* HealthText;
+	UTextBlock* OffenceDefenceText;
 
+	
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetTimeText(float LeftSecond);
+	void SetGoldText(float GoldAmount, float MaxGoldAmount, float GoldMine);
 
 	UFUNCTION(BlueprintCallable)
-	void SetGoldText(float GoldAmount, float MaxGoldAmount);
+	void SetCoolTimeProgressBar(float precent);
 
 	UFUNCTION(BlueprintCallable)
-	void SetBlueHeartText(float HealthAmount);
-
-	UFUNCTION(BlueprintCallable)
-	void SetPurpleHeartText(float HealthAmount);
-
-	UFUNCTION(BlueprintCallable)
-	void SetOrangeHeartText(float HealthAmount);
-
-	UFUNCTION(BlueprintCallable)
-	void SetHealthText(float HealthAmount);
-
+	void SetOffenceDefenceText(EObjectType objectType);
 
 
 

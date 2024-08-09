@@ -50,28 +50,20 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount, float GesturePercent);
+	void UpdateUserLeftHandUI(float GoldAmount, float MaxGoldAmount, float GoldMineCount, float GesturePercent);
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetUIOffenceDefence_Multi(EObjectType objectType);
+
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUITime(float TimeSecond);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIHealth(float HealthAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIOrnageHealth(float HealthAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUBlueHealth(float HealthAmount);
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetUIPurpleHealth(float HealthAmount);
+	void SetUIGoldAmount(float GoldAmount, float MaxGoldAmount, float GoldMineCount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIGestureCoolTime(float percent);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetUIOffenceDefence(EObjectType objectType);
 
 
 	UFUNCTION()
@@ -85,5 +77,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerGameModeCallPositionReady();
 
+	class APlayer_Controller* PlayerController;
 
 };

@@ -1,64 +1,56 @@
 #include "UI/GamePlayHandUI.h"
 #include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 
-void UGamePlayHandUI::SetTimeText(float LeftSecond)
-{
-    int32 Minutes = FMath::FloorToInt(LeftSecond / 60.0f);
-    int32 Seconds = FMath::FloorToInt(FMath::Fmod(LeftSecond, 60.0f));
-    FString TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
-    FText TimeTextValue = FText::FromString(TimeString);
-    if (TimeText)
-    {
-        TimeText->SetText(TimeTextValue);
-    }
-}
-
-void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount)
+void UGamePlayHandUI::SetGoldText(float GoldAmount, float MaxGoldAmount, float GoldMine)
 {
     int32 GoldInt = GoldAmount;
     int32 MaxGoldInt = MaxGoldAmount;
 
-    FString GoldString = FString::Printf(TEXT("%d \n/ %d"), GoldInt, MaxGoldInt);
+    FString GoldString = FString::Printf(TEXT("%d / %d"), GoldInt, MaxGoldInt);
     FText GoldTextValue = FText::FromString(GoldString);
 
     if (GoldText)
     {
         GoldText->SetText(GoldTextValue);
     }
-}
 
-void UGamePlayHandUI::SetBlueHeartText(float HealthAmount)
-{
-    FText BlueHeartTextValue = FText::AsNumber(HealthAmount);
-    if (BlueHeartText)
+    if (currentGoldMineText)
     {
-        BlueHeartText->SetText(BlueHeartTextValue);
+        FString GoldMineString = FString::Printf(TEXT("%d"), (int32)GoldMine);
+        FText GoldMineText = FText::FromString(GoldMineString);
+        currentGoldMineText->SetText(GoldMineText);
     }
 }
 
-void UGamePlayHandUI::SetPurpleHeartText(float HealthAmount)
+void UGamePlayHandUI::SetCoolTimeProgressBar(float precent)
 {
-    FText PurpleHeartTextValue = FText::AsNumber(HealthAmount);
-    if (PurpleHeartText)
+    if (CoolTimeProgressBar)
     {
-        PurpleHeartText->SetText(PurpleHeartTextValue);
+        CoolTimeProgressBar->SetPercent(precent);
     }
+
+    if (CoolTimeText)
+    {
+        FString GestureCountDown = FString::Printf(TEXT("%d"), 5 - (int32)(precent * 5));
+        FText GestureCountDownText = FText::FromString(GestureCountDown);
+
+        CoolTimeText->SetText(GestureCountDownText);
+    }
+
+
 }
 
-void UGamePlayHandUI::SetOrangeHeartText(float HealthAmount)
+void UGamePlayHandUI::SetOffenceDefenceText(EObjectType objectType)
 {
-    FText OrangeHeartTextValue = FText::AsNumber(HealthAmount);
-    if (OrangeHeartText)
+    if (objectType == EObjectType::EOT_Offence)
     {
-        OrangeHeartText->SetText(OrangeHeartTextValue);
+        OffenceDefenceText->SetText(FText::FromString(FString("Offence")));
     }
-}
+    else if (objectType == EObjectType::EOT_Deffence)
+    {
+        OffenceDefenceText->SetText(FText::FromString(FString("Defence")));
+    }
 
-void UGamePlayHandUI::SetHealthText(float HealthAmount)
-{
-    FText HealthTextValue = FText::AsNumber(HealthAmount);
-    if (HealthText)
-    {
-        HealthText->SetText(HealthTextValue);
-    }
+    
 }

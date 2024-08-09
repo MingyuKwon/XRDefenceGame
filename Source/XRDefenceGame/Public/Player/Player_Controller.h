@@ -50,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandInteractLeftOverlapEnd(TScriptInterface<IHandInteractInterface> handInteractInterface);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable)
 	void UpdateUserHandUI();
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -97,19 +97,8 @@ public:
 
 private:
 
-	// This will be saved in GameMode
-	float orangeNexusHealth = 1000.f;
-	float purpleNexusHealth = 1000.f;
-	float blueNexusHealth = 1000.f;
-
-	float curerntLeftTime = 300.f;
-
 	UFUNCTION(BlueprintCallable)
 	void GoldMineBroadCastCallBack(EObjectType objectType, bool bRemove, float perSecGold);
-
-	UFUNCTION(BlueprintCallable)
-	void NexusHealthChange(ENexusType nexusType, float currentHealth);
-
 
 	void ReleaseRightInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
 	void ReleaseLeftInteract(TScriptInterface<IHandInteractInterface> handInteractInterface);
@@ -130,10 +119,11 @@ private:
 	bool bLeftGrabbing = false;
 	bool bRightGrabbing = false;
 
-	inline bool IsRightGrabable() { return currentRightInteractInterface && !IHandInteractInterface::Execute_IsOnBoard(currentRightInteractInterface.GetObject()); }
-	inline bool IsLeftGrabable() { return currentLeftInteractInterface && !IHandInteractInterface::Execute_IsOnBoard(currentLeftInteractInterface.GetObject()); }
-	inline bool IsRightGrabable_CostInclude() { return IsRightGrabable() && !IHandInteractInterface::Execute_GetDisableHighLight(currentRightInteractInterface.GetObject()); }
-	inline bool IsLeftGrabable_CostInclude() { return IsLeftGrabable() && !IHandInteractInterface::Execute_GetDisableHighLight(currentLeftInteractInterface.GetObject()); }
+
+	inline bool IsRightGrabable() { return currentRightInteractInterface && !currentRightInteractInterface->IsOnBoard_Implementation(); }
+	inline bool IsLeftGrabable() { return currentLeftInteractInterface && !currentLeftInteractInterface->IsOnBoard_Implementation(); }
+	inline bool IsRightGrabable_CostInclude() { return IsRightGrabable() && !currentRightInteractInterface->IsOnBoard_Implementation(); }
+	inline bool IsLeftGrabable_CostInclude() { return IsLeftGrabable() && !currentLeftInteractInterface->IsOnBoard_Implementation(); }
 
 	void LeftGrabStart();
 	void RightGrabStart();
@@ -192,9 +182,6 @@ private:
 
 	UFUNCTION()
 	virtual void OnGameEnd();
-
-	UFUNCTION()
-	virtual void OnGameTimerShow(float leftSecond);
 
 	FTimerHandle DefaultGoldTimerHandle;
 	void StartDefaultTimeTick();
