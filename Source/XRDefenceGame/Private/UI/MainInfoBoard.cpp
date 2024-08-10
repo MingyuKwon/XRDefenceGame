@@ -49,6 +49,7 @@ void AMainInfoBoard::OnGameEnd()
 {
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameEnd);
 	if (XRGameInstace == nullptr) return;
+	if (XRGamePlayMode == nullptr) return;
 
 	if (GEngine)
 	{
@@ -57,7 +58,8 @@ void AMainInfoBoard::OnGameEnd()
 
 	if (HasAuthority())
 	{
-		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft , XRGameInstace->bServerFirstDefence);
+		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft , XRGameInstace->bServerFirstDefence
+		, XRGamePlayMode->bSurrenderTriggeredByServer, XRGamePlayMode->bSurrenderTriggeredByClient);
 	}
 
 }
@@ -121,8 +123,7 @@ void AMainInfoBoard::UpdateInGameUI_Implementation(float TimeSecond, float Total
 	SetUITime(TimeSecond);
 }
 
-void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence)
+void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient)
 {
-
-	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft, bServerFirstDefence);
+	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft, bServerFirstDefence, bSurrenderTriggeredByServer, bSurrenderTriggeredByClient);
 }

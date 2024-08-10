@@ -41,6 +41,13 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* GameEndtPanel;
 
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* GameExceptEndPanel;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ExceptEndText;
+
+
 	// Game Start
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_GameStateText;
@@ -122,7 +129,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bServer);
+	void SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bServer, bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient);
 
 	UFUNCTION(BlueprintCallable)
 	void CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft, bool bServerFirstDefence, bool bServer);

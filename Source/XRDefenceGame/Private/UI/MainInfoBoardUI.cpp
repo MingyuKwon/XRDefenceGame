@@ -8,6 +8,8 @@
 
 void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 {
+    GameExceptEndPanel->SetVisibility(ESlateVisibility::Hidden);
+
     if (offence)
     {
         GameStart_OffenceConnectText->SetText(FText::FromString(FString("O")));
@@ -25,8 +27,45 @@ void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 
 }
 
-void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bServer)
+void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, 
+    bool bServerFirstDefence, bool bServer, 
+    bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient)
 {
+    if (bSurrenderTriggeredByServer || bSurrenderTriggeredByClient)
+    {
+        GameExceptEndPanel->SetVisibility(ESlateVisibility::Visible);
+
+        if (bSurrenderTriggeredByServer)
+        {
+            if (bServer)
+            {
+                GameEnd_WinnerText->SetText(FText::FromString(FString("Enemy Win...")));
+                ExceptEndText->SetText(FText::FromString(FString("You Surrender")));
+            }
+            else
+            {
+                GameEnd_WinnerText->SetText(FText::FromString(FString("You Win!")));
+                ExceptEndText->SetText(FText::FromString(FString("Enemy Surrender")));
+
+            }
+        }
+        else
+        {
+            if (!bServer)
+            {
+                GameEnd_WinnerText->SetText(FText::FromString(FString("Enemy Win...")));
+                ExceptEndText->SetText(FText::FromString(FString("You Surrender")));
+            }
+            else
+            {
+                GameEnd_WinnerText->SetText(FText::FromString(FString("You Win!")));
+                ExceptEndText->SetText(FText::FromString(FString("Enemy Surrender")));
+            }
+        }
+
+        return;
+    }
+
     if (bServer)
     {
         if (bServerFirstDefence)

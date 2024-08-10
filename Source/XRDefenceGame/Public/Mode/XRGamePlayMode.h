@@ -91,6 +91,10 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     UFUNCTION(BlueprintCallable, Category = "Events")
     void MoveToNextGame();
 
+    UFUNCTION(BlueprintCallable, Category = "Events")
+    void TriggerSurrender(bool bServer);
+
+
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
     AXR_Character* PoolSpawnActor(ECharacterType characterType);
@@ -148,6 +152,8 @@ class XRDEFENCEGAME_API AXRGamePlayMode : public AGameMode
     FString NewmapName;
 
 
+    bool bSurrenderTriggeredByServer = false;
+    bool bSurrenderTriggeredByClient = false;
 
 protected:
 
@@ -162,4 +168,10 @@ protected:
     void SetGameMatchState(EGameMatchState matchState);
 
     bool isNowFirstGame();
+
+    FTimerHandle TriggerOnGameStartEventTimerHandle;
+
+
+
+
 };
