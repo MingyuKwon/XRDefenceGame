@@ -165,10 +165,21 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 		XRGameInstace->SecondNexusHealth = orangeNexusHealth + blueNexusHealth + purpleNexusHealth;
 		XRGameInstace->SecondTimeLeft = GameTimerSecond;
 
+		FTimerHandle DestroySessionHandle;
+		GetWorld()->GetTimerManager().SetTimer(DestroySessionHandle, [this]() {
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("                          Session will be closed in 5Seconds")));
+			}
+			DestroyServerSession();
+			}, 5.0f, false);
+		
+
 	}
 
 	OnGameEnd.Broadcast();
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
+
 
 }
 
@@ -229,6 +240,31 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 			}
 		}
 	}
+}
+
+void AXRGamePlayMode::Logout(AController* Exiting)
+{
+	Super::Logout(Exiting);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("            %s      Logout"), *Exiting->GetName()));
+	}
+
+	if (XRGameInstace == nullptr) return;
+
+	if (XRGameInstace->matchState == EGameMatchState::EGMS_SecondGameEnd)
+	{
+		XRGameInstace->FirstNexusCount = -1;
+		XRGameInstace->FirstNexusHealth = -1;
+		XRGameInstace->FirstTimeLeft = -1;
+		XRGameInstace->SecondNexusCount = -1;
+		XRGameInstace->SecondNexusHealth = -1;
+		XRGameInstace->SecondTimeLeft = -1;
+
+		XRGameInstace->matchState = EGameMatchState::EGMS_None;
+	}
+
 }
 
 void AXRGamePlayMode::SetGameMatchState(EGameMatchState matchState)

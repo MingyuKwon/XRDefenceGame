@@ -155,6 +155,8 @@ protected:
 
     virtual void PostLogin(APlayerController* NewPlayer) override;
 
+    virtual void Logout(AController* Exiting) override;
+
     class UXRDefenceGameInstance* XRGameInstace;
 
     void SetGameMatchState(EGameMatchState matchState);
