@@ -41,12 +41,13 @@ void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNex
             {
                 GameEnd_WinnerText->SetText(FText::FromString(FString("Enemy Win...")));
                 ExceptEndText->SetText(FText::FromString(FString("You Surrender")));
+                ExceptEndPanel->SetColorAndOpacity(FLinearColor::Red);
+
             }
             else
             {
                 GameEnd_WinnerText->SetText(FText::FromString(FString("You Win!")));
                 ExceptEndText->SetText(FText::FromString(FString("Enemy Surrender")));
-
             }
         }
         else
@@ -55,6 +56,8 @@ void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNex
             {
                 GameEnd_WinnerText->SetText(FText::FromString(FString("Enemy Win...")));
                 ExceptEndText->SetText(FText::FromString(FString("You Surrender")));
+                ExceptEndPanel->SetColorAndOpacity(FLinearColor::Red);
+
             }
             else
             {

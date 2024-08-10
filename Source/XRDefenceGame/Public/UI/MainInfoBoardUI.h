@@ -79,6 +79,11 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* GameEnd_TimeLeft_BackGround;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* ExceptEndPanel;
+
+	
 	
 
 	UPROPERTY(meta = (BindWidget))
