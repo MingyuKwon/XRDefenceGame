@@ -119,4 +119,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetConnectState(bool offence, bool defence);
 
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft);
+
+	UFUNCTION(BlueprintCallable)
+	void CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft);
+
 };

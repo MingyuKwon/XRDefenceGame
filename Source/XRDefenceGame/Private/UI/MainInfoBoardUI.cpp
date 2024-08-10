@@ -25,6 +25,121 @@ void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 
 }
 
+void UMainInfoBoardUI::SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
+{
+    if (FirstNexusCount == -1)
+    {
+        FirtsPlayerNexus_AmountText->SetText(FText::FromString(FString(" ")));
+        FirtsPlayerNexus_HealthText->SetText(FText::FromString(FString(" ")));
+        FirtsPlayer_TimeLeftText->SetText(FText::FromString(FString(" ")));
+
+        SecondPlayerNexus_AmountText->SetText(FText::FromString(FString(" ")));
+        SecondPlayerNexus_HealthText->SetText(FText::FromString(FString(" ")));
+        SecondPlayer_TimeLeftText->SetText(FText::FromString(FString(" ")));
+
+        GameEnd_WinnerText->SetText(FText::FromString(FString(" ")));
+        return;
+    }
+
+    int32 Minutes = FMath::FloorToInt(FirstTimeLeft / 60.0f);
+    int32 Seconds = FMath::FloorToInt(FMath::Fmod(FirstTimeLeft, 60.0f));
+    FString TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+
+    FText NexusCountTextValue = FText::AsNumber(FirstNexusCount);
+    FText NexusHealthTextValue = FText::AsNumber(FirstNexusHealth);
+
+    FirtsPlayerNexus_AmountText->SetText(NexusCountTextValue);
+    FirtsPlayerNexus_HealthText->SetText(NexusHealthTextValue);
+    FirtsPlayer_TimeLeftText->SetText(FText::FromString(TimeString));
+
+
+    if (SecondNexusCount == -1)
+    {
+        SecondPlayerNexus_AmountText->SetText(FText::FromString(FString(" ")));
+        SecondPlayerNexus_HealthText->SetText(FText::FromString(FString(" ")));
+        SecondPlayer_TimeLeftText->SetText(FText::FromString(FString(" ")));
+        GameEnd_WinnerText->SetText(FText::FromString(FString("Next Game will start in 10 Seconds")));
+
+        return;
+    }
+
+    Minutes = FMath::FloorToInt(SecondTimeLeft / 60.0f);
+    Seconds = FMath::FloorToInt(FMath::Fmod(SecondTimeLeft, 60.0f));
+    TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+
+    NexusCountTextValue = FText::AsNumber(SecondNexusCount);
+    NexusHealthTextValue = FText::AsNumber(SecondNexusHealth);
+
+    FirtsPlayerNexus_AmountText->SetText(NexusCountTextValue);
+    FirtsPlayerNexus_HealthText->SetText(NexusHealthTextValue);
+    FirtsPlayer_TimeLeftText->SetText(FText::FromString(TimeString));
+
+
+    CheckWhoIsWinner(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft);
+
+}
+
+void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
+{
+    if (FirstNexusCount != SecondNexusCount)
+    {
+        GameEnd_NexusAmount_BackGround->SetColorAndOpacity(FLinearColor::Red);
+
+        if (FirstNexusCount < SecondNexusCount)
+        {
+            GameEnd_WinnerText->SetText(FText::FromString(FString("Second Player Win")));
+        }
+        else
+        {
+            GameEnd_WinnerText->SetText(FText::FromString(FString("First Player Win")));
+        }
+
+        return;
+    }
+
+    GameEnd_NexusAmount_BackGround->SetColorAndOpacity(FLinearColor::Green);
+
+
+    if (FirstNexusHealth != SecondNexusHealth)
+    {
+        GameEnd_NexusHealth_BackGround->SetColorAndOpacity(FLinearColor::Red);
+
+        if (FirstNexusHealth < SecondNexusHealth)
+        {
+            GameEnd_WinnerText->SetText(FText::FromString(FString("Second Player Win")));
+        }
+        else
+        {
+            GameEnd_WinnerText->SetText(FText::FromString(FString("First Player Win")));
+        }
+
+        return;
+    }
+
+    GameEnd_NexusHealth_BackGround->SetColorAndOpacity(FLinearColor::Green);
+
+
+    if (FirstTimeLeft != SecondTimeLeft)
+    {
+        GameEnd_TimeLeft_BackGround->SetColorAndOpacity(FLinearColor::Red);
+
+        if (FirstTimeLeft < SecondTimeLeft)
+        {
+            GameEnd_WinnerText->SetText(FText::FromString(FString("Second Player Win")));
+        }
+        else
+        {
+            GameEnd_WinnerText->SetText(FText::FromString(FString("First Player Win")));
+        }
+
+        return;
+    }
+
+    GameEnd_TimeLeft_BackGround->SetColorAndOpacity(FLinearColor::Green);
+    GameEnd_WinnerText->SetText(FText::FromString(FString("Draw")));
+
+}
+
 void UMainInfoBoardUI::SetTimeText(float LeftSecond)
 {
     int32 Minutes = FMath::FloorToInt(LeftSecond / 60.0f);

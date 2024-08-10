@@ -5,6 +5,7 @@
 #include "Mode/XRGamePlayMode.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 AMainInfoBoard::AMainInfoBoard()
 {
@@ -30,6 +31,9 @@ void AMainInfoBoard::BeginPlay()
 
 	}
 
+	XRGameInstace = (XRGameInstace == nullptr) ? Cast<UXRDefenceGameInstance>(GetGameInstance()) : XRGameInstace;
+
+
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameWait);
 
 }
@@ -44,6 +48,9 @@ void AMainInfoBoard::OnGameStart()
 void AMainInfoBoard::OnGameEnd()
 {
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameEnd);
+	if (XRGameInstace == nullptr) return;
+
+	SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft) ;
 }
 
 void AMainInfoBoard::NexusHealthChange(ENexusType nexusType, float currentHealth)
@@ -103,4 +110,9 @@ void AMainInfoBoard::UpdateInGameUI_Implementation(float TimeSecond, float Total
 	SetUIHealth(TotalHealthAmount);
 
 	SetUITime(TimeSecond);
+}
+
+void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
+{
+	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft);
 }

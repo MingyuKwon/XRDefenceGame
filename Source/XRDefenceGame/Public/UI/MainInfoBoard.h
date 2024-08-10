@@ -36,6 +36,12 @@ public:
 	void SetUIPurpleHealth(float HealthAmount);
 
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetFinalResultPanel_Multi(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft);
+
 
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -77,6 +83,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
 
+	class UXRDefenceGameInstance* XRGameInstace;
 
 
 private:

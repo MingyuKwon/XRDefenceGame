@@ -124,25 +124,62 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 
 void AXRGamePlayMode::TriggerOnGameEndEvent()
 {
-	OnGameEnd.Broadcast();
-	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
 
 	if (XRGameInstace == nullptr) return;
 
+	int nexusCount = 3;
+
+	if (orangeNexusHealth <= 0)
+	{
+		nexusCount--;
+	}
+
+	if (blueNexusHealth <= 0)
+	{
+		nexusCount--;
+	}
+
+	if (purpleNexusHealth <= 0)
+	{
+		nexusCount--;
+	}
+
+
 	if (isNowFirstGame())
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("isNowFirstGame True")));
+		}
+
 		XRGameInstace->matchState = EGameMatchState::EGMS_FIrstGameEnd;
+
+		XRGameInstace->FirstNexusCount = nexusCount;
+		XRGameInstace->FirstNexusHealth = orangeNexusHealth + blueNexusHealth + purpleNexusHealth;
+		XRGameInstace->FirstTimeLeft = GameTimerSecond;
+
 		MoveToNextGame();
 
 	}
 	else
 	{
+
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("                          Game Ends")));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("isNowFirstGame Second")));
+
 		}
 		XRGameInstace->matchState = EGameMatchState::EGMS_SecondGameEnd;
+
+		XRGameInstace->SecondNexusCount = nexusCount;
+		XRGameInstace->SecondNexusHealth = orangeNexusHealth + blueNexusHealth + purpleNexusHealth;
+		XRGameInstace->SecondTimeLeft = GameTimerSecond;
+
 	}
+
+	OnGameEnd.Broadcast();
+	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
+
 }
 
 void AXRGamePlayMode::MoveToNextGame()
