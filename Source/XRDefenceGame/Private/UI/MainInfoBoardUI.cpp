@@ -85,9 +85,9 @@ void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNex
     NexusCountTextValue = FText::AsNumber(SecondNexusCount);
     NexusHealthTextValue = FText::AsNumber(SecondNexusHealth);
 
-    FirtsPlayerNexus_AmountText->SetText(NexusCountTextValue);
-    FirtsPlayerNexus_HealthText->SetText(NexusHealthTextValue);
-    FirtsPlayer_TimeLeftText->SetText(FText::FromString(TimeString));
+    SecondPlayerNexus_AmountText->SetText(NexusCountTextValue);
+    SecondPlayerNexus_HealthText->SetText(NexusHealthTextValue);
+    SecondPlayer_TimeLeftText->SetText(FText::FromString(TimeString));
 
 
     CheckWhoIsWinner(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft);
