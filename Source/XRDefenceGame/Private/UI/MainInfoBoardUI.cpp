@@ -27,6 +27,11 @@ void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 
 void UMainInfoBoardUI::SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
 {
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanelUI %d, %d, %d, %d, %d, %d "), FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft));
+    }
+
     if (FirstNexusCount == -1)
     {
         FirtsPlayerNexus_AmountText->SetText(FText::FromString(FString(" ")));

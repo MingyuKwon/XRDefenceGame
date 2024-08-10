@@ -31,7 +31,7 @@ void AMainInfoBoard::BeginPlay()
 
 	}
 
-	XRGameInstace = (XRGameInstace == nullptr) ? Cast<UXRDefenceGameInstance>(GetGameInstance()) : XRGameInstace;
+	XRGameInstace = Cast<UXRDefenceGameInstance>(GetGameInstance());
 
 
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameWait);
@@ -50,8 +50,17 @@ void AMainInfoBoard::OnGameEnd()
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameEnd);
 	if (XRGameInstace == nullptr) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OnGameEnd")));
+	}
+
 	if (HasAuthority())
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanel_Multi Call")));
+		}
 		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft);
 	}
 
@@ -118,5 +127,10 @@ void AMainInfoBoard::UpdateInGameUI_Implementation(float TimeSecond, float Total
 
 void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanel_Multi In")));
+	}
+
 	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft);
 }

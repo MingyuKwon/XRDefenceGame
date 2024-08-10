@@ -147,10 +147,6 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 
 	if (isNowFirstGame())
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("isNowFirstGame True")));
-		}
 
 		XRGameInstace->matchState = EGameMatchState::EGMS_FIrstGameEnd;
 
@@ -163,12 +159,6 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 	}
 	else
 	{
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("isNowFirstGame Second")));
-
-		}
 		XRGameInstace->matchState = EGameMatchState::EGMS_SecondGameEnd;
 
 		XRGameInstace->SecondNexusCount = nexusCount;
