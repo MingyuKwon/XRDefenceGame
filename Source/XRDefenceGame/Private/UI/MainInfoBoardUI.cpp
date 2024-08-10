@@ -25,11 +25,11 @@ void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 
 }
 
-void UMainInfoBoardUI::SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
+void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft)
 {
     if (GEngine)
     {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanelUI %d, %d, %d, %d, %d, %d "), FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft));
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanelUI %f, %f, %f, %f, %f, %f "), FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft));
     }
 
     if (FirstNexusCount == -1)
@@ -44,6 +44,11 @@ void UMainInfoBoardUI::SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNex
 
         GameEnd_WinnerText->SetText(FText::FromString(FString(" ")));
         return;
+    }
+
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("FirstNexusCount != -1 ")));
     }
 
     int32 Minutes = FMath::FloorToInt(FirstTimeLeft / 60.0f);
@@ -68,6 +73,11 @@ void UMainInfoBoardUI::SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNex
         return;
     }
 
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SecondNexusCount != -1 ")));
+    }
+
     Minutes = FMath::FloorToInt(SecondTimeLeft / 60.0f);
     Seconds = FMath::FloorToInt(FMath::Fmod(SecondTimeLeft, 60.0f));
     TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
@@ -86,6 +96,11 @@ void UMainInfoBoardUI::SetFinalResultPanel(int32 FirstNexusCount, int32 FirstNex
 
 void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
 {
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("CheckWhoIsWinner ")));
+    }
+
     if (FirstNexusCount != SecondNexusCount)
     {
         GameEnd_NexusAmount_BackGround->SetColorAndOpacity(FLinearColor::Red);
