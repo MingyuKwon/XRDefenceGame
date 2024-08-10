@@ -4,6 +4,7 @@
 #include "UI/MainInfoBoardUI.h"
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanel.h"
+#include "Components/Image.h"
 
 void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 {

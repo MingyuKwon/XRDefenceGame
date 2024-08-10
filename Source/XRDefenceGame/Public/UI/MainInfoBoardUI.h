@@ -12,6 +12,7 @@
  */
 class UTextBlock;
 class UCanvasPanel;
+class UImage;
 
 UCLASS()
 class XRDEFENCEGAME_API UMainInfoBoardUI : public UUserWidget
@@ -40,6 +41,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* GameEndtPanel;
 
+	// Game Start
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_GameStateText;
 
@@ -48,6 +50,47 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_OffenceConnectText;
+	// Game Start
+
+	// Game End
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameEnd_FirstPlayerText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameEnd_SecondPlayerText;
+
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameEnd_WinnerText;
+
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameEnd_NexusAmount_BackGround;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameEnd_NexusHealth_BackGround;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameEnd_TimeLeft_BackGround;
+	
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* FirtsPlayerNexus_AmountText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* FirtsPlayerNexus_HealthText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* FirtsPlayer_TimeLeftText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SecondPlayerNexus_AmountText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SecondPlayerNexus_HealthText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SecondPlayer_TimeLeftText;
 
 
 public:

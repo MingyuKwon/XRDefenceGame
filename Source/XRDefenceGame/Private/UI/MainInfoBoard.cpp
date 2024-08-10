@@ -63,13 +63,13 @@ void AMainInfoBoard::NexusHealthChange(ENexusType nexusType, float currentHealth
 
 	}
 
-	UpdateUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth, blueNexusHealth, purpleNexusHealth);
+	UpdateInGameUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth, blueNexusHealth, purpleNexusHealth);
 }
 
 void AMainInfoBoard::OnGameTimerShow(float leftSecond)
 {
 	curerntLeftTime = leftSecond;
-	UpdateUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth , blueNexusHealth , purpleNexusHealth);
+	UpdateInGameUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth , blueNexusHealth , purpleNexusHealth);
 
 }
 
@@ -95,7 +95,7 @@ void AMainInfoBoard::SetConnectState_Multi_Implementation(bool offence, bool def
 	SetConnectState(offence, defence);
 }
 
-void AMainInfoBoard::UpdateUI_Implementation(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)
+void AMainInfoBoard::UpdateInGameUI_Implementation(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)
 {
 	SetUIPurpleHealth(PurpleHealthAmount);
 	SetUIOrnageHealth(OrangeHealthAmount);

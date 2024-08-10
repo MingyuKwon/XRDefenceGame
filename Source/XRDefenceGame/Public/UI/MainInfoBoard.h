@@ -18,7 +18,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void UpdateUI(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount);
+	void UpdateInGameUI(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUITime(float TimeSecond);
@@ -34,6 +34,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIPurpleHealth(float HealthAmount);
+
+
+
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetGameStateText(EGameMatchState matchState, const FString& text);
