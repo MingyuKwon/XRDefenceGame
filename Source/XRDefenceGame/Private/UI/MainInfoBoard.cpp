@@ -50,7 +50,11 @@ void AMainInfoBoard::OnGameEnd()
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameEnd);
 	if (XRGameInstace == nullptr) return;
 
-	SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft) ;
+	if (HasAuthority())
+	{
+		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft);
+	}
+
 }
 
 void AMainInfoBoard::NexusHealthChange(ENexusType nexusType, float currentHealth)
