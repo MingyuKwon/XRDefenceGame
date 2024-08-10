@@ -57,11 +57,7 @@ void AMainInfoBoard::OnGameEnd()
 
 	if (HasAuthority())
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanel_Multi Call")));
-		}
-		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft);
+		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft , XRGameInstace->bServerFirstDefence);
 	}
 
 }
@@ -125,12 +121,8 @@ void AMainInfoBoard::UpdateInGameUI_Implementation(float TimeSecond, float Total
 	SetUITime(TimeSecond);
 }
 
-void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft)
+void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanel_Multi In")));
-	}
 
-	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft);
+	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft, bServerFirstDefence);
 }

@@ -34,6 +34,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
 	FRotator DefencePlayerGamePlayRotation = FRotator(0.f, 180.f, 0.f);
 
+	bool bServerFirstDefence = true;
+
 	float FirstNexusCount = -1;
 	float FirstNexusHealth = -1;
 	float FirstTimeLeft = -1;

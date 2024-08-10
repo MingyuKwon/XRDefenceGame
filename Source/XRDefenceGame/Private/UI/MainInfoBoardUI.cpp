@@ -25,12 +25,36 @@ void UMainInfoBoardUI::SetConnectState(bool offence, bool defence)
 
 }
 
-void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft)
+void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bServer)
 {
-    if (GEngine)
+    if (bServer)
     {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetFinalResultPanelUI %f, %f, %f, %f, %f, %f "), FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft));
+        if (bServerFirstDefence)
+        {
+            GameEnd_FirstPlayerText->SetText(FText::FromString(FString("YOU")));
+            GameEnd_SecondPlayerText->SetText(FText::FromString(FString("ENEMY")));
+        }
+        else
+        {
+            GameEnd_SecondPlayerText->SetText(FText::FromString(FString("YOU")));
+            GameEnd_FirstPlayerText->SetText(FText::FromString(FString("ENEMY")));
+        }
+
     }
+    else
+    {
+        if (!bServerFirstDefence)
+        {
+            GameEnd_FirstPlayerText->SetText(FText::FromString(FString("YOU")));
+            GameEnd_SecondPlayerText->SetText(FText::FromString(FString("ENEMY")));
+        }
+        else
+        {
+            GameEnd_SecondPlayerText->SetText(FText::FromString(FString("YOU")));
+            GameEnd_FirstPlayerText->SetText(FText::FromString(FString("ENEMY")));
+        }
+    }
+
 
     if (FirstNexusCount == -1)
     {
@@ -44,11 +68,6 @@ void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNex
 
         GameEnd_WinnerText->SetText(FText::FromString(FString(" ")));
         return;
-    }
-
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("FirstNexusCount != -1 ")));
     }
 
     int32 Minutes = FMath::FloorToInt(FirstTimeLeft / 60.0f);
@@ -73,11 +92,6 @@ void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNex
         return;
     }
 
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SecondNexusCount != -1 ")));
-    }
-
     Minutes = FMath::FloorToInt(SecondTimeLeft / 60.0f);
     Seconds = FMath::FloorToInt(FMath::Fmod(SecondTimeLeft, 60.0f));
     TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
@@ -90,15 +104,42 @@ void UMainInfoBoardUI::SetFinalResultPanel(float FirstNexusCount, float FirstNex
     SecondPlayer_TimeLeftText->SetText(FText::FromString(TimeString));
 
 
-    CheckWhoIsWinner(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft);
+    CheckWhoIsWinner(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft, bServerFirstDefence, bServer);
 
 }
 
-void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft)
+void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft, bool bServerFirstDefence, bool bServer)
 {
-    if (GEngine)
+    FString FirstPlayer = FString();
+    FString SecondPlayer = FString();
+
+    if (bServer)
     {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("CheckWhoIsWinner ")));
+        if (bServerFirstDefence)
+        {
+            FirstPlayer = FString("You Win!");
+            SecondPlayer = FString("Enemy Win...");
+        }
+        else
+        {
+            SecondPlayer = FString("You Win!");
+            FirstPlayer = FString("Enemy Win...");
+
+        }
+
+    }
+    else
+    {
+        if (!bServerFirstDefence)
+        {
+            FirstPlayer = FString("You Win!");
+            SecondPlayer = FString("Enemy Win...");
+        }
+        else
+        {
+            SecondPlayer = FString("You Win!");
+            FirstPlayer = FString("Enemy Win...");
+        }
     }
 
     if (FirstNexusCount != SecondNexusCount)
@@ -107,11 +148,11 @@ void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusH
 
         if (FirstNexusCount < SecondNexusCount)
         {
-            GameEnd_WinnerText->SetText(FText::FromString(FString("Second Player Win")));
+            GameEnd_WinnerText->SetText(FText::FromString(SecondPlayer));
         }
         else
         {
-            GameEnd_WinnerText->SetText(FText::FromString(FString("First Player Win")));
+            GameEnd_WinnerText->SetText(FText::FromString(FirstPlayer));
         }
 
         return;
@@ -126,11 +167,11 @@ void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusH
 
         if (FirstNexusHealth < SecondNexusHealth)
         {
-            GameEnd_WinnerText->SetText(FText::FromString(FString("Second Player Win")));
+            GameEnd_WinnerText->SetText(FText::FromString(SecondPlayer));
         }
         else
         {
-            GameEnd_WinnerText->SetText(FText::FromString(FString("First Player Win")));
+            GameEnd_WinnerText->SetText(FText::FromString(FirstPlayer));
         }
 
         return;
@@ -145,11 +186,11 @@ void UMainInfoBoardUI::CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusH
 
         if (FirstTimeLeft < SecondTimeLeft)
         {
-            GameEnd_WinnerText->SetText(FText::FromString(FString("Second Player Win")));
+            GameEnd_WinnerText->SetText(FText::FromString(SecondPlayer));
         }
         else
         {
-            GameEnd_WinnerText->SetText(FText::FromString(FString("First Player Win")));
+            GameEnd_WinnerText->SetText(FText::FromString(FirstPlayer));
         }
 
         return;

@@ -37,10 +37,10 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void SetFinalResultPanel_Multi(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft);
+	void SetFinalResultPanel_Multi(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft);
+	void SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence);
 
 
 

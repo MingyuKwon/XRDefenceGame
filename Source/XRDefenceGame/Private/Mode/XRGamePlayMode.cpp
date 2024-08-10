@@ -88,12 +88,25 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 	if (isNowFirstGame())
 	{
 		SetGameMatchState(EGameMatchState::EGMS_FIrstGameStart);
+
+		if (XRGameInstace)
+		{
+			if (XRGameInstace->ServerObjectType == EObjectType::EOT_Deffence)
+			{
+				XRGameInstace->bServerFirstDefence = true;
+			}
+			else
+			{
+				XRGameInstace->bServerFirstDefence = false;
+
+			}
+
+		}
 	}
 	else
 	{
 		SetGameMatchState(EGameMatchState::EGMS_SecondGameStart);
 	}
-
 
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
