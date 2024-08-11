@@ -172,6 +172,9 @@ protected:
     FTimerHandle TriggerOnGameStartEventTimerHandle;
 
 
+    void ResetGameInsatnceValue();
+
+
 
 
 };

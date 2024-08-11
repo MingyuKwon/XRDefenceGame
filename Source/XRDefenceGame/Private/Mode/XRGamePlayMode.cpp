@@ -141,6 +141,8 @@ void AXRGamePlayMode::TriggerOnGameEndEvent()
 	
 	if (bSurrenderTriggeredByServer || bSurrenderTriggeredByClient)
 	{ // IF Surrender And Game Over
+		XRGameInstace->matchState = EGameMatchState::EGMS_SecondGameEnd;
+
 		FTimerHandle DestroySessionHandle;
 		GetWorld()->GetTimerManager().SetTimer(DestroySessionHandle, [this]() {
 			if (GEngine)
@@ -301,18 +303,39 @@ void AXRGamePlayMode::Logout(AController* Exiting)
 
 	if (XRGameInstace->matchState == EGameMatchState::EGMS_SecondGameEnd || bSurrenderTriggeredByServer || bSurrenderTriggeredByClient)
 	{
-		XRGameInstace->bServerFirstDefence = true;
-
-
-		XRGameInstace->FirstNexusCount = -1;
-		XRGameInstace->FirstNexusHealth = -1;
-		XRGameInstace->FirstTimeLeft = -1;
-		XRGameInstace->SecondNexusCount = -1;
-		XRGameInstace->SecondNexusHealth = -1;
-		XRGameInstace->SecondTimeLeft = -1;
-
-		XRGameInstace->matchState = EGameMatchState::EGMS_None;
+		ResetGameInsatnceValue();
 	}
+
+	// if client logout during gameplay
+	if (XRGameInstace->matchState == EGameMatchState::EGMS_FIrstGamePlaying || XRGameInstace->matchState == EGameMatchState::EGMS_SecondGamePlaying)
+	{
+		ResetGameInsatnceValue();
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("                          Session will be closed in 5Seconds")));
+		}
+
+		// Go to Lobby (Server)
+		DestroyServerSession();
+
+	}
+
+}
+
+void AXRGamePlayMode::ResetGameInsatnceValue()
+{
+	XRGameInstace->bServerFirstDefence = true;
+
+
+	XRGameInstace->FirstNexusCount = -1;
+	XRGameInstace->FirstNexusHealth = -1;
+	XRGameInstace->FirstTimeLeft = -1;
+	XRGameInstace->SecondNexusCount = -1;
+	XRGameInstace->SecondNexusHealth = -1;
+	XRGameInstace->SecondTimeLeft = -1;
+
+	XRGameInstace->matchState = EGameMatchState::EGMS_None;
 
 }
 
@@ -340,6 +363,8 @@ bool AXRGamePlayMode::isNowFirstGame()
 	return false;
 
 }
+
+
 
 void AXRGamePlayMode::PlayerPositionSetReady()
 {
