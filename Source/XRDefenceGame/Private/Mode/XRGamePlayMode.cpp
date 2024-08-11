@@ -269,6 +269,11 @@ void AXRGamePlayMode::PostLogin(APlayerController* NewPlayer)
 
 	if (PlayerController == nullptr) return;
 
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("            %s      PostLogin"), *NewPlayer->GetName()));
+	}
+
 	if (HasAuthority())
 	{
 		XRGameInstace = (XRGameInstace == nullptr) ? Cast<UXRDefenceGameInstance>(GetGameInstance()) : XRGameInstace;
