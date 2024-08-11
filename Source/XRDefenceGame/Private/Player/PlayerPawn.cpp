@@ -105,11 +105,17 @@ void APlayerPawn::BeginPlay()
 
     if (bDefaultPawn) return;
 
+
     PlayerController = Cast<APlayer_Controller>(GetController());
     XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
     if (GetController() && GetController()->IsLocalPlayerController())
     {
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("       PAWN     %s      BeginPlay"), *GetName()));
+        }
+
         if (HasAuthority())
         {
             SetPawnTransformForGameStart();
