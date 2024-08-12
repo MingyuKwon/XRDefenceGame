@@ -118,6 +118,7 @@ void APlayerPawn::BeginPlay()
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("       PAWN     %s      BeginPlay"), *GetName()));
         }
 
+
         if (HasAuthority())
         {
             SetPawnTransformForGameStart();
