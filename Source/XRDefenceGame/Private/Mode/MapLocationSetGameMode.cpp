@@ -22,8 +22,7 @@ void AMapLocationSetGameMode::TriggerOnMapLocationEvent(FVector SpawnLocation)
 
 void AMapLocationSetGameMode::TriggerOnMapSpawnEvent()
 {
-    MoveToLobby();
-	//OnMapSpawnEvent.Broadcast();
+	OnMapSpawnEvent.Broadcast();
 }
 
 void AMapLocationSetGameMode::MoveToLobby()
