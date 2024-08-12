@@ -25,6 +25,12 @@ public:
 	void SetPlayerTransformData(FVector PlayerGamePlayLocation, FRotator PlayerGamePlayRotation, FVector GameStartLocatoin);
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
+	FVector LocalBoardLocation = FVector(0.f, 0.f, 0.f);
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
+	FRotator LocalBoardRotation = FRotator(0.f, 0.f, 0.f);
+
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
 	FVector OffencePlayerGamePlayLocation = FVector(-100.f, 0.f, 40.f);
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Player")
 	FRotator OffencePlayerGamePlayRotation = FRotator(0.f, 0.f, 0.f);

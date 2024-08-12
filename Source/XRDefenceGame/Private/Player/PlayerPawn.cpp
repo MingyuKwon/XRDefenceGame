@@ -103,8 +103,10 @@ void APlayerPawn::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (bDefaultPawn) return;
-
+    if (bDefaultPawn)
+    {
+        return;
+    }
 
     PlayerController = Cast<APlayer_Controller>(GetController());
     XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
