@@ -149,6 +149,8 @@ void AMapLocationSetGameMode::OnFindSession(const TArray<FOnlineSessionSearchRes
         {
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("Failed to find any sessions"));
         }
+
+        OFindSessionFailedEvent.Broadcast();
     }
 }
 
