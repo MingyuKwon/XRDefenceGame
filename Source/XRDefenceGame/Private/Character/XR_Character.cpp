@@ -63,7 +63,6 @@ AXR_Character::AXR_Character()
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 
-	CharacterMovementComponent = GetCharacterMovement();
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Bullet, ECollisionResponse::ECR_Block);
@@ -232,7 +231,7 @@ void AXR_Character::InitializeCharacter()
 		SpawnCostShowUI();
 	}
 
-	CharacterMovementComponent->MaxWalkSpeed = 5.f;
+	GetCharacterMovement()->MaxWalkSpeed = 5.f;
 
 	if (ObjectType == EObjectType::EOT_Deffence) 
 	{
@@ -785,7 +784,7 @@ void AXR_Character::Death(bool bDieInTrash)
 			}
 		}
 
-		CharacterMovementComponent->MaxWalkSpeed = 0.f;
+		GetCharacterMovement()->MaxWalkSpeed = 0.f;
 		FloorRingMesh->SetbTickReject(true);
 
 
@@ -1156,7 +1155,7 @@ void AXR_Character::MoveSpeedUp_Implementation(bool bEffectOn)
 		SpeedBuffNiagara->Activate(true);
 	}
 
-	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed + 2.f;
+	GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed + 2.f;
 }
 
 void AXR_Character::MoveSpeedDown_Implementation(bool bEffectOn)
@@ -1168,7 +1167,7 @@ void AXR_Character::MoveSpeedDown_Implementation(bool bEffectOn)
 		SpeedBuffNiagara->Activate(true);
 	}
 
-	CharacterMovementComponent->MaxWalkSpeed = CharacterMovementComponent->MaxWalkSpeed - 2.f;
+	GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed - 2.f;
 }
 
 

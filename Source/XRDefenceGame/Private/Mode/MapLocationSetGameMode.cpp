@@ -81,7 +81,7 @@ void AMapLocationSetGameMode::CreateSessionThroughSubSystem()
 {
     if (MultiplayerSessionsSubsystem)
     {
-        MultiplayerSessionsSubsystem->CreateSession(2, FString("FreeForAll"));
+        MultiplayerSessionsSubsystem->CreateSession(2, FString("XRDefenceGame"));
     }
 }
 
@@ -130,13 +130,13 @@ void AMapLocationSetGameMode::OnFindSession(const TArray<FOnlineSessionSearchRes
                 GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Found session with MatchType: %s"), *SettingString));
             }
 
-            if (SettingString == FString("FreeForAll"))
+            if (SettingString == FString("XRDefenceGame"))
             {
                 MultiplayerSessionsSubsystem->JoinSession(Result);
 
                 if (GEngine)
                 {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString("Joining FreeForAll session"));
+                    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString("Joining XRDefenceGame session"));
                 }
 
                 return;
@@ -149,6 +149,8 @@ void AMapLocationSetGameMode::OnFindSession(const TArray<FOnlineSessionSearchRes
         {
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString("Failed to find any sessions"));
         }
+
+        OFindSessionFailedEvent.Broadcast();
     }
 }
 

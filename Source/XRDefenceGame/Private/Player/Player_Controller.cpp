@@ -178,6 +178,14 @@ void APlayer_Controller::BeginPlay()
 
 	}
 
+	if (IsLocalPlayerController())
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("       CONTROLLER     %s      BeginPlay"), *GetName()));
+		}
+	}
+
 }
 
 void APlayer_Controller::OnGameStart()

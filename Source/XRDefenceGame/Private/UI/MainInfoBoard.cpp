@@ -5,6 +5,7 @@
 #include "Mode/XRGamePlayMode.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managet/XRDefenceGameInstance.h"
 
 AMainInfoBoard::AMainInfoBoard()
 {
@@ -30,6 +31,9 @@ void AMainInfoBoard::BeginPlay()
 
 	}
 
+	XRGameInstace = Cast<UXRDefenceGameInstance>(GetGameInstance());
+
+
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameWait);
 
 }
@@ -44,6 +48,20 @@ void AMainInfoBoard::OnGameStart()
 void AMainInfoBoard::OnGameEnd()
 {
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGameEnd);
+	if (XRGameInstace == nullptr) return;
+	if (XRGamePlayMode == nullptr) return;
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OnGameEnd")));
+	}
+
+	if (HasAuthority())
+	{
+		SetFinalResultPanel_Multi(XRGameInstace->FirstNexusCount, XRGameInstace->FirstNexusHealth, XRGameInstace->FirstTimeLeft, XRGameInstace->SecondNexusCount, XRGameInstace->SecondNexusHealth, XRGameInstace->SecondTimeLeft , XRGameInstace->bServerFirstDefence
+		, XRGamePlayMode->bSurrenderTriggeredByServer, XRGamePlayMode->bSurrenderTriggeredByClient);
+	}
+
 }
 
 void AMainInfoBoard::NexusHealthChange(ENexusType nexusType, float currentHealth)
@@ -63,13 +81,13 @@ void AMainInfoBoard::NexusHealthChange(ENexusType nexusType, float currentHealth
 
 	}
 
-	UpdateUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth, blueNexusHealth, purpleNexusHealth);
+	UpdateInGameUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth, blueNexusHealth, purpleNexusHealth);
 }
 
 void AMainInfoBoard::OnGameTimerShow(float leftSecond)
 {
 	curerntLeftTime = leftSecond;
-	UpdateUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth , blueNexusHealth , purpleNexusHealth);
+	UpdateInGameUI(curerntLeftTime, orangeNexusHealth + blueNexusHealth + purpleNexusHealth, orangeNexusHealth , blueNexusHealth , purpleNexusHealth);
 
 }
 
@@ -95,7 +113,7 @@ void AMainInfoBoard::SetConnectState_Multi_Implementation(bool offence, bool def
 	SetConnectState(offence, defence);
 }
 
-void AMainInfoBoard::UpdateUI_Implementation(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)
+void AMainInfoBoard::UpdateInGameUI_Implementation(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount)
 {
 	SetUIPurpleHealth(PurpleHealthAmount);
 	SetUIOrnageHealth(OrangeHealthAmount);
@@ -103,4 +121,9 @@ void AMainInfoBoard::UpdateUI_Implementation(float TimeSecond, float TotalHealth
 	SetUIHealth(TotalHealthAmount);
 
 	SetUITime(TimeSecond);
+}
+
+void AMainInfoBoard::SetFinalResultPanel_Multi_Implementation(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient)
+{
+	SetFinalResultPanel(FirstNexusCount, FirstNexusHealth, FirstTimeLeft, SecondNexusCount, SecondNexusHealth, SecondTimeLeft, bServerFirstDefence, bSurrenderTriggeredByServer, bSurrenderTriggeredByClient);
 }

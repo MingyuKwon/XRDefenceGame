@@ -10,6 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapRotateEvent, float, RotateAmount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMapLocationEvent, FVector, SpawnLocation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMapSpawnEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOFindSessionFailedEvent);
+
 
 UCLASS()
 class XRDEFENCEGAME_API AMapLocationSetGameMode : public AGameMode
@@ -25,6 +27,9 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnMapSpawnEvent OnMapSpawnEvent;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOFindSessionFailedEvent OFindSessionFailedEvent;
 
     UFUNCTION(BlueprintCallable, Category = "Events")
     void TriggerOnMapRotateEvent(float RotateAmount);

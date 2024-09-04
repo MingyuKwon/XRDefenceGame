@@ -12,6 +12,7 @@
  */
 class UTextBlock;
 class UCanvasPanel;
+class UImage;
 
 UCLASS()
 class XRDEFENCEGAME_API UMainInfoBoardUI : public UUserWidget
@@ -41,6 +42,14 @@ protected:
 	UCanvasPanel* GameEndtPanel;
 
 	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* GameExceptEndPanel;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ExceptEndText;
+
+
+	// Game Start
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_GameStateText;
 
 	UPROPERTY(meta = (BindWidget))
@@ -48,6 +57,52 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GameStart_OffenceConnectText;
+	// Game Start
+
+	// Game End
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameEnd_FirstPlayerText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameEnd_SecondPlayerText;
+
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* GameEnd_WinnerText;
+
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameEnd_NexusAmount_BackGround;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameEnd_NexusHealth_BackGround;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameEnd_TimeLeft_BackGround;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* ExceptEndPanel;
+
+	
+	
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* FirtsPlayerNexus_AmountText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* FirtsPlayerNexus_HealthText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* FirtsPlayer_TimeLeftText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SecondPlayerNexus_AmountText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SecondPlayerNexus_HealthText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SecondPlayer_TimeLeftText;
 
 
 public:
@@ -75,5 +130,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetConnectState(bool offence, bool defence);
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bServer, bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient);
+
+	UFUNCTION(BlueprintCallable)
+	void CheckWhoIsWinner(int32 FirstNexusCount, int32 FirstNexusHealth, int32 FirstTimeLeft, int32 SecondNexusCount, int32 SecondNexusHealth, int32 SecondTimeLeft, bool bServerFirstDefence, bool bServer);
 
 };

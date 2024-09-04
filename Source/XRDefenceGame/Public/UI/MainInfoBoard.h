@@ -18,7 +18,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void UpdateUI(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount);
+	void UpdateInGameUI(float TimeSecond, float TotalHealthAmount, float OrangeHealthAmount, float BlueHealthAmount, float PurpleHealthAmount);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUITime(float TimeSecond);
@@ -34,6 +34,15 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetUIPurpleHealth(float HealthAmount);
+
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetFinalResultPanel_Multi(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetFinalResultPanel(float FirstNexusCount, float FirstNexusHealth, float FirstTimeLeft, float SecondNexusCount, float SecondNexusHealth, float SecondTimeLeft, bool bServerFirstDefence, bool bSurrenderTriggeredByServer, bool bSurrenderTriggeredByClient);
+
+
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetGameStateText(EGameMatchState matchState, const FString& text);
@@ -74,6 +83,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TObjectPtr<class AXRGamePlayMode> XRGamePlayMode;
 
+	class UXRDefenceGameInstance* XRGameInstace;
 
 
 private:

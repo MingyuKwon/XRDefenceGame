@@ -78,5 +78,13 @@ protected:
 	void ServerGameModeCallPositionReady();
 
 	class APlayer_Controller* PlayerController;
+	class AXRGamePlayMode* XRGamePlayMode;
+
+	UFUNCTION(BlueprintCallable, Category = "Events")
+	void TriggerSurrender();
+
+	UFUNCTION(BlueprintCallable, Category = "Events", Server, Reliable)
+	void TriggerSurrender_Server(bool bServer);
+
 
 };

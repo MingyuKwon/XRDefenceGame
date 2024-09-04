@@ -103,12 +103,22 @@ void APlayerPawn::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (bDefaultPawn) return;
+    if (bDefaultPawn)
+    {
+        return;
+    }
 
     PlayerController = Cast<APlayer_Controller>(GetController());
+    XRGamePlayMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
 
     if (GetController() && GetController()->IsLocalPlayerController())
     {
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("       PAWN     %s      BeginPlay"), *GetName()));
+        }
+
+
         if (HasAuthority())
         {
             SetPawnTransformForGameStart();
@@ -121,10 +131,24 @@ void APlayerPawn::BeginPlay()
 
                 SetPawnTransformForGameStart();
                 ServerGameModeCallPositionReady();
-                }, 0.3f, false);
+                }, 1.f, false);
         }
     }
 
+}
+
+void APlayerPawn::TriggerSurrender()
+{
+    TriggerSurrender_Server(HasAuthority());
+}
+
+void APlayerPawn::TriggerSurrender_Server_Implementation(bool bServer)
+{
+    XRGamePlayMode = (XRGamePlayMode == nullptr) ? Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this)) : XRGamePlayMode;
+    if (XRGamePlayMode)
+    {
+        XRGamePlayMode->TriggerSurrender(bServer);
+    }
 }
 
 void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
@@ -136,10 +160,10 @@ void APlayerPawn::ServerGameModeCallPositionReady_Implementation()
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Multi Test GameModeCallPositionReady")));
         }
 
-        AXRGamePlayMode* GameMode = Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this));
-        if (GameMode)
+        XRGamePlayMode = (XRGamePlayMode == nullptr) ? Cast<AXRGamePlayMode>(UGameplayStatics::GetGameMode(this)) : XRGamePlayMode;
+        if (XRGamePlayMode)
         {
-            GameMode->PlayerPositionSetReady();
+            XRGamePlayMode->PlayerPositionSetReady();
         }
 
         if (PlayerController)
