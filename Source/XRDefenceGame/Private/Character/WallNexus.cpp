@@ -4,6 +4,7 @@
 #include "Character/WallNexus.h"
 #include "Components/BoxComponent.h"
 #include "Mode/XRGamePlayMode.h"
+#include "Components/PointLightComponent.h"  
 
 // Sets default values
 AWallNexus::AWallNexus()
@@ -29,6 +30,10 @@ AWallNexus::AWallNexus()
 	NexusMesh5 = CreateDefaultSubobject<UStaticMeshComponent>(FName("NexusMesh5"));
 	NexusMesh5->SetupAttachment(GetMesh());
 	NexusMesh5->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    PointLight = CreateDefaultSubobject<UPointLightComponent>(FName("PointLight"));
+    PointLight->SetupAttachment(GetMesh()); 
+    PointLight->Intensity = 100.0f; 
 
     TimeAccumulator = 0.0f;
     bMovingUp = true;
@@ -63,6 +68,20 @@ float AWallNexus::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
     }
 
     return returnValue;
+}
+
+void AWallNexus::Death(bool bDieInTrash)
+{
+    Super::Death(bDieInTrash);
+
+    if (HasAuthority())
+    {
+        if (PointLight)
+        {
+            PointLight->Intensity = 1000.0f;
+            PointLight->SetLightColor(FLinearColor::Red);
+        }
+    }
 }
 
 void AWallNexus::Tick(float DeltaTime)
