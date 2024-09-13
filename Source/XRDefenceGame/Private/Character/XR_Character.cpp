@@ -24,6 +24,8 @@
 #include "Battle/CostShowChip.h"
 #include "Net/UnrealNetwork.h"
 #include "NiagaraSystemInstanceController.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 AXR_Character::AXR_Character()
 {
@@ -1364,8 +1366,17 @@ void AXR_Character::ChangeMaterialEMS_HandHighLight()
 
 void AXR_Character::ChangeMaterialEMS_Death()
 {
+	if (DeathNiagaraCylinder)
+	{
+		UNiagaraComponent* beamTrailNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), DeathNiagaraCylinder, FloorRingMesh->GetComponentLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
 
+		if (beamTrailNiagara)
+		{
+			beamTrailNiagara->SetVariableVec3(FName("BeamEnd"), FloorRingMesh->GetComponentLocation() + FVector::UpVector * 100.f);
+		}
+	}
 }
+
 
 void AXR_Character::PlayAnimMontageMulti_Implementation(USkeletalMeshComponent* skeletalComponent, UAnimMontage* montage)
 {

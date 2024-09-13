@@ -14,6 +14,7 @@ class UXRDefenceGameInstance;
 class UAudioSubsystem;
 class ACostShowChip;
 class UAnimMontage;
+class UNiagaraSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -221,6 +222,9 @@ protected:
 
 	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale, bool bLocal = false);
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
+	UNiagaraSystem* DeathNiagaraCylinder;
 
 
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
