@@ -395,6 +395,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> DeathCilinderCharacter;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> SpawnCilinderCharacter;
+
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;

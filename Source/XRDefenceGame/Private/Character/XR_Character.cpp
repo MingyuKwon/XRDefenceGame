@@ -40,6 +40,12 @@ AXR_Character::AXR_Character()
 	DeathCilinderCharacter->SetupAttachment(RootComponent);
 	DeathCilinderCharacter->SetIsReplicated(true);
 
+	SpawnCilinderCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("SpawnCilinderCharacter"));
+	SpawnCilinderCharacter->SetupAttachment(RootComponent);
+	SpawnCilinderCharacter->SetIsReplicated(true);
+
+	
+
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
 	FromCharacterToRing->SetIsReplicated(true);
@@ -69,6 +75,7 @@ AXR_Character::AXR_Character()
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
 	DeathCilinderCharacter->SetVisibility(false);
+	SpawnCilinderCharacter->SetVisibility(false);
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -120,6 +127,15 @@ void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedBy
 		SpawnCharacterPropertyUI();
 
 		FloorRingMesh->SetbCharacterOnBoard(true);
+
+		SpawnCilinderCharacter->SetVisibility(true);
+
+		FTimerHandle spawnringHandle;
+		GetWorld()->GetTimerManager().SetTimer(spawnringHandle, [this]()
+			{
+				SpawnCilinderCharacter->SetVisibility(false);
+
+			}, 1.f, false);
 
 
 		if (XRGamePlayMode)
@@ -811,6 +827,12 @@ void AXR_Character::Death(bool bDieInTrash)
 		}
 
 		DeathCilinderCharacter->SetVisibility(true);
+		FTimerHandle spawnringHandle;
+		GetWorld()->GetTimerManager().SetTimer(spawnringHandle, [this]()
+			{
+				DeathCilinderCharacter->SetVisibility(false);
+
+			}, 1.f, false);
 
 
 		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
