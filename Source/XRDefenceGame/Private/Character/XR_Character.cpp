@@ -24,6 +24,8 @@
 #include "Battle/CostShowChip.h"
 #include "Net/UnrealNetwork.h"
 #include "NiagaraSystemInstanceController.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 AXR_Character::AXR_Character()
 {
@@ -33,6 +35,16 @@ AXR_Character::AXR_Character()
 	FromPaletteToCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("FromPaletteToCharacter"));
 	FromPaletteToCharacter->SetupAttachment(RootComponent);
 	FromPaletteToCharacter->SetIsReplicated(true);
+
+	DeathCilinderCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("DeathCilinderCharacter"));
+	DeathCilinderCharacter->SetupAttachment(RootComponent);
+	DeathCilinderCharacter->SetIsReplicated(true);
+
+	SpawnCilinderCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("SpawnCilinderCharacter"));
+	SpawnCilinderCharacter->SetupAttachment(RootComponent);
+	SpawnCilinderCharacter->SetIsReplicated(true);
+
+	
 
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
@@ -62,6 +74,8 @@ AXR_Character::AXR_Character()
 	bPalletteBeamAvailable = false;
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
+	DeathCilinderCharacter->SetVisibility(false);
+	SpawnCilinderCharacter->SetVisibility(false);
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -113,6 +127,15 @@ void AXR_Character::OnBoardCalledFunctionServer(bool isOnBoard, bool isSpawnedBy
 		SpawnCharacterPropertyUI();
 
 		FloorRingMesh->SetbCharacterOnBoard(true);
+
+		SpawnCilinderCharacter->SetVisibility(true);
+
+		FTimerHandle spawnringHandle;
+		GetWorld()->GetTimerManager().SetTimer(spawnringHandle, [this]()
+			{
+				SpawnCilinderCharacter->SetVisibility(false);
+
+			}, 1.f, false);
 
 
 		if (XRGamePlayMode)
@@ -803,7 +826,15 @@ void AXR_Character::Death(bool bDieInTrash)
 			}
 		}
 
-		
+		DeathCilinderCharacter->SetVisibility(true);
+		FTimerHandle spawnringHandle;
+		GetWorld()->GetTimerManager().SetTimer(spawnringHandle, [this]()
+			{
+				DeathCilinderCharacter->SetVisibility(false);
+
+			}, 1.f, false);
+
+		ChangeMaterialState(EMaterialState::EMS_Death, true);
 
 		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
@@ -856,6 +887,12 @@ void AXR_Character::BehaviorAvailableTimerFunction()
 void AXR_Character::DamageTimerFunction()
 {
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
+}
+
+void AXR_Character::DamageStartFunction()
+{
+	ChangeMaterialState(EMaterialState::EMS_Damage, true);
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
 }
 
 void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
@@ -1074,10 +1111,10 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 		UpdateCharacterPropertyUI();
 
-		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
-		ChangeMaterialState(EMaterialState::EMS_Damage, true);
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
+		DamageStartFunction();
+
+		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
 
 		if (CharacterProperty.currentHealth <= 0)
@@ -1366,6 +1403,7 @@ void AXR_Character::ChangeMaterialEMS_Death()
 {
 
 }
+
 
 void AXR_Character::PlayAnimMontageMulti_Implementation(USkeletalMeshComponent* skeletalComponent, UAnimMontage* montage)
 {

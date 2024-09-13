@@ -41,6 +41,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<class UBoxComponent> RootCollision;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<class UPointLightComponent> PointLight;
+
+	
 
 	UPROPERTY(EditDefaultsOnly, Category = "Nexus Parameter")
 	ENexusType nexusType;
@@ -60,6 +64,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "HighLight Parameter")
 	UMaterialInstance* DefaultNexusMesh5;
 
+	
+
 	virtual void DissolveCallBackReverse(float percent) override;
 	virtual void DissolveCallBack(float percent) override;
 
@@ -74,6 +80,13 @@ protected:
 	bool bMovingUp;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void Death(bool bDieInTrash) override;
+
+	FLinearColor defaultcolor;
+	virtual void DamageTimerFunction() override;
+	virtual void DamageStartFunction() override;
+
 
 public:	
 	virtual void Tick(float DeltaTime) override;

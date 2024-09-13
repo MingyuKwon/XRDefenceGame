@@ -35,6 +35,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* HealthText;
 
+	float LastBlueheart = 1000.f;
+	float LastOrangeheart = 1000.f;
+	float LastPurpleheart = 1000.f;
+	float LastTotalheart = 3000.f;
+
+
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* GameStartPanel;
 
@@ -104,6 +110,11 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* SecondPlayer_TimeLeftText;
 
+
+	FTimerHandle totalHealthTimerHandle;
+	FTimerHandle orangeHealthTimerHandle;
+	FTimerHandle blueHealthTimerHandle;
+	FTimerHandle purpleHealthTimerHandle;
 
 public:
 	UFUNCTION(BlueprintCallable)
