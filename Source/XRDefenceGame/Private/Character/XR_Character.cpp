@@ -834,6 +834,7 @@ void AXR_Character::Death(bool bDieInTrash)
 
 			}, 1.f, false);
 
+		ChangeMaterialState(EMaterialState::EMS_Death, true);
 
 		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
@@ -886,6 +887,12 @@ void AXR_Character::BehaviorAvailableTimerFunction()
 void AXR_Character::DamageTimerFunction()
 {
 	ChangeMaterialState(EMaterialState::EMS_Damage, false);
+}
+
+void AXR_Character::DamageStartFunction()
+{
+	ChangeMaterialState(EMaterialState::EMS_Damage, true);
+	PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
 }
 
 void AXR_Character::SetTrashEffect(bool flag, bool onlyNiagara)
@@ -1104,10 +1111,10 @@ float AXR_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 		UpdateCharacterPropertyUI();
 
-		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
-		ChangeMaterialState(EMaterialState::EMS_Damage, true);
-		PlaySoundViaManager(EGameSoundType::EGST_SFX, SoundDamaged, GetActorLocation(), 0.1f);
+		DamageStartFunction();
+
+		GetWorld()->GetTimerManager().SetTimer(DamageTimerHandle, this, &AXR_Character::DamageTimerFunction, 0.15f, false);
 
 
 		if (CharacterProperty.currentHealth <= 0)

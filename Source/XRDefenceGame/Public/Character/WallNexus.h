@@ -81,7 +81,11 @@ protected:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	virtual void Death(bool bDieInTrash);
+	virtual void Death(bool bDieInTrash) override;
+
+	FLinearColor defaultcolor;
+	virtual void DamageTimerFunction() override;
+	virtual void DamageStartFunction() override;
 
 
 public:	

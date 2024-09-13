@@ -518,6 +518,7 @@ protected:
 
 	virtual void DamageTimerFunction();
 
+	virtual void DamageStartFunction();
 
 	UFUNCTION()
 	virtual void BuffEndTimerFunction();

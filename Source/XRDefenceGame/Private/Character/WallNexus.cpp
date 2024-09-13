@@ -50,6 +50,9 @@ void AWallNexus::BeginPlay()
     DefaultNexusMesh4 = Cast<UMaterialInstance>(NexusMesh4->GetMaterial(0));
     DefaultNexusMesh5 = Cast<UMaterialInstance>(NexusMesh5->GetMaterial(0));
 
+    defaultcolor = PointLight->GetLightColor();
+
+
 }
 
 void AWallNexus::InitializeCharacter()
@@ -76,12 +79,19 @@ void AWallNexus::Death(bool bDieInTrash)
 
     if (HasAuthority())
     {
-        if (PointLight)
-        {
-            PointLight->Intensity = 1000.0f;
-            PointLight->SetLightColor(FLinearColor::Red);
-        }
+
     }
+}
+
+void AWallNexus::DamageTimerFunction()
+{
+    Super::DamageTimerFunction();
+}
+
+void AWallNexus::DamageStartFunction()
+{
+    Super::DamageStartFunction();
+
 }
 
 void AWallNexus::Tick(float DeltaTime)
@@ -165,6 +175,12 @@ void AWallNexus::ChangeMaterialEMS_Default()
     if (DefaultNexusMesh4) NexusMesh4->SetMaterial(0, DefaultNexusMesh4);
     if (DefaultNexusMesh5) NexusMesh5->SetMaterial(0, DefaultNexusMesh5);
 
+    if (PointLight)
+    {
+        PointLight->Intensity = 100.0f;
+        PointLight->SetLightColor(defaultcolor);
+
+    }
 }
 
 void AWallNexus::ChangeMaterialEMS_OnBoardHighLight()
@@ -195,6 +211,15 @@ void AWallNexus::ChangeMaterialEMS_Damage()
         NexusMesh5->SetMaterial(0, DamagedMaterial);
 
     }
+
+    if (PointLight)
+    {
+        PointLight->Intensity = 500.0f;
+        PointLight->SetLightColor(FLinearColor::Red);
+
+    }
+
+
 }
 
 void AWallNexus::ChangeMaterialEMS_HandHighLight()
@@ -215,5 +240,11 @@ void AWallNexus::ChangeMaterialEMS_Death()
 {
     Super::ChangeMaterialEMS_Death();
 
+    if (PointLight)
+    {
+        PointLight->Intensity = 5000.0f;
+        PointLight->SetLightColor(FLinearColor::Red);
+
+    }
 }
 
