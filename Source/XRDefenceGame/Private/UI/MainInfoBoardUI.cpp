@@ -260,7 +260,29 @@ void UMainInfoBoardUI::SetBlueHeartText(float HealthAmount)
     FText BlueHeartTextValue = FText::AsNumber(HealthAmount);
     if (BlueHeartText)
     {
+
         BlueHeartText->SetText(BlueHeartTextValue);
+
+
+        if (HealthAmount <= 0)
+        {
+            BlueHeartText->SetColorAndOpacity(FLinearColor::Red);
+            return;
+        }
+        
+        if (HealthAmount < LastBlueheart)
+        {
+            BlueHeartText->SetColorAndOpacity(FLinearColor::Red);
+            GetWorld()->GetTimerManager().SetTimer(blueHealthTimerHandle, [this]()
+                {
+                    BlueHeartText->SetColorAndOpacity(FLinearColor::Black);
+
+                }, 0.2f, false);
+                
+        }
+
+        LastBlueheart = HealthAmount;
+
     }
 }
 
@@ -271,24 +293,85 @@ void UMainInfoBoardUI::SetPurpleHeartText(float HealthAmount)
     {
         PurpleHeartText->SetText(PurpleHeartTextValue);
     }
+
+    if (HealthAmount <= 0)
+    {
+        PurpleHeartText->SetColorAndOpacity(FLinearColor::Red);
+        return;
+    }
+
+    if (HealthAmount < LastPurpleheart)
+    {
+        PurpleHeartText->SetColorAndOpacity(FLinearColor::Red);
+        GetWorld()->GetTimerManager().SetTimer(purpleHealthTimerHandle, [this]()
+            {
+                PurpleHeartText->SetColorAndOpacity(FLinearColor::Black);
+
+            }, 0.2f, false);
+
+    }
+
+    LastPurpleheart = HealthAmount;
+
 }
 
 void UMainInfoBoardUI::SetOrangeHeartText(float HealthAmount)
 {
     FText OrangeHeartTextValue = FText::AsNumber(HealthAmount);
+
     if (OrangeHeartText)
     {
         OrangeHeartText->SetText(OrangeHeartTextValue);
     }
+
+    if (HealthAmount <= 0)
+    {
+        OrangeHeartText->SetColorAndOpacity(FLinearColor::Red);
+        return;
+    }
+
+    if (HealthAmount < LastOrangeheart)
+    {
+        OrangeHeartText->SetColorAndOpacity(FLinearColor::Red);
+        GetWorld()->GetTimerManager().SetTimer(orangeHealthTimerHandle, [this]()
+            {
+                OrangeHeartText->SetColorAndOpacity(FLinearColor::Black);
+
+            }, 0.2f, false);
+
+    }
+
+    LastOrangeheart = HealthAmount;
 }
 
 void UMainInfoBoardUI::SetHealthText(float HealthAmount)
 {
     FText HealthTextValue = FText::AsNumber(HealthAmount);
+
     if (HealthText)
     {
         HealthText->SetText(HealthTextValue);
     }
+
+    if (HealthAmount <= 0)
+    {
+        HealthText->SetColorAndOpacity(FLinearColor::Red);
+        return;
+    }
+
+    if (HealthAmount < LastTotalheart)
+    {
+        HealthText->SetColorAndOpacity(FLinearColor::Red);
+        GetWorld()->GetTimerManager().SetTimer(totalHealthTimerHandle, [this]()
+            {
+                HealthText->SetColorAndOpacity(FLinearColor::Black);
+
+            }, 0.2f, false);
+
+    }
+
+    LastTotalheart = HealthAmount;
+
 }
 
 void UMainInfoBoardUI::WhichPanelToShow(EGameMatchState matchState)
