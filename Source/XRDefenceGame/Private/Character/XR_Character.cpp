@@ -36,6 +36,10 @@ AXR_Character::AXR_Character()
 	FromPaletteToCharacter->SetupAttachment(RootComponent);
 	FromPaletteToCharacter->SetIsReplicated(true);
 
+	DeathCilinderCharacter = CreateDefaultSubobject<UNiagaraComponent>(FName("DeathCilinderCharacter"));
+	DeathCilinderCharacter->SetupAttachment(RootComponent);
+	DeathCilinderCharacter->SetIsReplicated(true);
+
 	FromCharacterToRing = CreateDefaultSubobject<UNiagaraComponent>(FName("FromCharacterToRing"));
 	FromCharacterToRing->SetupAttachment(RootComponent);
 	FromCharacterToRing->SetIsReplicated(true);
@@ -64,6 +68,7 @@ AXR_Character::AXR_Character()
 	bPalletteBeamAvailable = false;
 	FromPaletteToCharacter->SetVisibility(false);
 	FromCharacterToRing->SetVisibility(false);
+	DeathCilinderCharacter->SetVisibility(false);
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -805,7 +810,8 @@ void AXR_Character::Death(bool bDieInTrash)
 			}
 		}
 
-		
+		DeathCilinderCharacter->SetVisibility(true);
+
 
 		PlayAnimMontageMulti(GetMesh(), CharacterDeathMontage);
 	}
@@ -1366,15 +1372,7 @@ void AXR_Character::ChangeMaterialEMS_HandHighLight()
 
 void AXR_Character::ChangeMaterialEMS_Death()
 {
-	if (DeathNiagaraCylinder)
-	{
-		UNiagaraComponent* beamTrailNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), DeathNiagaraCylinder, FloorRingMesh->GetComponentLocation(), FRotator::ZeroRotator, FVector(1.0f), true);
 
-		if (beamTrailNiagara)
-		{
-			beamTrailNiagara->SetVariableVec3(FName("BeamEnd"), FloorRingMesh->GetComponentLocation() + FVector::UpVector * 100.f);
-		}
-	}
 }
 
 

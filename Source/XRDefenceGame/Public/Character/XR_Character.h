@@ -223,10 +223,6 @@ protected:
 	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale, bool bLocal = false);
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Niagara Parameter")
-	UNiagaraSystem* DeathNiagaraCylinder;
-
-
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	float OwnVolumeScale = 1.f;
 
@@ -394,6 +390,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Parameter")
 	float StunTime = 2.f;
+
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> DeathCilinderCharacter;
 
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
