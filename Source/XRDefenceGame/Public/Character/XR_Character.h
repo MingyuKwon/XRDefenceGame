@@ -14,6 +14,7 @@ class UXRDefenceGameInstance;
 class UAudioSubsystem;
 class ACostShowChip;
 class UAnimMontage;
+class UNiagaraSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSetBoardEvent,EObjectType, objectType , ECharacterType, characterType, int32 , SpawnPlaceIndex);
 
@@ -222,7 +223,6 @@ protected:
 	virtual void PlaySoundViaManager(EGameSoundType soundType, USoundBase* Sound, FVector Location, float VolumeScale, bool bLocal = false);
 
 
-
 	UPROPERTY(EditAnywhere, Category = "Sound Parameter")
 	float OwnVolumeScale = 1.f;
 
@@ -393,6 +393,13 @@ protected:
 
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> DeathCilinderCharacter;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TObjectPtr<UNiagaraComponent> SpawnCilinderCharacter;
+
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<UNiagaraComponent> FromPaletteToCharacter;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -511,6 +518,7 @@ protected:
 
 	virtual void DamageTimerFunction();
 
+	virtual void DamageStartFunction();
 
 	UFUNCTION()
 	virtual void BuffEndTimerFunction();
