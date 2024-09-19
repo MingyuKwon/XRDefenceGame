@@ -118,6 +118,11 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 
 	GetWorld()->GetTimerManager().SetTimer(TriggerOnGameStartEventTimerHandle, [this]() {
 
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("GetWorld()->GetTimerManager().SetTimer 5 second")));
+		}
+
 		if (isNowFirstGame())
 		{
 			SetGameMatchState(EGameMatchState::EGMS_FIrstGamePlaying);
@@ -127,10 +132,7 @@ void AXRGamePlayMode::TriggerOnGameStartEvent()
 			SetGameMatchState(EGameMatchState::EGMS_SecondGamePlaying);
 		}
 
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Game start after 5Seconds")));
-		}
+
 
 		OnGameStart.Broadcast();
 		GetWorld()->GetTimerManager().SetTimer(GameTimerHandle, this, &AXRGamePlayMode::GameTimerCallBack, 1.0f, true);
@@ -356,6 +358,11 @@ void AXRGamePlayMode::SetGameMatchState(EGameMatchState matchState)
 {
 	if (XRGameInstace)
 	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("SetGameMatchState ")));
+		}
+
 		XRGameInstace->matchState = matchState;
 	}
 }
