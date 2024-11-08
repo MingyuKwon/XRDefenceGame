@@ -33,16 +33,16 @@ void ALobbyGameMode::CountDown()
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Count Dwon %d"), timeCount));
-		UE_LOG(LogTemp, Display, TEXT("Multi Test Login Characters"));
 	}
 	timeCount--;
 	if (timeCount <= 0)
 	{
+		GetWorld()->GetTimerManager().ClearTimer(LobbyOutCount);
+
 		UWorld* world = GetWorld();
 
 		if (world)
 		{
-			UE_LOG(LogTemp, Display, TEXT("Multi Test Move to GameMap"));
 			world->ServerTravel(GameMapName);
 		}
 	}
