@@ -32,9 +32,9 @@
 
 졸업프로젝트 시상회와, 실감미디어 경진 대회 각각 최우수상, 대상을 받게 되어 좋은 성적을 거두었습니다.
 
-![crape1](Images/crape1.png)
-![crape2](Images/crape2.png)
-![award](Images/award2.png)
+![crape1](Images/crape1.jpg)
+![crape2](Images/crape2.jpg)
+![award](Images/award2.jpg)
 
 
 ## Development duration
