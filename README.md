@@ -47,33 +47,35 @@
 
 
 **공격 측 말 에셋 ** : https://www.fab.com/ko/listings/039ea035-9360-4e76-ad06-5d3a92da6f65 
+
 **수비 측 말 에셋 ** : https://www.fab.com/ko/listings/515af6b5-6ec9-4efb-8d79-76b8d98b564b
+
 **보드 판 및 테두리 에셋 ** : https://www.fab.com/ko/listings/6f401fb5-88b5-41b4-bf1b-62321414e1f0 
 
 
 ---
 
 ## 작품 소개서 
-![crape1](Images/Cap-14_1.png)
-![crape1](Images/Cap-14_2.png)
-![crape1](Images/Cap-14_3.png)
-![crape1](Images/Cap-14_4.png)
-![crape1](Images/Cap-14_5.png)
-![crape1](Images/Cap-14_6.png)
-![crape1](Images/Cap-14_7.png)
-![crape1](Images/Cap-14_8.png)
-![crape1](Images/Cap-14_9.png)
-![crape1](Images/Cap-14_10.png)
-![crape1](Images/Cap-14_11.png)
-![crape1](Images/Cap-14_12.png)
-![crape1](Images/Cap-14_13.png)
-![crape1](Images/Cap-14_14.png)
-![crape1](Images/Cap-14_15.png)
-![crape1](Images/Cap-14_16.png)
-![crape1](Images/Cap-14_17.png)
-![crape1](Images/Cap-14_18.png)
-![crape1](Images/Cap-14_19.png)
-![crape1](Images/Cap-14_20.png)
+![crape1](Images/Cap-14/Cap-14_1.png)
+![crape1](Images/Cap-14/Cap-14_2.png)
+![crape1](Images/Cap-14/Cap-14_3.png)
+![crape1](Images/Cap-14/Cap-14_4.png)
+![crape1](Images/Cap-14/Cap-14_5.png)
+![crape1](Images/Cap-14/Cap-14_6.png)
+![crape1](Images/Cap-14/Cap-14_7.png)
+![crape1](Images/Cap-14/Cap-14_8.png)
+![crape1](Images/Cap-14/Cap-14_9.png)
+![crape1](Images/Cap-14/Cap-14_10.png)
+![crape1](Images/Cap-14/Cap-14_11.png)
+![crape1](Images/Cap-14/Cap-14_12.png)
+![crape1](Images/Cap-14/Cap-14_13.png)
+![crape1](Images/Cap-14/Cap-14_14.png)
+![crape1](Images/Cap-14/Cap-14_15.png)
+![crape1](Images/Cap-14/Cap-14_16.png)
+![crape1](Images/Cap-14/Cap-14_17.png)
+![crape1](Images/Cap-14/Cap-14_18.png)
+![crape1](Images/Cap-14/Cap-14_19.png)
+![crape1](Images/Cap-14/Cap-14_20.png)
 
 
 
