@@ -41,6 +41,11 @@ void AMainInfoBoard::BeginPlay()
 
 void AMainInfoBoard::OnGameStart()
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OnGameStart in MainBoard")));
+	}
+
 	WhichPanelToShow_Multi(EGameMatchState::EGMS_FIrstGamePlaying);
 
 }
