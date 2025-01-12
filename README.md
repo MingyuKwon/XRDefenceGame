@@ -2,7 +2,6 @@
 
 ![Main Banner](Images/GameStage.png)
 ![Main Banner](Images/GamePlay.png)
-![Main Banner](Images/Grab.png)
 ![Main Banner](Images/HandGesture.png)
 
 ---
